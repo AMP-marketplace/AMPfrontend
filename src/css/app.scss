@@ -1,0 +1,291 @@
+// app global css in SCSS form
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap");
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+li {
+  list-style: none;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+a.text_underline {
+  text-decoration: underline;
+}
+
+img {
+  max-width: 100%;
+}
+
+body {
+  font-family: "Inter", sans-serif;
+  line-height: 1.4;
+}
+p {
+  margin-bottom: 0;
+}
+
+.section {
+  padding: 4rem 0;
+}
+
+// utilities
+
+.container {
+  margin-inline: 2rem;
+}
+.grid {
+  display: grid;
+  gap: 2rem;
+  grid-template-columns: 1fr 1fr;
+
+  &.alt {
+    .left {
+      order: 2;
+    }
+
+    .right {
+      order: 1;
+    }
+  }
+}
+.responsive_grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 2rem;
+}
+
+.q-btn {
+  min-height: auto;
+  text-transform: capitalize;
+  &::before {
+    box-shadow: none;
+  }
+}
+
+.input_wrap {
+  input,
+  select,
+  textarea {
+    border: none;
+    background: transparent;
+    width: 100%;
+    &:focus {
+      outline: none;
+    }
+  }
+
+  .input {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    border: 2px solid #ffffff;
+    background: #ffffff;
+    border-radius: 120px;
+    padding: 0.3rem 1rem;
+  }
+}
+
+// sections
+header {
+  position: absolute;
+  width: 100%;
+  z-index: 2;
+  a {
+    color: white;
+    font-weight: 700;
+    font-size: 14px;
+  }
+}
+.hero {
+  height: 75vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: url("/images/hero.png") no-repeat center top/cover;
+  padding-top: 3rem;
+  position: relative;
+  &::before {
+    content: "";
+    position: absolute;
+    background: rgba(0, 0, 0, 0.4);
+    top: 0;
+    right: 0;
+    width: 100%;
+    height: 100%;
+  }
+  .container {
+    position: relative;
+    z-index: 10;
+  }
+  h1 {
+    max-width: 700px;
+    color: white;
+    font-weight: 800;
+    font-size: 2rem;
+    line-height: 1.3;
+  }
+  p {
+    font-weight: 600;
+    margin-top: 3rem;
+  }
+
+  .input_wrap {
+    max-width: 500px;
+    .input {
+      padding-right: 0.5rem;
+
+      .q-btn {
+        padding: 0.5rem 1rem;
+      }
+    }
+  }
+}
+.new_products {
+  .responsive_grid {
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  }
+}
+.product_card {
+  max-width: 350px;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  padding: 1rem;
+  border-radius: 10px;
+  .content {
+    .text-h6 {
+      line-height: 1.4;
+    }
+  }
+  img {
+    width: 100%;
+    border-radius: 10px;
+  }
+
+  .main {
+    img {
+      height: 200px;
+      object-fit: cover;
+    }
+  }
+}
+.sponsors {
+  .responsive_grid {
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    gap: 1rem;
+    align-items: center;
+  }
+}
+
+.footer {
+  background: linear-gradient(180deg, #111314 0%, #0e1e5e 100%);
+  border: 1px solid #ffffff;
+  position: relative;
+  padding: 3rem 0;
+  p {
+    max-width: 500px;
+  }
+  &::before {
+    content: "";
+    background: url("/images/footerbg.svg");
+    bottom: 0;
+    width: 100%;
+  }
+}
+
+@media (min-width: 1300px) {
+  .new_products {
+    .responsive_grid {
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    }
+  }
+}
+@media (max-width: 1100px) {
+  .text-h3 {
+    font-size: 2.3rem;
+    line-height: 1.2;
+  }
+  .hero {
+    .q-btn {
+      padding: 0.2rem 0.7rem;
+      font-size: 12px;
+    }
+    .row.justify-end.q-mt-xl {
+      margin-top: 1rem;
+    }
+  }
+  .hero h1 {
+    font-size: 1.5rem;
+    max-width: 500px;
+  }
+  header {
+    a {
+      font-size: 13px;
+    }
+
+    .nav_wrap {
+      gap: 0.5rem !important;
+    }
+  }
+  .input_wrap .input {
+    padding: 0.1rem 1rem;
+  }
+}
+
+@media (max-width: 600px) {
+  .container {
+    margin-inline: 1rem;
+  }
+  .text-h3 {
+    font-size: 1.6rem;
+    line-height: 1.2;
+  }
+
+  .logo {
+    img {
+      width: 80px;
+    }
+  }
+
+  .new_products .responsive_grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+  .hero {
+    height: 55vh;
+    .q-btn {
+      padding: 0.2rem 0.7rem;
+      font-size: 10px;
+    }
+  }
+  .hero h1 {
+    font-size: 1.2rem;
+  }
+  .nav_wrap {
+    gap: 0.5rem !important;
+    flex-wrap: wrap;
+  }
+  .hero {
+    background: url("/images/hero.png") no-repeat 80% center / cover;
+    .q-mt-lg.row.nav_wrap.items-center.no-wrap {
+      margin-top: 0.5rem;
+    }
+    .row.justify-end.q-mt-xl {
+      margin-top: 0.5rem;
+    }
+    .input_wrap .input {
+      font-size: 10px;
+      padding: 0.1rem 1rem;
+      padding-right: 0.5rem;
+      input {
+        font-size: 10px;
+      }
+    }
+  }
+}
