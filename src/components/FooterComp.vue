@@ -1,7 +1,7 @@
 <template>
   <footer class="footer">
     <div class="container">
-      <div class="row items-center justify-between">
+      <div class="flex items-center justify-between ">
         <h4 class="text-h5 text-weight-bold text-white">
           Africa Medical Marketplace
         </h4>

@@ -33,9 +33,11 @@
                 <router-link to="">RFQ</router-link>
               </li> -->
               <li>
-                <q-btn text-color="black" color="white">
-                  {{ $t("Get started") }}
-                </q-btn>
+                <router-link to="onboarding">
+                  <q-btn text-color="black" color="white">
+                    {{ $t("Get started") }}
+                  </q-btn>
+                </router-link>
               </li>
               <li>
                 <q-btn-dropdown text-color="black" label="Lang" color="white">

@@ -4,7 +4,16 @@ const routes = [
     path: '/',
     component: () => import('layouts/MainLayout.vue'),
     children: [
-      { path: '', component: () => import('pages/IndexPage.vue') }
+      { path: '', component: () => import('pages/IndexPage.vue') },
+    ]
+  },
+  {
+    path: '/onboarding',
+    component: () => import('layouts/OnboardingLayout.vue'), // Use the new layout
+    children: [
+      { path: '', component: () => import('pages/onboarding/OnBoarding.vue') },
+      { path: '/sign-up', component: () => import('pages/onboarding/SignupPage.vue') },
+      { path: '/login', component: () => import('pages/onboarding/LoginPage.vue') }
     ]
   },
 
