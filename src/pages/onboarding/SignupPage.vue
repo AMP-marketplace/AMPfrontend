@@ -1,28 +1,28 @@
 <template>
-  <q-page>
+  <q-page class=" ">
     <div>
       <StepHeader
         title=" Create an account"
         subtitle="One more step before starting your free trial"
       />
-      <div class="flex flex-col gap-3 items-center my-10 justify-center">
+      <div class="flex flex-col gap-3 items-center my-10 mx-10 md:mx-0 justify-center">
         <q-btn
-          class="bg-gray-100 px-5 w-1/3 py-4"
+          class="bg-gray-100 w-full px-5 md:w-1/3 py-4"
           icon="mail"
           label="Sign up with email"
         ></q-btn>
         <q-btn
-          class="bg-gray-100 px-5 w-1/3 py-4"
+          class="bg-gray-100 w-full px-5 md:w-1/3 py-4"
           icon="fa-brands fa-apple"
           label="Sign up with Apple"
         ></q-btn>
         <q-btn
-          class="bg-gray-100 px-5 w-1/3 py-4"
+          class="bg-gray-100 w-full px-5 md:w-1/3 py-4"
           icon="fa-brands fa-facebook"
           label="Sign up with Facebook"
         ></q-btn>
         <q-btn
-          class="bg-gray-100 px-5 w-1/3 py-4"
+          class="bg-gray-100 w-full px-5 md:w-1/3 py-4"
           icon="fa-brands fa-google"
           label="Sign up with Google"
         ></q-btn>

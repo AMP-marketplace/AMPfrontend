@@ -14,7 +14,7 @@
           subtitle="We’ll help you get set up based on your business needs"
         />
         <q-form @submit.prevent="onNext">
-          <div class="flex gap-5 my-10">
+          <div class="flex items-center justify-center gap-5 my-10">
             <q-radio
               v-model="userStatus"
               val="starting"
@@ -28,7 +28,7 @@
               class="radio-option"
             />
           </div>
-          <q-btn type="submit" label="Next" class="submit-btn -end-3/4 " />
+          <q-btn type="submit" label="Next" class="submit-btn self-center mx-auto md:-end-3/4 " />
         </q-form>
       </div>
   
@@ -38,7 +38,7 @@
           subtitle="Pick what you want to advertise"
         />
         <q-form @submit.prevent="onNext">
-          <div class="grid grid-cols-2 my-10">
+          <div class="grid grid-cols-1 md:grid-cols-2 my-10">
             <q-checkbox
               v-for="(item, index) in planOptions"
               :key="index"
@@ -48,7 +48,7 @@
               class="checkbox-option"
             />
           </div>
-          <q-btn type="submit" label="Next" class="submit-btn -end-3/4" />
+          <q-btn type="submit" label="Next" class="submit-btn mx-auto md:-end-3/4" />
         </q-form>
       </div>
   
@@ -58,7 +58,7 @@
           subtitle="Pick as many as you like, you can always change later"
         />
         <q-form @submit.prevent="onFinish">
-          <div class="grid grid-cols-2 my-10">
+          <div class="grid grid-cols-1 md:grid-cols-2 my-10">
             <q-checkbox
               v-for="(item, index) in items"
               :key="index"
@@ -72,7 +72,7 @@
               </div>
             </q-checkbox>
           </div>
-          <q-btn to="/sign-up" replace class=" submit-btn  w-40 -end-3/4">Time to Sign-up</q-btn>
+          <q-btn to="/sign-up" replace class=" submit-btn  w-40 mx-auto  md:-end-3/4">Time to Sign-up</q-btn>
         </q-form>
       </div>
     </q-page>

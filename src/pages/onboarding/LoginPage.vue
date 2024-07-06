@@ -2,18 +2,18 @@
    <q-page>
     <div>
     <StepHeader title="Log in" subtitle="Continue to your account" />
-    <div class="flex flex-col gap-3 items-center my-10 justify-center">
+    <div class="flex flex-col mx-10 md:mx-0 gap-3 items-center my-10 justify-center">
         <q-input
           v-model="email"
           borderless
           label="Email"
-          class="w-1/3 border px-3 rounded-lg  "
+          class="md:w-1/3 w-full border px-3 rounded-lg  "
         >
           <template v-slot:prepend>
             <q-icon name="mail" />
           </template>
         </q-input>
-        <q-btn class="bg-blue-800 rounded-lg text-white px-5 w-1/3 py-4"> Continue with email </q-btn>
+        <q-btn class="bg-blue-800 rounded-lg text-white px-5 w-full md:w-1/3 py-4"> Continue with email </q-btn>
 
         
       </div>
