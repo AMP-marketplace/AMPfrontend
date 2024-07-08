@@ -1,7 +1,7 @@
 <template>
   <q-layout view="lHh Lpr lFf">
     <header>
-      <div class="container">
+      <div class="">
         <div class="row items-center no-wrap justify-between">
           <div class="logo">
             <img src="/images/logo.svg" alt="" />
@@ -16,6 +16,9 @@
               </li>
               <li>
                 <router-link to="">{{ $t("About us") }}</router-link>
+              </li>
+              <li>
+                <router-link to="/pricing">{{ $t("Pricing") }}</router-link>
               </li>
               <li>
                 <router-link to="">{{ $t("All stores") }}</router-link>
@@ -135,6 +138,7 @@
       <q-list>
         <q-item clickable to="">{{ $t("home") }}</q-item>
         <q-item clickable to="">{{ $t("About us") }}</q-item>
+        <q-item clickable to="/pricing">{{ $t("Pricing") }}</q-item>
         <q-item clickable to="">{{ $t("All stores") }}</q-item>
         <q-item clickable to="">{{ $t("Donate") }}</q-item>
         <q-item clickable to="">{{ $t("Job listings") }}</q-item>
