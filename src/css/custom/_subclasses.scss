@@ -212,6 +212,8 @@ hr {
   }
   .logo img {
     width: 200px;
+    height: 70px;
+    object-fit: contain;
   }
   nav ul {
     display: flex;
