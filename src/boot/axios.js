@@ -15,7 +15,7 @@ import { Notify, Platform } from "quasar";
 //   "application/json; charset=utf-8";
 // axios.defaults.headers.common["Accept"] = "application/json";
 // axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
-const api = axios.create({
+const authAxios = axios.create({
   baseURL: "https://agora.africamedicalmarketplace.com",
   headers: {
     "X-Requested-With": "XMLHttpRequest",
@@ -32,12 +32,12 @@ export default boot(({ app, store, router }) => {
   // ^ ^ ^ this will allow you to use this.$axios (for Vue Options API form)
   //       so you won't necessarily have to import axios in each vue file
 
-  app.config.globalProperties.$api = api;
+  app.config.globalProperties.$authAxios = authAxios;
   app.config.globalProperties.$store = loadStore;
 
   let auth = store.state.value.ampauth;
   // console.log(auth);
-  api.interceptors.response.use(
+  authAxios.interceptors.response.use(
     function (response) {
       return response;
     },
@@ -113,7 +113,7 @@ export default boot(({ app, store, router }) => {
     }
   );
 
-  api.interceptors.request.use(function (config) {
+  authAxios.interceptors.request.use(function (config) {
     // console.log(auth);
     if (auth.token) {
       config.headers.Authorization = "Bearer " + auth.token;
@@ -152,4 +152,4 @@ export default boot(({ app, store, router }) => {
   //       so you can easily perform requests against your app's API
 });
 
-export { axios, api };
+export { axios, authAxios };

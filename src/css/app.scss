@@ -1,3 +1,4 @@
+@import "custom/subclasses";
 // app global css in SCSS form
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap");
 *,
@@ -188,7 +189,7 @@ header {
   background: linear-gradient(180deg, #111314 0%, #0e1e5e 100%);
   border: 1px solid #ffffff;
   position: relative;
-  padding: 3rem ;
+  padding: 3rem;
   p {
     max-width: 500px;
   }

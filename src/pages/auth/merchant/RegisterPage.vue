@@ -9,7 +9,7 @@
         <div class="frame">
           <img src="../../../assets/frame.png" alt="" />
         </div>
-        <h4 class="biggerText">Welcome to buildadom</h4>
+        <h4 class="biggerText">Welcome to Africa Medical Marketplace</h4>
         <p class="mediumText q-my-xs">
           Choose method of registration to proceed with creatng your account
           with us.

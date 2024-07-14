@@ -1,7 +1,7 @@
 <template>
   <q-layout view="lHh Lpr lFf">
     <header>
-      <div class="">
+      <div class="q-mx-sm">
         <div class="row items-center no-wrap justify-between">
           <div class="logo">
             <img src="/images/logo.svg" alt="" />

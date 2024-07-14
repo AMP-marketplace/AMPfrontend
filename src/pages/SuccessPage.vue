@@ -19,10 +19,11 @@
                   class="text-center q-pa-sm"
                 >
                   "Thank you for signing up to be one of the early users of
-                  Buildadom. Our engineers are currently working to deliver our
-                  full stack of features to you. In the mean time, a customer
-                  support representative will contact you to let you know of
-                  next steps. We can't wait to start doing business with you!"
+                  Africa Medical Marketplace. Our engineers are currently
+                  working to deliver our full stack of features to you. In the
+                  mean time, a customer support representative will contact you
+                  to let you know of next steps. We can't wait to start doing
+                  business with you!"
                 </p>
               </div>
             </div>
