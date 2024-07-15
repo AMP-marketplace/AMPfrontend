@@ -1,157 +1,161 @@
 <template>
-  <q-layout view="lHh Lpr lFf">
-    <header>
-      <div class="q-mx-sm">
-        <div class="row items-center no-wrap justify-between">
-          <div class="logo">
-            <img src="/images/logo.svg" alt="" />
+  <q-layout class="side_" view="hHh lpR fFf">
+    <q-header class="header bg-white">
+      <div class="">
+        <div class="top_nav">
+          <div class="container">
+            <div class="left">Mon-Sat : <span>9:00am - 5:00pm</span></div>
+            <div style="gap: 0.5rem" class="middle row items-center no-wrap">
+              <p>For advert placements & store features on Buildadom</p>
+              <router-link to="">Contact Us</router-link>
+            </div>
+            <div class="right">
+              <p>
+                <span
+                  >Call Us:
+                  <a href="tel:+2348119736227" target="_blank"
+                    >(+234) 8119736227</a
+                  ></span
+                >
+              </p>
+              <div style="gap: 1rem" class="row items-center no-wrap">
+                <i class="fa-brands fa-facebook"></i>
+                <i class="fa-brands fa-instagram"></i>
+              </div>
+            </div>
           </div>
-          <nav v-if="!$q.screen.lt.md">
-            <ul
-              style="gap: 1rem"
-              class="row items-center no-wrap nav_wrap justify-between"
-            >
-              <li>
-                <router-link to="">{{ $t("home") }}</router-link>
-              </li>
-              <li>
-                <router-link to="">{{ $t("About us") }}</router-link>
-              </li>
-              <li>
-                <router-link to="/pricing">{{ $t("Pricing") }}</router-link>
-              </li>
-              <li>
-                <router-link to="">{{ $t("All stores") }}</router-link>
-              </li>
-              <li>
-                <router-link to="">{{ $t("Donate") }}</router-link>
-              </li>
-              <li>
-                <router-link to="">{{ $t("Job listings") }}</router-link>
-              </li>
-              <li>
-                <router-link to="">{{ $t("Logistics") }}</router-link>
-              </li>
-              <!-- <li>
-                <router-link to="">RFQ</router-link>
-              </li> -->
-              <li>
-                <router-link to="onboarding">
-                  <q-btn text-color="black" color="white">
-                    {{ $t("Get started") }}
-                  </q-btn>
-                </router-link>
-              </li>
-              <li>
-                <q-btn-dropdown text-color="black" label="Lang" color="white">
-                  <q-list>
-                    <q-item
-                      clickable
-                      v-close-popup
-                      :class="language === 'en' ? 'text-blue-10' : ''"
-                      @click="changeLanguage('en')"
-                    >
-                      <q-item-section>
-                        <q-item-label>English</q-item-label>
-                      </q-item-section>
-                    </q-item>
+        </div>
+        <div class="down_nav">
+          <div class="container">
+            <div class="logo">
+              <router-link :to="{ name: 'home' }">
+                <img src="/images/logo.svg" alt="" />
+              </router-link>
+            </div>
+            <nav class="nav_items_">
+              <ul>
+                <li class="navLinks">
+                  <router-link :to="{ name: 'stores' }">Stores</router-link>
+                </li>
+                <!-- <li class="navLinks">
+                  <router-link to="">Merchant</router-link>
+                </li> -->
+                <!-- <li class="navLinks">
+                  <router-link to="">Categories</router-link>
+                </li> -->
+                <li class="navLinks">
+                  <router-link :to="{ name: 'explore' }">Explore</router-link>
+                </li>
+                <!-- <li class="navLinks">
+                  <router-link to="">Services</router-link>
+                </li> -->
+              </ul>
+            </nav>
 
-                    <q-item
-                      clickable
-                      v-close-popup
-                      @click="changeLanguage('fr')"
-                      :class="language === 'fr' ? 'text-blue-10' : ''"
+            <div style="gap: 0.5rem" class="row items-center no-wrap">
+              <q-btn :to="{ name: 'cart' }" flat>
+                <i class="fa-solid text-black fa-cart-shopping"></i>
+                <q-badge color="red" floating>{{
+                  cartStore.cart.length
+                }}</q-badge>
+              </q-btn>
+
+              <q-btn v-if="store.token" flat>
+                <img
+                  style="width: 36px; height: 36px; border-radius: 100%"
+                  src="https://w7.pngwing.com/pngs/178/595/png-transparent-user-profile-computer-icons-login-user-avatars-thumbnail.png"
+                  alt=""
+                />
+                <q-menu class="q-pa-md">
+                  <div class="column items-center">
+                    <q-avatar size="72px">
+                      <img
+                        src="https://w7.pngwing.com/pngs/178/595/png-transparent-user-profile-computer-icons-login-user-avatars-thumbnail.png"
+                      />
+                    </q-avatar>
+
+                    <div
+                      style="white-space: nowrap"
+                      class="text-subtitle1 name_text q-mt-md q-mb-xs"
                     >
-                      <q-item-section>
-                        <q-item-label>French</q-item-label>
-                      </q-item-section>
-                    </q-item>
-                    <q-item
-                      clickable
+                      {{
+                        store.storedetails.name
+                          ? store.storedetails.name
+                          : store.userdetails.name
+                      }}
+                    </div>
+                    <q-btn
+                      color="green-7"
+                      label="View Dashboard"
+                      :to="{
+                        name:
+                          store.userdetails.type === 'business'
+                            ? 'all.set'
+                            : 'dashboard',
+                      }"
+                      push
+                      no-caps
+                      no-wrap
+                      size="sm"
                       v-close-popup
-                      @click="changeLanguage('yo')"
-                      :class="language === 'yo' ? 'text-blue-10' : ''"
-                    >
-                      <q-item-section>
-                        <q-item-label>Yoruba</q-item-label>
-                      </q-item-section>
-                    </q-item>
-                  </q-list>
-                </q-btn-dropdown>
-              </li>
-            </ul>
-          </nav>
-          <q-btn
-            v-if="$q.screen.lt.md"
-            class="text-white"
-            flat
-            @click="leftDrawerOpen = !leftDrawerOpen"
-            round
-            ><i class="ri-menu-2-line text-h5"></i
-          ></q-btn>
+                    />
+                    <q-btn
+                      color="primary"
+                      label="Logout"
+                      class="q-mt-sm"
+                      push
+                      :to="{
+                        name: 'logout',
+                        query: {
+                          redirect: route.name,
+                        },
+                      }"
+                      size="sm"
+                      v-close-popup
+                    />
+                  </div>
+                </q-menu>
+              </q-btn>
+
+              <q-btn
+                v-if="!store.token"
+                :to="{
+                  name: 'merchant.register',
+                }"
+                color="primary"
+                no-caps
+                no-wrap
+                rounded
+                label="Sign in"
+              />
+              <q-btn @click="drawer = !drawer" class="expand_cats" flat>
+                <i class="fa-solid text-black fa-bars"></i>
+              </q-btn>
+            </div>
+          </div>
         </div>
       </div>
-    </header>
+    </q-header>
 
-    <q-drawer v-model="leftDrawerOpen" bordered>
-      <div class="row items-center no-wrap justify-between">
-        <div class="logo">
-          <img src="/images/logo.svg" alt="" />
-        </div>
-        <q-btn-dropdown text-color="black" label="Lang" color="white">
+    <q-drawer
+      v-model="drawer"
+      @click.capture="drawer = !drawer"
+      :width="250"
+      :breakpoint="800"
+      bordered
+      :class="$q.dark.isActive ? 'bg-grey-9' : 'bg-grey-3'"
+    >
+      <q-scroll-area class="fit" :horizontal-thumb-style="{ opacity: 0 }">
+        <div class="explore_categories">
+          <h6 class="text-h5 text-weight-bold q-mb-md">Navigation</h6>
+
           <q-list>
-            <q-item
-              clickable
-              v-close-popup
-              :class="language === 'en' ? 'text-blue-10' : ''"
-              @click="changeLanguage('en')"
-            >
-              <q-item-section>
-                <q-item-label>English</q-item-label>
-              </q-item-section>
-            </q-item>
-
-            <q-item
-              clickable
-              v-close-popup
-              @click="changeLanguage('fr')"
-              :class="language === 'fr' ? 'text-blue-10' : ''"
-            >
-              <q-item-section>
-                <q-item-label>French</q-item-label>
-              </q-item-section>
-            </q-item>
-            <q-item
-              clickable
-              v-close-popup
-              @click="changeLanguage('yo')"
-              :class="language === 'yo' ? 'text-blue-10' : ''"
-            >
-              <q-item-section>
-                <q-item-label>Yoruba</q-item-label>
-              </q-item-section>
-            </q-item>
+            <q-item :to="{ name: 'stores' }" clickable> Stores </q-item>
+            <q-item clickable> Merchant </q-item>
+            <q-item :to="{ name: 'explore' }" clickable> Explore </q-item>
           </q-list>
-        </q-btn-dropdown>
-      </div>
-      <q-separator class="q-mb-lg" />
-      <q-list>
-        <q-item clickable to="">{{ $t("home") }}</q-item>
-        <q-item clickable to="">{{ $t("About us") }}</q-item>
-        <q-item clickable to="/pricing">{{ $t("Pricing") }}</q-item>
-        <q-item clickable to="">{{ $t("All stores") }}</q-item>
-        <q-item clickable to="">{{ $t("Donate") }}</q-item>
-        <q-item clickable to="">{{ $t("Job listings") }}</q-item>
-        <q-item clickable to="">{{ $t("Logistics") }}</q-item>
-        <q-item clickable to="">{{ $t("Logistics") }}</q-item>
-
-        <q-item
-          style="border-radius: 5px"
-          class="bg-secondary flex items-center text-center justify-center text-weight-bold text-white q-mx-md"
-        >
-          {{ $t("Get started") }}
-        </q-item>
-      </q-list>
+        </div>
+      </q-scroll-area>
     </q-drawer>
 
     <q-page-container>
@@ -162,14 +166,12 @@
 
 <script setup>
 import { ref } from "vue";
-import { useI18n } from "vue-i18n";
-
-const { locale } = useI18n();
-let leftDrawerOpen = ref(false);
-let language = ref("en");
-
-function changeLanguage(lang) {
-  language.value = lang;
-  locale.value = lang;
-}
+import { useMyAuthStore } from "src/stores/auth";
+import { useRoute } from "vue-router";
+import { useCartStore } from "src/stores/cart";
+let store = useMyAuthStore();
+let route = useRoute();
+let cartStore = useCartStore();
+let leftDrawerOpen = ref(true);
+let drawer = ref(false);
 </script>

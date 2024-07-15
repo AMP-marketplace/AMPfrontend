@@ -122,31 +122,67 @@ export default boot(({ app, store, router }) => {
   });
 
   router.beforeEach((to, from, next) => {
-    // if (to.path === "/") {
-    //   if (Platform.is.mobile && to.path !== "/login") {
-    //     next("/login");
-    //   } else if (!Platform.is.mobile && to.name !== "home") {
-    //     next({ name: "home" });
-    //   } else {
-    //     next();
-    //   }
-    // } else
-    if (to.name === "logout") {
-      store.state.value.ampauth.token = "";
-      store.state.value.ampauth.userdetails = {};
-      localStorage.setItem("token", "");
-      localStorage.setItem("userdet", "");
-      router.replace({ name: "login" });
-    } else if (to.name === "login" && store.state.value.ampauth.token) {
-      router.replace({ name: "dashboard" });
-    } else {
-      next();
-    }
-  });
+    const store = app.config.globalProperties.$store;
+    console.log(store);
 
-  //   // Continue with the navigation as is
-  //   next();
-  // });
+    if (store.ampauth.token) {
+      authAxios.defaults.headers.common[
+        "Authorization"
+      ] = `Bearer ${store.ampauth.token}`;
+    }
+    if (to.name === "logout") {
+      // console.log(store.buildadom);
+      // console.log(store.buildadom.token);
+      // console.log(store.buildadom.userdetails);
+      // console.log(store.buildadom.userdetails.type);
+      if (to.query.redirect && to.name !== "account.dashboard") {
+        console.log("there");
+        if (store.ampauth.userdetails.type === "business") {
+          router.replace({
+            name: "merchant.login",
+          });
+        } else if (to.query.redirect === "dashboard") {
+          router.replace({
+            name: "customer.login",
+          });
+        } else {
+          router.replace({
+            name: to.query.redirect,
+          });
+        }
+        // router.replace({
+        //   name:
+        //     store.buildadomauth.userdetails.type === "business"
+        //       ? "merchant.login"
+        //       : to.query.redirect,
+        // });
+        store.ampauth.token = "";
+        store.ampauth.userdetails = {};
+        store.ampauth.storedetails = {};
+        store.ampauth.userstores = [];
+      } else {
+        console.log("here");
+        console.log(store.ampauth.userdetails.type);
+        router.replace({
+          name:
+            store.ampauth.userdetails.type === "business"
+              ? "merchant.login"
+              : "customer.login",
+        });
+        store.ampauth.token = "";
+        store.ampauth.userdetails = {};
+        store.ampauth.storedetails = {};
+        store.ampauth.userstores = [];
+      }
+
+      // console.log(store.buildadom.userdetails.type);
+      // next();
+    }
+
+    next();
+
+    //   // Continue with the navigation as is
+  });
 
   // ^ ^ ^ this will allow you to use this.$api (for Vue Options API form)
   //       so you can easily perform requests against your app's API

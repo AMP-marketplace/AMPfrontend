@@ -10,7 +10,7 @@
 
 const { configure } = require("quasar/wrappers");
 
-module.exports = configure(function ( ctx ) {
+module.exports = configure(function (ctx) {
   return {
     // https://v2.quasar.dev/quasar-cli/prefetch-feature
     // preFetch: true,
@@ -18,12 +18,10 @@ module.exports = configure(function ( ctx ) {
     // app boot file (/src/boot)
     // --> boot files are part of "main.js"
     // https://v2.quasar.dev/quasar-cli/boot-files
-    boot: ["axios", "translation"],
+    boot: ["axios", "translation", "components"],
 
     // https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#css
-    css: ["app.scss",
-       'tailwind.css'
-    ],
+    css: ["app.scss", "tailwind.css"],
 
     // https://github.com/quasarframework/quasar/tree/dev/extras
     extras: [
@@ -37,7 +35,7 @@ module.exports = configure(function ( ctx ) {
 
       "roboto-font", // optional, you are not bound to it
       "material-icons", // optional, you are not bound to it
-      'fontawesome-v6' 
+      "fontawesome-v6",
     ],
 
     // Full list of options: https://v2.quasar.dev/quasar-cli-vite/quasar-config-js#build
@@ -92,7 +90,7 @@ module.exports = configure(function ( ctx ) {
       // directives: [],
 
       // Quasar plugins
-      plugins: [],
+      plugins: ["Notify", "Dialog"],
     },
 
     // animations: 'all', // --- includes all animations

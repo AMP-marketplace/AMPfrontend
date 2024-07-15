@@ -1,58 +1,3 @@
-// app global css in SCSS form
-@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
-:root {
-  /**
-   * colors
-   */
-
-  --cadet-blue-crayola: hsl(220, 14%, 75%);
-  --dark-electric-blue: hsl(217, 9%, 45%);
-  --shamrock-green: hsl(146, 51%, 41%);
-  --sea-green_10: hsla(146, 75%, 30%, 0.1);
-  --eerie-black: hsl(218, 12%, 13%);
-  --ghost-white: hsl(230, 60%, 98%);
-  --sea-green: hsl(146, 75%, 30%);
-  --honeydew: hsl(146, 74%, 94%);
-  --white: hsl(0, 0%, 100%);
-  --black: hsl(0, 0%, 0%);
-
-  --ff-kumbh-sans: "Kumbh Sans", sans-serif;
-
-  --fs-1: 2.8rem;
-  --fs-2: 1.8rem;
-  --fs-3: 1.5rem;
-  --fs-4: 1.2rem;
-
-  --fw-500: 500;
-  --fw-700: 700;
-
-  --shadow-1: 0 2px 3px hsla(0, 0%, 0%, 0.2);
-  --shadow-2: 0 10px 30px -10px hsl(146, 75%, 30%);
-
-  --radius-circle: 50%;
-  --radius-15: 15px;
-  --radius-12: 12px;
-  --radius-10: 10px;
-  --radius-6: 6px;
-
-  --transition-1: 0.25s ease;
-  --transition-2: 0.5s ease;
-  --cubic-out: cubic-bezier(0.33, 0.85, 0.4, 0.96);
-
-  --color: rgba(31, 41, 55, 1);
-}
-
-* {
-  padding: 0;
-  margin: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: "Poppins", sans-serif;
-  line-height: 1.5;
-}
-
 // utility classes
 
 .container {
@@ -99,20 +44,20 @@ textarea:focus {
 .biggerText {
   font-size: 40px;
   font-weight: 600;
-  text-transform: capitalize;
+
   line-height: 50px;
   color: rgba(2, 2, 2, 1);
 }
 .bigText {
   font-size: 30px;
   font-weight: 600;
-  text-transform: capitalize;
+
   line-height: 48px;
 }
 .text1 {
   font-size: 28px;
   font-weight: 600;
-  text-transform: capitalize;
+
   line-height: 48px;
 }
 .bigMediumText {
@@ -808,7 +753,6 @@ hr {
   line-height: 20px; /* 142.857% */
 }
 .q-table tbody td {
-  text-transform: capitalize;
 }
 
 .stores_wrap {
