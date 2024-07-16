@@ -17,7 +17,7 @@
             no-wrap
             no-caps
             rounded
-            v-if="stores.userdetails.type === 'individual'"
+            v-if="stores.role === 'shopper'"
             color="primary"
             >Goto Dashboard</q-btn
           >
@@ -31,7 +31,7 @@
             no-wrap
             no-caps
             rounded
-            v-if="stores.userdetails.type === 'business'"
+            v-if="stores.role === 'merchant'"
             color="primary"
             >Create Store</q-btn
           >

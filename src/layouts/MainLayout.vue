@@ -6,7 +6,10 @@
           <div class="container">
             <div class="left">Mon-Sat : <span>9:00am - 5:00pm</span></div>
             <div style="gap: 0.5rem" class="middle row items-center no-wrap">
-              <p>For advert placements & store features on Buildadom</p>
+              <p>
+                For advert placements & store features on Africa Medical
+                Marketplace
+              </p>
               <router-link to="">Contact Us</router-link>
             </div>
             <div class="right">
@@ -35,7 +38,7 @@
             <nav class="nav_items_">
               <ul>
                 <li class="navLinks">
-                  <router-link :to="{ name: 'stores' }">Stores</router-link>
+                  <router-link :to="{ name: 'stores' }">All Stores</router-link>
                 </li>
                 <!-- <li class="navLinks">
                   <router-link to="">Merchant</router-link>
@@ -44,7 +47,12 @@
                   <router-link to="">Categories</router-link>
                 </li> -->
                 <li class="navLinks">
-                  <router-link :to="{ name: 'explore' }">Explore</router-link>
+                  <router-link :to="{ name: 'explore' }"
+                    >All Products</router-link
+                  >
+                </li>
+                <li class="navLinks">
+                  <router-link to="">Medical Donations Africa</router-link>
                 </li>
                 <!-- <li class="navLinks">
                   <router-link to="">Services</router-link>

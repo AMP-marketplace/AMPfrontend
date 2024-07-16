@@ -224,9 +224,11 @@ const getProducts = async () => {
 const getCategories = async () => {
   try {
     loading.value = true;
-    let prodCatList = await authAxios.get("product/category/list");
+    let prodCatList = await authAxios.get(
+      "data?fetch=subcategories&category=medsolutions"
+    );
     console.log(prodCatList);
-    categoryListArr.value = prodCatList.data.data;
+    // categoryListArr.value = prodCatList.data.data;
     // console.log(categoryListArr.value);
     loading.value = false;
   } catch (error) {

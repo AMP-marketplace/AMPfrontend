@@ -5,7 +5,10 @@ export const useMyAuthStore = defineStore("ampauth", {
     userdetails: {},
     dashboardSettings: {},
     previousRoute: "",
-    typeOfPersonnel: "",
+    role: "",
+    storedetails: {},
+    userstores: [],
+    token: "",
   }),
   persist: {
     key: "ampauth",
@@ -16,13 +19,12 @@ export const useMyAuthStore = defineStore("ampauth", {
   },
   actions: {
     setUserDetails(data) {
-      // console.log(data);
       const token = data.token;
-      const user = data.user;
-      // console.log(data);
+      const user = data.data.user;
+      const typeOfUser = data.data.roles[0].name;
       this.userdetails = user;
       this.token = token;
-
+      this.role = typeOfUser;
       localStorage.setItem("token", token);
       localStorage.setItem("userdet", JSON.stringify(user));
     },

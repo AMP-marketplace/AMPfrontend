@@ -10,31 +10,31 @@
             <label for="">First Name <span>*</span></label>
             <div class="input">
               <input
-                v-model="data.firstname"
+                v-model="data.first_name"
                 placeholder="Enter first name"
                 required
                 type="text"
               />
             </div>
-            <small v-if="errors.firstname" class="text-red text-weight-bold">
-              {{ errors.firstname[0] }}
+            <small v-if="errors.first_name" class="text-red text-weight-bold">
+              {{ errors.first_name[0] }}
             </small>
           </div>
           <div class="input_wrap">
             <label for="">Last Name <span>*</span></label>
             <div class="input">
               <input
-                v-model="data.lastname"
+                v-model="data.last_name"
                 placeholder="Enter last name"
                 required
                 type="text"
               />
             </div>
-            <small v-if="errors.lastname" class="text-red text-weight-bold">
-              {{ errors.lastname[0] }}
+            <small v-if="errors.last_name" class="text-red text-weight-bold">
+              {{ errors.last_name[0] }}
             </small>
           </div>
-          <div class="input_wrap">
+          <!-- <div class="input_wrap">
             <label for="">Company Name <span>*</span></label>
             <div class="input">
               <input
@@ -50,13 +50,13 @@
             >
               {{ errors.business_name[0] }}
             </small>
-          </div>
+          </div> -->
           <div class="input_wrap">
-            <label for="">Company Email<span>*</span></label>
+            <label for=""> Email<span>*</span></label>
             <div class="input">
               <input
                 v-model="data.email"
-                placeholder="Enter company email"
+                placeholder="Enter  email"
                 required
                 type="email"
               />
@@ -72,7 +72,13 @@
                 <div class="input_wrap">
                   <div class="input">
                     <select v-model="country_code">
-                      <option value="+234">+234</option>
+                      <option
+                        v-for="(country, index) in countries"
+                        :key="index"
+                        :value="country.phoneCode"
+                      >
+                        {{ country.phoneCode }}
+                      </option>
                     </select>
                   </div>
                 </div>
@@ -93,45 +99,6 @@
             </small>
           </div>
 
-          <div class="input_wrap">
-            <label for="">Website<span>*</span></label>
-            <div class="input">
-              <input
-                v-model="data.website"
-                required
-                placeholder="Enter website address"
-                type="text"
-              />
-            </div>
-            <small v-if="errors.address" class="text-red text-weight-bold">
-              {{ errors.address[0] }}
-            </small>
-          </div>
-          <div class="input_wrap">
-            <label for="">CAC registration number<span>*</span></label>
-            <div class="input">
-              <input
-                v-model="data.cac_number"
-                required
-                placeholder="Enter CAC number eg RC-939293, BN-9392993, IT-4838838"
-                type="text"
-              />
-            </div>
-            <small v-if="errors.cac_number" class="text-red text-weight-bold">
-              {{ errors.cac_number[0] }}
-            </small>
-          </div>
-          <div class="input_wrap">
-            <label for="">Address<span>*</span></label>
-            <div class="input">
-              <input
-                v-model="data.address"
-                required
-                placeholder="Enter address"
-                type="text"
-              />
-            </div>
-          </div>
           <div class="password">
             <div class="input_wrap">
               <label for="">Password<span>*</span></label>
@@ -366,6 +333,7 @@
       </q-card>
     </div>
   </q-dialog>
+  <FooterCompVue />
 </template>
 
 <script setup>
@@ -373,12 +341,13 @@ import { Notify } from "quasar";
 import { authAxios } from "src/boot/axios";
 import { useMyAuthStore } from "src/stores/auth";
 import { useRouter } from "vue-router";
+import { onMounted, ref } from "vue";
+import FooterCompVue from "src/components/FooterComp.vue";
+import countries from "../../../countries";
+let store = useMyAuthStore();
 
 let router = useRouter();
-import { ref } from "vue";
-let data = ref({
-  type: "business",
-});
+let data = ref({});
 let errors = ref({});
 let country_code = ref("+234");
 let viewPassword = ref(false);
@@ -391,18 +360,28 @@ const bindModal = ref("");
 const bindEmailModal = ref("");
 const verifyEmailModal = ref(false);
 const resending = ref(false);
-let store = useMyAuthStore();
 
+const formatPhoneNumber = (phone) => {
+  console.log(phone);
+  if (phone.startsWith("0")) {
+    return phone.slice(1);
+  } else {
+    return phone;
+  }
+};
 const submitForm = () => {
   let newData = {
     ...data.value,
+    role_id: "3",
     // type: router.currentRoute.value.query.type,
-    phone: country_code.value + data.value.phone,
+    phone: country_code.value + formatPhoneNumber(data.value.phone),
   };
   console.log(newData);
   loading.value = true;
   authAxios
-    .post("merchant/signup", newData)
+    .post("register", {
+      ...newData,
+    })
     .then((response) => {
       console.log(response);
       Notify.create({
@@ -410,15 +389,17 @@ const submitForm = () => {
         color: "green",
         position: "top",
       });
-      store.setUserDetails(response);
       loading.value = false;
       verifyModal.value = true;
+
+      store.setUserDetails(response.data);
+
       // data.value = {};
     })
     .catch(({ response }) => {
       console.log(response);
       loading.value = false;
-      errors.value = response.data.data.errors || {};
+      errors.value = response.data.errors || {};
       Notify.create({
         message: response.data.message
           ? response.data.message
@@ -520,6 +501,24 @@ const VerifyEmail = () => {
       });
     });
 };
+
+const getRoles = () => {
+  authAxios
+    .get("data?fetch=roles")
+    .then((response) => {
+      console.log(response);
+    })
+    .catch(({ response }) => {
+      // console.log(response);
+      loading.value = false;
+      Notify.create({
+        message: response.data.error,
+        color: "red",
+        position: "bottom",
+        actions: [{ icon: "close", color: "white" }],
+      });
+    });
+};
 const skipProcess = () => {
   router.replace({
     name: "kyc",
@@ -554,9 +553,6 @@ const resend = () => {
     });
 };
 const resendPhone = () => {
-  // let dataReg = {
-  //   email: data.value.email,
-  // };
   loadingBtn.value = true;
   authAxios
     .post("auth/phone/resend-code")
@@ -581,6 +577,10 @@ const resendPhone = () => {
       });
     });
 };
+
+onMounted(() => {
+  getRoles();
+});
 </script>
 
 <style lang="scss" scoped></style>

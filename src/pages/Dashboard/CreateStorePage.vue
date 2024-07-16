@@ -23,24 +23,27 @@
       </div>
     </div>
 
-    <q-separator class="q-my-sm" />
+    <q-separator style="margin-bottom: 0rem" class="q-my-sm" />
 
-    <div v-if="progress === 1" class="q-mt-xl small_container left">
+    <div v-if="progress === 1" class="small_container left">
       <form @submit.prevent="createStore">
-        <div class="auth">
+        <div style="margin-top: 0rem" class="auth">
           <div class="input_wrap">
             <label for="">Store Name <span>*</span></label>
             <div class="input">
               <input
-                v-model="basicStoreData.name"
+                v-model="basicStoreData.business_name"
                 placeholder="Enter store name"
                 required
                 name="storeName"
                 type="text"
               />
             </div>
-            <small v-if="errors.name" class="text-weight-bold text-red">
-              {{ errors.name[0] }}
+            <small
+              v-if="errors.business_name"
+              class="text-weight-bold text-red"
+            >
+              {{ errors.business_name[0] }}
             </small>
           </div>
           <div class="input_wrap">
@@ -52,7 +55,7 @@
                 name="description"
                 id=""
                 cols="30"
-                rows="10"
+                rows="5"
               ></textarea>
             </div>
             <small v-if="errors.description" class="text-weight-bold text-red">
@@ -74,7 +77,7 @@
             <label for=""> Country <span>*</span></label>
             <div class="input">
               <q-select
-                v-model="basicStoreData.country_id"
+                v-model="basicStoreData.country"
                 use-input
                 @filter="filterFn"
                 behavior="dialog"
@@ -455,6 +458,7 @@
       </div>
     </q-card>
   </q-dialog>
+  <FooterCompVue />
 </template>
 
 <script setup>
@@ -463,8 +467,11 @@ import { authAxios } from "src/boot/axios";
 import { useMyAuthStore } from "src/stores/auth";
 import { onMounted, ref } from "vue";
 import ProductsComp from "src/components/ProductsComp.vue";
-let store = useMyAuthStore();
 import { useRoute, useRouter } from "vue-router";
+import countries from "../../../countries";
+import FooterCompVue from "src/components/FooterComp.vue";
+
+let store = useMyAuthStore();
 let router = useRouter();
 let route = useRoute();
 let data = ref({
@@ -498,7 +505,7 @@ let countriesBaseArr = [];
 const filterFn = (val, update, abort) => {
   if (val === "") {
     update(() => {
-      countriesArr.value = countriesBaseArr;
+      countriesArr.value = countries;
     });
     return;
   }
@@ -506,7 +513,7 @@ const filterFn = (val, update, abort) => {
   update(() => {
     const needle = val.toLowerCase();
     // console.log(val);
-    countriesArr.value = countriesBaseArr.filter(
+    countriesArr.value = countries.filter(
       (v) => v.name.toLowerCase().indexOf(needle) > -1
     );
   });
@@ -526,7 +533,7 @@ const setCoverFile = (props) => {
   });
   authAxios
     .post(
-      `merchant/store/${store.storedetails.id}/upload-banner`,
+      `vendor/istores-ng/update-media`,
       {
         banner: coverFile.value,
       },
@@ -583,7 +590,7 @@ const setProductImage = (props) => {
   });
   authAxios
     .post(
-      `merchant/product/${addedProductData.value.id}/upload-image`,
+      `vendor/product/${addedProductData.value.slug}/upload/media`,
       {
         image: productImageFile.value,
         role: "main",
@@ -636,7 +643,7 @@ const setProfileFile = (props) => {
   });
   authAxios
     .post(
-      `merchant/store/${store.storedetails.id}/upload-logo`,
+      `vendor/istores-ng/update-media`,
       {
         logo: profileFile.value,
       },
@@ -703,9 +710,9 @@ const createStore = () => {
   //   formData.append(key, JSON.stringify(data.value[key]));
   // }
   authAxios
-    .post("merchant/store/create", {
+    .post("vendor/onboard", {
       ...basicStoreData.value,
-      country_id: basicStoreData.value.country_id.id,
+      country: basicStoreData.value.country.name,
     })
     .then((response) => {
       console.log(response);
@@ -718,11 +725,7 @@ const createStore = () => {
 
       store.storedetails = response.data.data;
       store.userstores.push(response.data.data);
-      // store.userstores = store.userstores.map((store) =>
-      //   store.id === response.data.data.id
-      //     ? { ...store, ...response.data.data }
-      //     : store
-      // );
+
       progress.value = 2;
     })
     .catch(({ response }) => {
@@ -806,7 +809,7 @@ const addProductFCN = () => {
   };
   Loading.show();
   authAxios
-    .post("merchant/product/add", {
+    .post("vendor/product/upload", {
       ...dataToSend,
     })
     .then((response) => {
@@ -853,25 +856,27 @@ onMounted(async () => {
       progress.value = 2;
       // console.log("there");
     }
-    let countriesResp = await authAxios.get("country/supported-countries");
-    let prodCatList = await authAxios.get("product/category/list");
-    let prodUnitList = await authAxios.get("product/unit/list");
-    let currList = await authAxios.get("currency/list");
-    let prodList = await authAxios.get("merchant/product/list");
+    // let countriesResp = await authAxios.get("country/supported-countries");
+    let prodCatList = await authAxios.get(
+      "data?fetch=subcategories&category=medsolutions"
+    );
+    // let prodUnitList = await authAxios.get("product/unit/list");
+    // let currList = await authAxios.get("currency/list");
+    // let prodList = await authAxios.get("merchant/product/list");
     // let citiesResp = await authAxios.get("city/list");
-    console.log(prodList);
-    countriesBaseArr = countriesResp.data.data
-      .sort((a, b) => a.name.localeCompare(b.name))
-      .map((country) => ({
-        ...country,
-        label: country.name,
-        value: country.id,
-      }));
+    // console.log(prodList);
+    // countries = countries
+    //   .sort((a, b) => a.name.localeCompare(b.name))
+    //   .map((country) => ({
+    //     ...country,
+    //     label: country.name,
+    //     value: country.id,
+    //   }));
 
-    productCategoryListArr.value = prodCatList.data.data;
-    productUnitListArr.value = prodUnitList.data.data;
-    currencyListArr.value = currList.data.data;
-    prodListArr.value = prodList.data.data.data;
+    productCategoryListArr.value = prodCatList.data;
+    // productUnitListArr.value = prodUnitList.data.data;
+    // currencyListArr.value = currList.data.data;
+    // prodListArr.value = prodList.data.data.data;
   } catch (error) {
     console.error(error);
   }

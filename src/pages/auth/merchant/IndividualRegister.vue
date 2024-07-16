@@ -55,7 +55,13 @@
                 <div class="input_wrap">
                   <div class="input">
                     <select v-model="country_code">
-                      <option value="+234">+234</option>
+                      <option
+                        v-for="(country, index) in countries"
+                        :key="index"
+                        :value="country.phoneCode"
+                      >
+                        {{ country.phoneCode }}
+                      </option>
                     </select>
                   </div>
                 </div>
@@ -294,6 +300,7 @@
       </q-card>
     </div>
   </q-dialog>
+  <FooterCompVue />
 </template>
 
 <script setup>
@@ -301,9 +308,10 @@ import { Notify } from "quasar";
 import { authAxios } from "src/boot/axios";
 import { useMyAuthStore } from "src/stores/auth";
 import { useRouter } from "vue-router";
-
+import countries from "../../../countries";
 let router = useRouter();
 import { ref } from "vue";
+import FooterCompVue from "src/components/FooterComp.vue";
 let data = ref({});
 let errors = ref({});
 let country_code = ref("+234");
@@ -319,17 +327,22 @@ const verifyEmailModal = ref(false);
 const resending = ref(false);
 
 let store = useMyAuthStore();
-
+const formatPhoneNumber = (phone) => {
+  if (phone.startsWith("0")) {
+    return phone.slice(1);
+  }
+};
 const submitForm = () => {
   let newData = {
     ...data.value,
+    role_id: "2",
     // type: router.currentRoute.value.query.type,
-    phone: country_code.value + data.value.phone,
+    phone: country_code.value + formatPhoneNumber(data.value.phone),
   };
   console.log(newData);
   loading.value = true;
   authAxios
-    .post("customer/signup", newData)
+    .post("register", newData)
     .then((response) => {
       console.log(response);
       Notify.create({

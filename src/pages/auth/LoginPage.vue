@@ -258,20 +258,26 @@ const submitForm = () => {
   console.log(newData);
   loading.value = true;
   authAxios
-    .post("auth/login", newData)
+    .post("login", newData)
     .then((response) => {
       console.log(response);
       loading.value = false;
       data.value = {};
-      if (response.data.data.user.type === "business") {
+      if (response.data.data.roles[0].name === "merchant") {
         Notify.create({
           message: response.data.message,
           color: "green",
           position: "top",
         });
 
-        store.setUserDetails(response);
-        getKycData();
+        store.setUserDetails(response.data);
+        router.replace({
+          name: "create.store",
+          query: {
+            create: "new",
+          },
+        });
+        // getKycData();
       } else {
         Dialog.create({
           title: "Note",

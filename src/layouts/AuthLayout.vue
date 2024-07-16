@@ -38,7 +38,7 @@
             <nav class="nav_items_">
               <ul>
                 <li class="navLinks">
-                  <router-link :to="{ name: 'stores' }">Stores</router-link>
+                  <router-link :to="{ name: 'stores' }">All Stores</router-link>
                 </li>
                 <!-- <li class="navLinks">
                   <router-link to="">Merchant</router-link>
@@ -47,7 +47,12 @@
                   <router-link to="">Categories</router-link>
                 </li> -->
                 <li class="navLinks">
-                  <router-link :to="{ name: 'explore' }">Explore</router-link>
+                  <router-link :to="{ name: 'explore' }"
+                    >Explore Products</router-link
+                  >
+                </li>
+                <li class="navLinks">
+                  <router-link to="">Medical Donations Africa</router-link>
                 </li>
                 <!-- <li class="navLinks">
                   <router-link to="">Services</router-link>

@@ -259,6 +259,7 @@ import { authAxios } from "src/boot/axios";
 import { ref } from "vue";
 import { useMyAuthStore } from "src/stores/auth";
 import { useRoute, useRouter } from "vue-router";
+
 let router = useRouter();
 let route = useRoute();
 let data = ref({});
@@ -280,7 +281,7 @@ const submitForm = () => {
   console.log(newData);
   loading.value = true;
   authAxios
-    .post("auth/login", newData)
+    .post("login", newData)
     .then((response) => {
       console.log(response);
       // Notify.create({

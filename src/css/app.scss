@@ -27,7 +27,7 @@ img {
 }
 
 body {
-  font-family: "" Plus Jakarta Sans "", sans-serif;
+  font-family: "Plus Jakarta Sans", sans-serif;
   line-height: 1.4;
 }
 p {
@@ -184,7 +184,9 @@ header {
     align-items: center;
   }
 }
-
+.q-btn-dropdown--simple * + .q-btn-dropdown__arrow {
+  margin-left: 0;
+}
 .footer {
   background: linear-gradient(180deg, #111314 0%, #0e1e5e 100%);
   border: 1px solid #ffffff;
@@ -241,6 +243,15 @@ header {
 }
 
 @media (max-width: 600px) {
+  header a {
+    font-size: 10px;
+  }
+  .top_nav .container .middle {
+    gap: 0;
+  }
+  .header .down_nav {
+    padding: 0;
+  }
   .container {
     margin-inline: 1rem;
   }

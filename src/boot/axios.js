@@ -16,7 +16,7 @@ import { Notify, Platform } from "quasar";
 // axios.defaults.headers.common["Accept"] = "application/json";
 // axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
 const authAxios = axios.create({
-  baseURL: "https://agora.africamedicalmarketplace.com",
+  baseURL: "https://agora.africamedicalmarketplace.com/api/v1/",
   headers: {
     "X-Requested-With": "XMLHttpRequest",
     Accept: "application/json",
