@@ -5,8 +5,8 @@
         <div
           :style="`background: url(${
             store.storedetails.banner
-              ? store.storedetails.banner
-              : profileFilePreview
+              ? store.storedetails.banner.url
+              : coverFilePreview
           }), #4f4f4f; background-repeat: no-repeat; background-size:cover`"
           class="hero"
         >
@@ -33,7 +33,7 @@
             <div
               :style="`background: url(${
                 store.storedetails.logo
-                  ? store.storedetails.logo
+                  ? store.storedetails.logo.url
                   : profileFilePreview
               }), #4f4f4f; background-repeat: no-repeat; background-size:cover`"
               class="left"
@@ -62,7 +62,7 @@
               <!-- <q-btn no-caps no-wrap> Upload Image </q-btn> -->
             </div>
             <div class="right">
-              <h4 class="bigText">{{ store.storedetails.name }}</h4>
+              <h4 class="bigText">{{ store.storedetails.business_name }}</h4>
 
               <p class="smallText q-my-sm">
                 {{ store.storedetails.description }}

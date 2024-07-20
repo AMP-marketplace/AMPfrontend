@@ -109,32 +109,32 @@ const routes = [
       },
     ],
   },
-  {
-    path: "/mainadmin",
-    component: () => import("layouts/AdminLayout.vue"),
-    children: [
-      {
-        path: "/admin/merchants",
-        component: () => import("pages/admin/ListMerchants.vue"),
-        name: "admin.list.merchants",
-      },
-      {
-        path: "/admin/kycs",
-        component: () => import("pages/admin/VerifyKyc.vue"),
-        name: "admin.list.kyc",
-      },
-      {
-        path: "/admin/orders",
-        component: () => import("pages/admin/ListOrders.vue"),
-        name: "admin.list.orders",
-      },
-      {
-        path: "/admin/fees",
-        component: () => import("pages/admin/ListFees.vue"),
-        name: "admin.list.fees",
-      },
-    ],
-  },
+  // {
+  //   path: "/mainadmin",
+  //   component: () => import("layouts/AdminLayout.vue"),
+  //   children: [
+  //     {
+  //       path: "/admin/merchants",
+  //       component: () => import("pages/admin/ListMerchants.vue"),
+  //       name: "admin.list.merchants",
+  //     },
+  //     {
+  //       path: "/admin/kycs",
+  //       component: () => import("pages/admin/VerifyKyc.vue"),
+  //       name: "admin.list.kyc",
+  //     },
+  //     {
+  //       path: "/admin/orders",
+  //       component: () => import("pages/admin/ListOrders.vue"),
+  //       name: "admin.list.orders",
+  //     },
+  //     {
+  //       path: "/admin/fees",
+  //       component: () => import("pages/admin/ListFees.vue"),
+  //       name: "admin.list.fees",
+  //     },
+  //   ],
+  // },
   {
     path: "/dashboard",
     component: () => import("layouts/DashboardLayout.vue"),

@@ -27,42 +27,7 @@
     <q-separator class="q-my-sm" />
 
     <div class="auth">
-      <!-- <div
-        style="gap: 1rem"
-        class="input justify-between row items-center no-wrap"
-      >
-        <q-file
-          @update:model-value="changeProductImage"
-          accept=".png,.jpeg,.svg,.jpg"
-          class="column profile_field justify-center items-center"
-          v-model="productImageFile"
-          max-file-size="2097152"
-          @rejected="onRejected"
-        >
-          <div class="img q-mb-sm">
-            <img src="../../assets/upload.svg" alt="" />
-          </div>
-          <div class="smallText">Upload product image</div>
-        </q-file>
-      </div> -->
-
       <div class="create_store_2">
-        <!-- <div
-          :style="`background: url(${
-            data?.images ? data?.images[0]?.url : productImagePreview
-          }), #4f4f4f; background-repeat: no-repeat; background-size:cover`"
-          class="hero"
-        >
-          <q-file
-            @update:model-value="changeProductImage"
-            accept=".jpg,.png,.svg,.jpeg"
-            :label="'Change Main Product Image'"
-            outlined
-            class="orderpage text-white"
-            style="max-width: 300px; margin: 0 auto"
-            v-model="productImageFile"
-          />
-        </div> -->
         <div>
           <q-carousel
             :autoplay="true"
@@ -120,23 +85,26 @@
         </div>
         <div class="input_wrap">
           <label for="">Description <span>*</span></label>
-          <div class="input">
-            <textarea
-              placeholder="product description"
-              v-model="data.description"
-              name=""
-              id=""
-              cols="30"
-              rows="10"
-            ></textarea>
+          <div class="input editor">
+            <q-editor v-model="data.description" min-height="5rem" />
           </div>
         </div>
-        <div class="auth_grid">
+        <div class="input_wrap">
+          <label for="">Price <span>*</span></label>
+          <div class="input">
+            <select v-model="typeOfPrice">
+              <option value="fixed">Fixed</option>
+              <option value="negotiable">Negotiable</option>
+              <option value="range">Range</option>
+            </select>
+          </div>
+        </div>
+        <div v-if="typeOfPrice === 'range'" class="auth_grid">
           <div class="input_wrap">
-            <label for="">Product Price <span>*</span></label>
+            <label for="">Minimun Price <span>*</span></label>
             <div class="input">
               <input
-                v-model="data.price"
+                v-model="data.minimum_price"
                 placeholder="N0.00"
                 required
                 type="text"
@@ -144,10 +112,10 @@
             </div>
           </div>
           <div class="input_wrap">
-            <label for="">Quantity in stock<span>*</span></label>
+            <label for="">Maximum price<span>*</span></label>
             <div class="input">
               <input
-                v-model="data.quantity"
+                v-model="data.maximum_price"
                 placeholder="10"
                 required
                 type="text"
@@ -155,16 +123,49 @@
             </div>
           </div>
         </div>
+        <div v-if="typeOfPrice === 'fixed'" class="input_wrap">
+          <label for="">Product Price <span>*</span></label>
+          <div class="input">
+            <input
+              v-model="data.minimum_price"
+              placeholder="N0.00"
+              required
+              type="text"
+            />
+          </div>
+        </div>
+        <div class="input_wrap">
+          <label for="">Quantity in stock<span>*</span></label>
+          <div class="input">
+            <input placeholder="10" required type="text" />
+          </div>
+        </div>
+        <!-- {{ productCategoryListArr }} -->
+        <div class="input_wrap">
+          <label for="">Minimum Product Sale<span>*</span></label>
+          <div class="input">
+            <input
+              v-model="data.minimum_order"
+              placeholder="3"
+              required
+              type="text"
+            />
+          </div>
+        </div>
         <!-- {{ productCategoryListArr }} -->
         <div class="input_wrap">
           <label for="">Product Category<span>*</span></label>
           <div class="input">
-            <select required v-model="data.product_category_id">
+            <select
+              @change="getSubcategories"
+              required
+              v-model="selectedCategories"
+            >
               <option disabled value="">Choose</option>
               <option
                 v-for="productCategory in productCategoryListArr"
-                :key="productCategory.id"
-                :value="productCategory.id"
+                :key="productCategory.slug"
+                :value="productCategory.slug"
               >
                 {{ productCategory.name }}
               </option>
@@ -172,31 +173,36 @@
           </div>
         </div>
         <div class="input_wrap">
-          <label for="">Product Unit<span>*</span></label>
+          <label for="">Product Sub Category<span>*</span></label>
           <div class="input">
-            <select required v-model="data.product_unit_id">
+            <select
+              required
+              :disabled="!productSubCategoryListArr.length"
+              v-model="data.subcategory_id"
+            >
               <option disabled value="">Choose</option>
               <option
-                v-for="productUnit in productUnitListArr"
-                :key="productUnit.id"
-                :value="productUnit.id"
+                v-for="productSubCategory in productSubCategoryListArr"
+                :key="productSubCategory.slug"
+                :value="productSubCategory.id"
               >
-                {{ productUnit.name }}
+                {{ productSubCategory.name }}
               </option>
             </select>
           </div>
         </div>
+
         <div class="input_wrap">
           <label for="">Currency<span>*</span></label>
           <div class="input">
-            <select required v-model="data.currency_id">
+            <select v-model="data.currency" required>
               <option disabled value="">Choose</option>
               <option
-                v-for="currency in currencyListArr"
-                :key="currency.id"
-                :value="currency.id"
+                v-for="currency in currencies"
+                :key="currency.name"
+                :value="currency.name"
               >
-                {{ currency.name }}
+                {{ currency.name }} {{ currency.flag }}
               </option>
             </select>
           </div>
@@ -315,13 +321,13 @@ import { onMounted, ref } from "vue";
 import ProductsComp from "src/components/ProductsComp.vue";
 let store = useMyAuthStore();
 import { useRoute, useRouter } from "vue-router";
+import currencies from "app/currencies";
 let router = useRouter();
 let route = useRoute();
 let data = ref({
-  product_category_id: "",
-  product_unit_id: "",
-  currency_id: "",
-  // attributes: [],
+  description: "",
+  minimum_price: "",
+  maximum_price: "",
 });
 
 let options = ["Main"];
@@ -348,8 +354,11 @@ let productImagePreview = ref("");
 let profileImagePreview = ref("");
 let coverFilePreview = ref("");
 let addProductModal = ref(false);
+let typeOfPrice = ref("fixed");
+let selectedCategories = ref("");
 let storeDetailsLoadBtn = ref(false);
 let actionsModal = ref(false);
+let productSubCategoryListArr = ref([]);
 let puborUnpubLoadBtn = ref(false);
 let loading = ref(false);
 let errors = ref({});
@@ -699,6 +708,19 @@ const getProducts = async () => {
   } catch (error) {
     console.error(error);
   }
+};
+
+const getSubcategories = async () => {
+  Loading.show({
+    spinner: QSpinnerOval,
+    message: "Loading subcategories...",
+  });
+  let subCatList = await authAxios.get(
+    `data?fetch=subcategories&category=${selectedCategories.value}`
+  );
+  console.log(subCatList);
+  productSubCategoryListArr.value = subCatList.data.data;
+  Loading.hide();
 };
 onMounted(async () => {
   try {

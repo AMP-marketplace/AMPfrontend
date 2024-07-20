@@ -6,6 +6,7 @@ export const useMyAuthStore = defineStore("ampauth", {
     dashboardSettings: {},
     previousRoute: "",
     role: "",
+    createStoreStep: "",
     storedetails: {},
     userstores: [],
     token: "",
@@ -21,7 +22,9 @@ export const useMyAuthStore = defineStore("ampauth", {
     setUserDetails(data) {
       const token = data.token;
       const user = data.data.user;
-      const typeOfUser = data.data.roles[0].name;
+      const typeOfUser = data.data.role
+        ? data.data.role[0].name
+        : data.data.roles[0].name;
       this.userdetails = user;
       this.token = token;
       this.role = typeOfUser;

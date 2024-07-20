@@ -150,8 +150,13 @@ v
 
             <div class="q-mt-lg">
               <p class="smallertext">
-                Please confirm you have recieved your order to complete the
-                purchase process
+                When the status of this delivery is delivered you will receive
+                an OTP. Please confirm you have recieved this order by entering
+                the OTP to complete the purchase process.
+              </p>
+              <p class="text-red-7 text-weight-bold">
+                Note: When you confirm this order you are authorizing us to
+                credit the merchant.
               </p>
               <div class="container confirmForm q-mt-lg">
                 <div class="">
@@ -171,6 +176,12 @@ v
                           required
                         />
                       </div>
+                      <small
+                        v-if="errors.confirmation_code"
+                        class="text-red text-weight-bold"
+                      >
+                        {{ errors.confirmation_code[0] }}
+                      </small>
                     </div>
                     <div>
                       <q-checkbox
@@ -182,6 +193,7 @@ v
                       color="primary"
                       class="q-px-xl q-mt-md"
                       rounded
+                      :disable="!data.trackings[2]?.status === 'delivered'"
                       no-wrap
                       no-caps
                       type="submit"
@@ -356,6 +368,7 @@ import { useRoute } from "vue-router";
 
 let route = useRoute();
 let data = ref({});
+let errors = ref({});
 let confirmData = ref({ payment: false });
 let prodListArr = ref([]);
 let mergedOrdersArr = ref([]);
@@ -364,6 +377,7 @@ let ratingModel = ref(4);
 let totalSumVal = ref("");
 let orderSuccessModal = ref(false);
 let orderConfirmed = ref(false);
+const passwordPattern = /^\d{6}$/;
 const formatDate = (datetimeString) => {
   const date = new Date(datetimeString);
   return new Intl.DateTimeFormat("en-US", {
@@ -400,7 +414,13 @@ const submitOrderConfirmation = () => {
       if (!confirmData.value.payment) {
         Notify.create({
           message:
-            "Please confirm that you have received this order by checking the checkbox.By confirming this order you authorize this merchant be paid",
+            "Please confirm that you have received this order by checking the checkbox. By confirming this order you authorize this merchant be paid",
+          color: "red",
+          position: "top",
+        });
+      } else if (!passwordPattern.test(confirmData.value.code)) {
+        Notify.create({
+          message: "Your OTP must be 6 digits long",
           color: "red",
           position: "top",
         });
@@ -427,9 +447,11 @@ const submitOrderConfirmation = () => {
             });
             confirmData.value = {};
             orderConfirmed.value = true;
+            Loading.hide();
           })
           .catch(({ response }) => {
             Loading.hide();
+            errors.value = response.data.data.errors;
             Notify.create({
               message: response.data.message || "Error confirming order",
               color: "red",

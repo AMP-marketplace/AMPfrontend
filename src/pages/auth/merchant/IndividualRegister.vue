@@ -60,7 +60,7 @@
                         :key="index"
                         :value="country.phoneCode"
                       >
-                        {{ country.phoneCode }}
+                        {{ country.phoneCode }} {{ country.flag }}
                       </option>
                     </select>
                   </div>
@@ -308,7 +308,7 @@ import { Notify } from "quasar";
 import { authAxios } from "src/boot/axios";
 import { useMyAuthStore } from "src/stores/auth";
 import { useRouter } from "vue-router";
-import countries from "../../../countries";
+import countries from "../../../../countries";
 let router = useRouter();
 import { ref } from "vue";
 import FooterCompVue from "src/components/FooterComp.vue";

@@ -272,11 +272,14 @@ const submitForm = () => {
 
         store.setUserDetails(response.data);
         router.replace({
-          name: "create.store",
-          query: {
-            create: "new",
-          },
+          name: "all.set",
         });
+        // router.replace({
+        //   name: "create.store",
+        //   query: {
+        //     create: "new",
+        //   },
+        // });
         // getKycData();
       } else {
         Dialog.create({

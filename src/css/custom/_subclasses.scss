@@ -395,10 +395,19 @@ hr {
     margin: 1rem 0;
   }
   .input_wrap .input {
-    border: 1px solid rgba(140, 140, 140, 1);
+    border: 1px solid rgba(140, 140, 140, 0.5);
     border-radius: 8px;
     padding: 1rem;
     color: var(--color);
+    &.editor {
+      padding: 0.5rem;
+      .q-editor {
+        width: 100%;
+        border: 0;
+        border-radius: 0;
+        background-color: #fff;
+      }
+    }
     .q-btn {
       min-height: auto;
       padding: 0;
@@ -624,9 +633,9 @@ hr {
     min-width: 250px;
   }
 
-  .right {
-    overflow: hidden;
-  }
+  // .right {
+  //   overflow: hidden;
+  // }
 }
 
 .escrow_top_area {
@@ -715,7 +724,7 @@ hr {
     position: relative;
     width: 200px;
     height: 200px;
-
+    min-width: 200px;
     .q-field {
       background: var(--Gray-1, #333);
       // mix-blend-mode: screen;

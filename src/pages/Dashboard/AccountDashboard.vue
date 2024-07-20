@@ -10,7 +10,7 @@
           :loading="puborUnpubLoadBtn"
           @click="publishOrUnpublishStore"
           no-wrap
-          v-if="store.storedetails.name"
+          v-if="store.storedetails.business_name"
         >
           {{
             store.storedetails.published === false
@@ -51,8 +51,8 @@
     >
       <div class="column items-center justify-center">
         <img
-          style="width: 308.001px; height: 204.304px"
-          src="../../assets/box.png"
+          style="width: 208.001px; height: 204.304px; object-fit: contain"
+          src="/images/box.png"
           alt=""
         />
         <p class="smallText q-my-lg">
@@ -76,7 +76,7 @@
       class="responsive_grid q-mt-lg"
     >
       <div v-for="product in prodListArr" :key="product.id">
-        <ProductsComp @editProduct="editProductModal" :product="product" />
+        <ProductComp @editProduct="editProductModal" :product="product" />
       </div>
     </div>
   </div>
@@ -129,23 +129,35 @@
           </div>
           <div class="input_wrap">
             <label for="">Description <span>*</span></label>
-            <div class="input">
-              <textarea
+            <div class="input editor">
+              <q-editor v-model="data.description" min-height="5rem" />
+
+              <!-- <textarea
                 placeholder="product description"
                 v-model="data.description"
                 name=""
                 id=""
                 cols="30"
-                rows="10"
-              ></textarea>
+                rows="5"
+              ></textarea> -->
             </div>
           </div>
-          <div class="auth_grid">
+          <div class="input_wrap">
+            <label for="">Price <span>*</span></label>
+            <div class="input">
+              <select @change="togglePriceType" v-model="typeOfPrice">
+                <option value="fixed">Fixed</option>
+                <option value="negotiable">Negotiable</option>
+                <option value="range">Range</option>
+              </select>
+            </div>
+          </div>
+          <div v-if="typeOfPrice === 'range'" class="auth_grid">
             <div class="input_wrap">
-              <label for="">Product Price <span>*</span></label>
+              <label for="">Minimun Price <span>*</span></label>
               <div class="input">
                 <input
-                  v-model="data.price"
+                  v-model="data.minimum_price"
                   placeholder="N0.00"
                   required
                   type="text"
@@ -153,10 +165,10 @@
               </div>
             </div>
             <div class="input_wrap">
-              <label for="">Quantity in stock<span>*</span></label>
+              <label for="">Maximum price<span>*</span></label>
               <div class="input">
                 <input
-                  v-model="data.quantity"
+                  v-model="data.maximum_price"
                   placeholder="10"
                   required
                   type="text"
@@ -164,16 +176,53 @@
               </div>
             </div>
           </div>
+          <div v-if="typeOfPrice === 'fixed'" class="input_wrap">
+            <label for="">Product Price <span>*</span></label>
+            <div class="input">
+              <input
+                v-model="data.minimum_price"
+                placeholder="N0.00"
+                required
+                type="text"
+              />
+            </div>
+          </div>
+          <div class="input_wrap">
+            <label for="">Quantity in stock<span>*</span></label>
+            <div class="input">
+              <input
+                v-model="data.quantity"
+                placeholder="10"
+                required
+                type="text"
+              />
+            </div>
+          </div>
+          <div class="input_wrap">
+            <label for="">Minimum Product Sale<span>*</span></label>
+            <div class="input">
+              <input
+                v-model="data.minimum_order"
+                placeholder="3"
+                required
+                type="text"
+              />
+            </div>
+          </div>
           <!-- {{ productCategoryListArr }} -->
           <div class="input_wrap">
             <label for="">Product Category<span>*</span></label>
             <div class="input">
-              <select required v-model="data.product_category_id">
+              <select
+                @change="getSubcategories"
+                required
+                v-model="selectedCategories"
+              >
                 <option disabled value="">Choose</option>
                 <option
                   v-for="productCategory in productCategoryListArr"
-                  :key="productCategory.id"
-                  :value="productCategory.id"
+                  :key="productCategory.slug"
+                  :value="productCategory.slug"
                 >
                   {{ productCategory.name }}
                 </option>
@@ -181,6 +230,25 @@
             </div>
           </div>
           <div class="input_wrap">
+            <label for="">Product Sub Category<span>*</span></label>
+            <div class="input">
+              <select
+                required
+                :disabled="!productSubCategoryListArr.length"
+                v-model="data.subcategory_id"
+              >
+                <option disabled value="">Choose</option>
+                <option
+                  v-for="productSubCategory in productSubCategoryListArr"
+                  :key="productSubCategory.slug"
+                  :value="productSubCategory.id"
+                >
+                  {{ productSubCategory.name }}
+                </option>
+              </select>
+            </div>
+          </div>
+          <!-- <div class="input_wrap">
             <label for="">Product Unit<span>*</span></label>
             <div class="input">
               <select required v-model="data.product_unit_id">
@@ -194,18 +262,18 @@
                 </option>
               </select>
             </div>
-          </div>
+          </div> -->
           <div class="input_wrap">
             <label for="">Currency<span>*</span></label>
             <div class="input">
-              <select required v-model="data.currency_id">
+              <select v-model="data.currency" required>
                 <option disabled value="">Choose</option>
                 <option
-                  v-for="currency in currencyListArr"
-                  :key="currency.id"
-                  :value="currency.id"
+                  v-for="currency in currencies"
+                  :key="currency.name"
+                  :value="currency.name"
                 >
-                  {{ currency.name }}
+                  {{ currency.name }} {{ currency.flag }}
                 </option>
               </select>
             </div>
@@ -264,7 +332,7 @@
               no-caps
               type="submit"
             >
-              {{ editState ? "Edit product" : "Upload Product" }}
+              Upload Product
             </q-btn>
           </div>
         </form>
@@ -277,43 +345,53 @@
 <script setup>
 import { Loading, Notify, QSpinnerOval } from "quasar";
 import { authAxios } from "src/boot/axios";
-import { onMounted, ref } from "vue";
-import FooterCompVue from "src/components/FooterComp.vue";
-import ProductsComp from "src/components/ProductsComp.vue";
 import { useMyAuthStore } from "src/stores/auth";
+import { onMounted, ref } from "vue";
+import ProductComp from "src/components/ProductComp.vue";
 import { useRoute, useRouter } from "vue-router";
+import countries from "../../../countries";
+import FooterCompVue from "src/components/FooterComp.vue";
+import currencies from "../../../currencies";
+let store = useMyAuthStore();
 let router = useRouter();
 let route = useRoute();
-let store = useMyAuthStore();
 let data = ref({
-  product_category_id: "",
-  product_unit_id: "",
-  currency_id: "",
+  description: "",
+  minimum_price: "",
+  maximum_price: "",
   // attributes: [],
 });
-let progress = ref(1);
-let coverFile = ref(null);
-let loadingProducts = ref(true);
-let puborUnpubLoadBtn = ref(false);
-let profileFile = ref(null);
-let productImagePreview = ref("");
-let profileFilePreview = ref("");
-let coverFilePreview = ref("");
-let showAddProductImage = ref(false);
-let storeDetailsLoadBtn = ref(false);
-let addProductModal = ref(false);
-let editState = ref(false);
-let productImageFile = ref(null);
 let basicStoreData = ref({});
 let addedProductData = ref({});
 let productCategoryListArr = ref([]);
+let productSubCategoryListArr = ref([]);
 let currencyListArr = ref([]);
 let prodListArr = ref([]);
 let productUnitListArr = ref([]);
+let progress = ref(1);
+let showAddProductImage = ref(false);
+let editProductModal = ref(false);
+let coverFile = ref(null);
+let productImageFile = ref(null);
+let profileFile = ref(null);
+let productImagePreview = ref("");
+let profileFilePreview = ref("");
+let selectedCategories = ref("");
+let typeOfPrice = ref("fixed");
+let coverFilePreview = ref("");
+let addProductModal = ref(false);
+let storeDetailsLoadBtn = ref(false);
+let loadingProducts = ref(true);
+let puborUnpubLoadBtn = ref(false);
+let loading = ref(false);
+let errors = ref({});
+let countriesArr = ref([]);
+let countriesBaseArr = [];
+
 const filterFn = (val, update, abort) => {
   if (val === "") {
     update(() => {
-      countriesArr.value = countriesBaseArr;
+      countriesArr.value = countries;
     });
     return;
   }
@@ -321,78 +399,12 @@ const filterFn = (val, update, abort) => {
   update(() => {
     const needle = val.toLowerCase();
     // console.log(val);
-    countriesArr.value = countriesBaseArr.filter(
+    countriesArr.value = countries.filter(
       (v) => v.name.toLowerCase().indexOf(needle) > -1
     );
   });
 };
-const publishOrUnpublishStore = () => {
-  puborUnpubLoadBtn.value = true;
-  if (!store.storedetails.published) {
-    console.log("pub");
-    authAxios
-      .post(`merchant/store/${store.storedetails.id}/publish`, {
-        published: 1,
-      })
-      .then((response) => {
-        console.log(response);
-        puborUnpubLoadBtn.value = false;
-        Notify.create({
-          message:
-            response.data.message +
-            ". You have successfully published your store.",
-          color: "green",
-          position: "top",
-        });
 
-        store.storedetails = response.data.data;
-      })
-      .catch(({ response }) => {
-        // console.log(response);
-        puborUnpubLoadBtn.value = false;
-        Notify.create({
-          message: response.data.message,
-          color: "red",
-          position: "top",
-          actions: [{ icon: "close", color: "white" }],
-        });
-      });
-  } else {
-    console.log("unoub");
-    authAxios
-      .post(`merchant/store/${store.storedetails.id}/publish`, {
-        published: 0,
-      })
-      .then((response) => {
-        console.log(response);
-        puborUnpubLoadBtn.value = false;
-        Notify.create({
-          message:
-            response.data.message +
-            ". You have successfully unpublished your store.",
-          color: "green",
-          position: "top",
-        });
-
-        store.storedetails = response.data.data;
-      })
-      .catch(({ response }) => {
-        // console.log(response);
-        puborUnpubLoadBtn.value = false;
-        Notify.create({
-          message: response.data.message,
-          color: "red",
-          position: "top",
-          actions: [{ icon: "close", color: "white" }],
-        });
-      });
-  }
-};
-const cancelAddproductodal = () => {
-  showAddProductImage.value = false;
-  editState.value = false;
-  addProductModal.value = false;
-};
 const setCoverFile = (props) => {
   coverFile.value = props;
   var reader = new FileReader();
@@ -407,7 +419,7 @@ const setCoverFile = (props) => {
   });
   authAxios
     .post(
-      `merchant/store/${store.storedetails.id}/upload-banner`,
+      `merchant/${store.storedetails.slug}/update-media`,
       {
         banner: coverFile.value,
       },
@@ -427,6 +439,13 @@ const setCoverFile = (props) => {
       });
 
       store.storedetails = response.data.data;
+      // store.userstores.push(response.data.data);
+      store.userstores = store.userstores.map((store) =>
+        store.id === response.data.data.id
+          ? { ...store, ...response.data.data }
+          : store
+      );
+      progress.value = 2;
       coverFile.value = null;
       Loading.hide();
     })
@@ -453,87 +472,52 @@ const setProductImage = (props) => {
 
   Loading.show({
     spinner: QSpinnerOval,
-    message: "Uploading product image...",
+    message: "Uploading image...",
   });
-  if (editState.value) {
-    authAxios
-      .post(
-        `merchant/product/${addedProductData.value.images[0].id}/change-image`,
-        {
-          image: productImageFile.value,
+  authAxios
+    .post(
+      `merchant/${store.storedetails.slug}/${addedProductData.value.slug}/upload/media`,
+      {
+        media: productImageFile.value,
+        // role: "main",
+      },
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
         },
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      )
-      .then((response) => {
-        console.log(response);
+      }
+    )
+    .then((response) => {
+      console.log(response);
 
-        Notify.create({
-          message: response.data.message + ", product successfully updated.",
-          color: "green",
-          position: "top",
-        });
-        Loading.hide();
-        addProductModal.value = false;
-        getProducts();
-      })
-      .catch(({ response }) => {
-        // console.log(response);
-        storeDetailsLoadBtn.value = false;
-        Loading.hide();
-        errors.value = response.data.data.errors;
-        Notify.create({
-          message: response.data.message,
-          color: "red",
-          position: "top",
-          actions: [{ icon: "close", color: "white" }],
-        });
-        editState.value = false;
-        addProductModal.value = false;
+      Notify.create({
+        message: response.data.message + ", product successfully added.",
+        color: "green",
+        position: "top",
       });
-  } else {
-    authAxios
-      .post(
-        `merchant/product/${addedProductData.value.id}/upload-image`,
-        {
-          image: productImageFile.value,
-          role: "main",
-        },
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      )
-      .then((response) => {
-        console.log(response);
-
-        Notify.create({
-          message: response.data.message + ", product successfully added.",
-          color: "green",
-          position: "top",
-        });
-        Loading.hide();
-        addProductModal.value = false;
-        getProducts();
-      })
-      .catch(({ response }) => {
-        // console.log(response);
-        storeDetailsLoadBtn.value = false;
-        Loading.hide();
-        errors.value = response.data.data.errors;
-        Notify.create({
-          message: response.data.message,
-          color: "red",
-          position: "top",
-          actions: [{ icon: "close", color: "white" }],
-        });
+      Loading.hide();
+      addProductModal.value = false;
+      router.replace({
+        name: "account.dashboard",
       });
-  }
+      // getProducts();
+    })
+    .catch(({ response }) => {
+      // console.log(response);
+      storeDetailsLoadBtn.value = false;
+      Loading.hide();
+      errors.value = response.data.data.errors;
+      Notify.create({
+        message: response.data.message,
+        color: "red",
+        position: "top",
+        actions: [{ icon: "close", color: "white" }],
+      });
+    });
 };
+// const togglePriceType = () => {
+
+// }
 const setProfileFile = (props) => {
   profileFile.value = props;
   var reader = new FileReader();
@@ -548,7 +532,7 @@ const setProfileFile = (props) => {
   });
   authAxios
     .post(
-      `merchant/store/${store.storedetails.id}/upload-logo`,
+      `merchant/${store.storedetails.slug}/update-media`,
       {
         logo: profileFile.value,
       },
@@ -568,7 +552,13 @@ const setProfileFile = (props) => {
       });
 
       store.storedetails = response.data.data;
+      store.userstores = store.userstores.map((store) =>
+        store.id === response.data.data.id
+          ? { ...store, ...response.data.data }
+          : store
+      );
       progress.value = 2;
+      store.createStoreStep = 2;
       profileFile.value = null;
       Loading.hide();
     })
@@ -599,46 +589,68 @@ const addAttribute = () => {
     value: "",
   });
 };
-const editProductModal = (product) => {
-  // console.log(product);
-  editState.value = true;
-  data.value = {
-    ...product,
-  };
-  addProductModal.value = !addProductModal.value;
-};
 const removeAttribute = (counter) => {
   data.value.attributes.splice(counter, 1);
 };
 
-const addProductFCN = () => {
-  let dataToSend = {
-    ...data.value,
-    store_id: store.storedetails.id,
-  };
-  Loading.show();
-  if (editState.value) {
+const createStore = () => {
+  storeDetailsLoadBtn.value = true;
+
+  authAxios
+    .post("merchant/onboard", {
+      ...basicStoreData.value,
+      country: basicStoreData.value.country.name,
+    })
+    .then((response) => {
+      console.log(response);
+      storeDetailsLoadBtn.value = false;
+      Notify.create({
+        message: response.data.message,
+        color: "green",
+        position: "top",
+      });
+
+      store.storedetails = response.data.data;
+      store.userstores.push(response.data.data);
+
+      progress.value = 2;
+    })
+    .catch(({ response }) => {
+      // console.log(response);
+      storeDetailsLoadBtn.value = false;
+      errors.value = response.data.data.errors;
+      Notify.create({
+        message: response.data.message,
+        color: "red",
+        position: "top",
+        actions: [{ icon: "close", color: "white" }],
+      });
+    });
+};
+
+const publishOrUnpublishStore = () => {
+  puborUnpubLoadBtn.value = true;
+  if (!store.storedetails.published) {
     authAxios
-      .post(`merchant/product/${data.value.id}/update`, {
-        ...dataToSend,
+      .post(`merchant/store/${store.storedetails.id}/publish`, {
+        publish: 1,
       })
       .then((response) => {
         console.log(response);
-        Loading.hide();
+        puborUnpubLoadBtn.value = false;
         Notify.create({
-          message: response.data.message,
+          message:
+            response.data.message +
+            ". You have successfully published your store.",
           color: "green",
           position: "top",
         });
-        addedProductData.value = response.data.data;
-        showAddProductImage.value = true;
-        getProducts();
+
+        store.storedetails = response.data.data;
       })
       .catch(({ response }) => {
         // console.log(response);
-        Loading.hide();
-
-        errors.value = response.data.data.errors;
+        puborUnpubLoadBtn.value = false;
         Notify.create({
           message: response.data.message,
           color: "red",
@@ -648,26 +660,25 @@ const addProductFCN = () => {
       });
   } else {
     authAxios
-      .post("merchant/product/add", {
-        ...dataToSend,
+      .post(`merchant/store/${store.storedetails.id}/publish`, {
+        publish: 0,
       })
       .then((response) => {
         console.log(response);
-        Loading.hide();
+        puborUnpubLoadBtn.value = false;
         Notify.create({
-          message: response.data.message,
+          message:
+            response.data.message +
+            ". You have successfully unpublished your store.",
           color: "green",
           position: "top",
         });
-        addedProductData.value = response.data.data;
-        showAddProductImage.value = true;
-        getProducts();
+
+        store.storedetails = response.data.data;
       })
       .catch(({ response }) => {
         // console.log(response);
-        Loading.hide();
-
-        errors.value = response.data.data.errors;
+        puborUnpubLoadBtn.value = false;
         Notify.create({
           message: response.data.message,
           color: "red",
@@ -677,31 +688,74 @@ const addProductFCN = () => {
       });
   }
 };
+const addProductFCN = () => {
+  let dataToSend = {
+    ...data.value,
+    is_negotiable: typeOfPrice.value === "negotiable" ? 1 : 0,
+  };
+  Loading.show();
+  authAxios
+    .post(`merchant/${store.storedetails.slug}/product/create`, {
+      ...dataToSend,
+    })
+    .then((response) => {
+      console.log(response);
+      Loading.hide();
+      Notify.create({
+        message: response.data.message,
+        color: "green",
+        position: "top",
+      });
+      addedProductData.value = response.data.data;
+      showAddProductImage.value = true;
+    })
+    .catch(({ response }) => {
+      // console.log(response);
+      Loading.hide();
 
+      errors.value = response.data.data.errors;
+      Notify.create({
+        message: response.data.message,
+        color: "red",
+        position: "top",
+        actions: [{ icon: "close", color: "white" }],
+      });
+    });
+};
 const getProducts = async () => {
   try {
+    // Loading.show();
     loadingProducts.value = true;
-    let prodList = await authAxios.get("merchant/product/list");
-    prodListArr.value = prodList.data.data.data;
+    let prodList = await authAxios.get(
+      `merchant/${store.storedetails.slug}/products`
+    );
+    console.log(prodList);
     loadingProducts.value = false;
+    prodListArr.value = prodList.data.data;
+
+    // Loading.hide();
   } catch (error) {
     console.error(error);
   }
 };
+
+const getSubcategories = async () => {
+  Loading.show({
+    spinner: QSpinnerOval,
+    message: "Loading subcategories...",
+  });
+  let subCatList = await authAxios.get(
+    `data?fetch=subcategories&category=${selectedCategories.value}`
+  );
+  console.log(subCatList);
+  productSubCategoryListArr.value = subCatList.data.data;
+  Loading.hide();
+};
 onMounted(async () => {
   try {
-    let prodCatList = await authAxios.get("product/category/list");
-    let prodUnitList = await authAxios.get("product/unit/list");
-    let currList = await authAxios.get("currency/list");
-    let prodList = await authAxios.get("merchant/product/list");
-    // let citiesResp = await authAxios.get("city/list");
-    console.log(prodList);
-
+    let prodCatList = await authAxios.get("data?fetch=categories");
     productCategoryListArr.value = prodCatList.data.data;
-    productUnitListArr.value = prodUnitList.data.data;
-    currencyListArr.value = currList.data.data;
-    prodListArr.value = prodList.data.data.data;
-    loadingProducts.value = false;
+    getProducts();
   } catch (error) {
     console.error(error);
   }

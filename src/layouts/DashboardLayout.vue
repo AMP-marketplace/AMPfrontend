@@ -52,7 +52,7 @@
                   >
                 </li>
                 <li class="navLinks">
-                  <router-link to="">Medical Donations Africa</router-link>
+                  <router-link to="">Donate Medical Equipments</router-link>
                 </li>
                 <!-- <li class="navLinks">
                   <router-link to="">Services</router-link>
@@ -90,9 +90,7 @@
                       label="View Dashboard"
                       :to="{
                         name:
-                          store.userdetails.type === 'business'
-                            ? 'all.set'
-                            : 'dashboard',
+                          store.role === 'merchant' ? 'all.set' : 'dashboard',
                       }"
                       push
                       no-caps

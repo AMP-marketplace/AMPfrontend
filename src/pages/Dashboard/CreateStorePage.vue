@@ -162,8 +162,8 @@
         <div
           :style="`background: url(${
             store.storedetails.banner
-              ? store.storedetails.banner
-              : profileFilePreview
+              ? store.storedetails.banner.url
+              : coverFilePreview
           }), #4f4f4f; background-repeat: no-repeat; background-size:cover`"
           class="hero"
         >
@@ -184,14 +184,14 @@
           <!-- <q-btn no-wrap no-caps flat> Upload Image </q-btn> -->
         </div>
 
-        <div class="q-mt-lg">
+        <div class="q-my-lg">
           <div style="gap: 2rem" class="row items-center no-wrap">
             <!-- {{ profileFilePreview }} -->
             <!-- {{ store.storedetails.logo }} -->
             <div
               :style="`background: url(${
                 store.storedetails.logo
-                  ? store.storedetails.logo
+                  ? store.storedetails.logo.url
                   : profileFilePreview
               }), #4f4f4f; background-repeat: no-repeat; background-size:cover`"
               class="left"
@@ -220,7 +220,7 @@
               <!-- <q-btn no-caps no-wrap> Upload Image </q-btn> -->
             </div>
             <div class="right">
-              <h4 class="bigText">{{ store.storedetails.name }}</h4>
+              <h4 class="bigText">{{ store.storedetails.business_name }}</h4>
 
               <p class="smallText q-my-sm">
                 {{ store.storedetails.description }}
@@ -236,16 +236,16 @@
 
         <q-separator class="q-my-xl" />
 
-        <div v-if="!prodListArr.length" class="row justify-center">
+        <div v-if="!prodListArr.length" class="row q-pb-xl justify-center">
           <div class="column items-center justify-center">
             <img
-              style="width: 308.001px; height: 204.304px"
-              src="../../assets/box.png"
+              style="width: 208.001px; height: 204.304px; object-fit: contain"
+              src="/images/box.png"
               alt=""
             />
-            <p class="smallText q-my-lg">
-              You have no product on your store at this time, upload a logo and
-              banner image and then a product.
+            <p class="smallText text-center q-my-lg">
+              You have no product on your store at this time, <br />
+              upload a logo and banner image and then a product.
             </p>
 
             <q-btn
@@ -316,23 +316,26 @@
           </div>
           <div class="input_wrap">
             <label for="">Description <span>*</span></label>
-            <div class="input">
-              <textarea
-                placeholder="product description"
-                v-model="data.description"
-                name=""
-                id=""
-                cols="30"
-                rows="10"
-              ></textarea>
+            <div class="input editor">
+              <q-editor v-model="data.description" min-height="5rem" />
             </div>
           </div>
-          <div class="auth_grid">
+          <div class="input_wrap">
+            <label for="">Price <span>*</span></label>
+            <div class="input">
+              <select v-model="typeOfPrice">
+                <option value="fixed">Fixed</option>
+                <option value="negotiable">Negotiable</option>
+                <option value="range">Range</option>
+              </select>
+            </div>
+          </div>
+          <div v-if="typeOfPrice === 'range'" class="auth_grid">
             <div class="input_wrap">
-              <label for="">Product Price <span>*</span></label>
+              <label for="">Minimun Price <span>*</span></label>
               <div class="input">
                 <input
-                  v-model="data.price"
+                  v-model="data.minimum_price"
                   placeholder="N0.00"
                   required
                   type="text"
@@ -340,10 +343,10 @@
               </div>
             </div>
             <div class="input_wrap">
-              <label for="">Quantity in stock<span>*</span></label>
+              <label for="">Maximum price<span>*</span></label>
               <div class="input">
                 <input
-                  v-model="data.quantity"
+                  v-model="data.maximum_price"
                   placeholder="10"
                   required
                   type="text"
@@ -351,16 +354,53 @@
               </div>
             </div>
           </div>
+          <div v-if="typeOfPrice === 'fixed'" class="input_wrap">
+            <label for="">Product Price <span>*</span></label>
+            <div class="input">
+              <input
+                v-model="data.minimum_price"
+                placeholder="N0.00"
+                required
+                type="text"
+              />
+            </div>
+          </div>
+          <div class="input_wrap">
+            <label for="">Quantity in stock<span>*</span></label>
+            <div class="input">
+              <input
+                v-model="data.quantity"
+                placeholder="10"
+                required
+                type="text"
+              />
+            </div>
+          </div>
+          <div class="input_wrap">
+            <label for="">Minimum Product Sale<span>*</span></label>
+            <div class="input">
+              <input
+                v-model="data.minimum_order"
+                placeholder="3"
+                required
+                type="text"
+              />
+            </div>
+          </div>
           <!-- {{ productCategoryListArr }} -->
           <div class="input_wrap">
             <label for="">Product Category<span>*</span></label>
             <div class="input">
-              <select required v-model="data.product_category_id">
+              <select
+                @change="getSubcategories"
+                required
+                v-model="selectedCategories"
+              >
                 <option disabled value="">Choose</option>
                 <option
                   v-for="productCategory in productCategoryListArr"
-                  :key="productCategory.id"
-                  :value="productCategory.id"
+                  :key="productCategory.slug"
+                  :value="productCategory.slug"
                 >
                   {{ productCategory.name }}
                 </option>
@@ -368,6 +408,25 @@
             </div>
           </div>
           <div class="input_wrap">
+            <label for="">Product Sub Category<span>*</span></label>
+            <div class="input">
+              <select
+                required
+                :disabled="!productSubCategoryListArr.length"
+                v-model="data.subcategory_id"
+              >
+                <option disabled value="">Choose</option>
+                <option
+                  v-for="productSubCategory in productSubCategoryListArr"
+                  :key="productSubCategory.slug"
+                  :value="productSubCategory.id"
+                >
+                  {{ productSubCategory.name }}
+                </option>
+              </select>
+            </div>
+          </div>
+          <!-- <div class="input_wrap">
             <label for="">Product Unit<span>*</span></label>
             <div class="input">
               <select required v-model="data.product_unit_id">
@@ -381,18 +440,18 @@
                 </option>
               </select>
             </div>
-          </div>
+          </div> -->
           <div class="input_wrap">
             <label for="">Currency<span>*</span></label>
             <div class="input">
-              <select required v-model="data.currency_id">
+              <select v-model="data.currency" required>
                 <option disabled value="">Choose</option>
                 <option
-                  v-for="currency in currencyListArr"
-                  :key="currency.id"
-                  :value="currency.id"
+                  v-for="currency in currencies"
+                  :key="currency.name"
+                  :value="currency.name"
                 >
-                  {{ currency.name }}
+                  {{ currency.name }} {{ currency.flag }}
                 </option>
               </select>
             </div>
@@ -470,19 +529,20 @@ import ProductsComp from "src/components/ProductsComp.vue";
 import { useRoute, useRouter } from "vue-router";
 import countries from "../../../countries";
 import FooterCompVue from "src/components/FooterComp.vue";
-
+import currencies from "../../../currencies";
 let store = useMyAuthStore();
 let router = useRouter();
 let route = useRoute();
 let data = ref({
-  product_category_id: "",
-  product_unit_id: "",
-  currency_id: "",
+  description: "",
+  minimum_price: "",
+  maximum_price: "",
   // attributes: [],
 });
 let basicStoreData = ref({});
 let addedProductData = ref({});
 let productCategoryListArr = ref([]);
+let productSubCategoryListArr = ref([]);
 let currencyListArr = ref([]);
 let prodListArr = ref([]);
 let productUnitListArr = ref([]);
@@ -493,6 +553,8 @@ let productImageFile = ref(null);
 let profileFile = ref(null);
 let productImagePreview = ref("");
 let profileFilePreview = ref("");
+let selectedCategories = ref("");
+let typeOfPrice = ref("fixed");
 let coverFilePreview = ref("");
 let addProductModal = ref(false);
 let storeDetailsLoadBtn = ref(false);
@@ -533,7 +595,7 @@ const setCoverFile = (props) => {
   });
   authAxios
     .post(
-      `vendor/istores-ng/update-media`,
+      `merchant/${store.storedetails.slug}/update-media`,
       {
         banner: coverFile.value,
       },
@@ -586,14 +648,14 @@ const setProductImage = (props) => {
 
   Loading.show({
     spinner: QSpinnerOval,
-    message: "Uploading Logo...",
+    message: "Uploading image...",
   });
   authAxios
     .post(
-      `vendor/product/${addedProductData.value.slug}/upload/media`,
+      `merchant/${store.storedetails.slug}/${addedProductData.value.slug}/upload/media`,
       {
-        image: productImageFile.value,
-        role: "main",
+        media: productImageFile.value,
+        // role: "main",
       },
       {
         headers: {
@@ -629,6 +691,9 @@ const setProductImage = (props) => {
       });
     });
 };
+// const togglePriceType = () => {
+
+// }
 const setProfileFile = (props) => {
   profileFile.value = props;
   var reader = new FileReader();
@@ -643,7 +708,7 @@ const setProfileFile = (props) => {
   });
   authAxios
     .post(
-      `vendor/istores-ng/update-media`,
+      `merchant/${store.storedetails.slug}/update-media`,
       {
         logo: profileFile.value,
       },
@@ -669,6 +734,7 @@ const setProfileFile = (props) => {
           : store
       );
       progress.value = 2;
+      store.createStoreStep = 2;
       profileFile.value = null;
       Loading.hide();
     })
@@ -705,12 +771,9 @@ const removeAttribute = (counter) => {
 
 const createStore = () => {
   storeDetailsLoadBtn.value = true;
-  // const formData = new FormData();
-  // for (var key in data.value) {
-  //   formData.append(key, JSON.stringify(data.value[key]));
-  // }
+
   authAxios
-    .post("vendor/onboard", {
+    .post("merchant/onboard", {
       ...basicStoreData.value,
       country: basicStoreData.value.country.name,
     })
@@ -804,12 +867,11 @@ const publishOrUnpublishStore = () => {
 const addProductFCN = () => {
   let dataToSend = {
     ...data.value,
-    // currency_id: 1,
-    store_id: store.storedetails.id,
+    is_negotiable: typeOfPrice.value === "negotiable" ? 1 : 0,
   };
   Loading.show();
   authAxios
-    .post("vendor/product/upload", {
+    .post(`merchant/${store.storedetails.slug}/product/create`, {
       ...dataToSend,
     })
     .then((response) => {
@@ -839,28 +901,41 @@ const addProductFCN = () => {
 const getProducts = async () => {
   try {
     Loading.show();
-    let prodList = await authAxios.get("merchant/product/list");
-    prodListArr.value = prodList.data.data.data;
+    let prodList = await authAxios.get(
+      `merchant/${store.storedetails.slug}/products`
+    );
+    console.log(prodList);
+    // prodListArr.value = prodList.data.data;
 
     Loading.hide();
   } catch (error) {
     console.error(error);
   }
 };
+
+const getSubcategories = async () => {
+  Loading.show({
+    spinner: QSpinnerOval,
+    message: "Loading subcategories...",
+  });
+  let subCatList = await authAxios.get(
+    `data?fetch=subcategories&category=${selectedCategories.value}`
+  );
+  console.log(subCatList);
+  productSubCategoryListArr.value = subCatList.data.data;
+  Loading.hide();
+};
 onMounted(async () => {
   try {
-    if (route.query.create === "new" && !store.storedetails.name) {
+    if (route.query.create === "new" && !store.storedetails.business_name) {
       progress.value = 1;
-      // console.log("here");
     } else {
       progress.value = 2;
-      // console.log("there");
     }
     // let countriesResp = await authAxios.get("country/supported-countries");
-    let prodCatList = await authAxios.get(
-      "data?fetch=subcategories&category=medsolutions"
-    );
-    // let prodUnitList = await authAxios.get("product/unit/list");
+
+    let prodCatList = await authAxios.get("data?fetch=categories");
+    // console.log(prodCatList);
     // let currList = await authAxios.get("currency/list");
     // let prodList = await authAxios.get("merchant/product/list");
     // let citiesResp = await authAxios.get("city/list");
@@ -873,7 +948,8 @@ onMounted(async () => {
     //     value: country.id,
     //   }));
 
-    productCategoryListArr.value = prodCatList.data;
+    productCategoryListArr.value = prodCatList.data.data;
+    // getProducts();
     // productUnitListArr.value = prodUnitList.data.data;
     // currencyListArr.value = currList.data.data;
     // prodListArr.value = prodList.data.data.data;
