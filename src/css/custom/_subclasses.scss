@@ -2,7 +2,7 @@
 
 .container {
   max-width: 1400px;
-  width: 95%;
+  width: 95% !important;
   margin: 0 auto;
 }
 
@@ -835,6 +835,9 @@ hr {
     height: 120px;
   }
 }
+.cat_text {
+  margin-left: 0.2rem;
+}
 
 .landingpage {
   .hero {
@@ -1193,6 +1196,9 @@ hr {
       flex-wrap: wrap;
     }
   }
+  .cat_text {
+    font-size: 10px;
+  }
   .grid_ {
     display: grid;
     grid-template-columns: 1fr;
@@ -1209,7 +1215,7 @@ hr {
   }
 
   .product_card {
-    padding: 0.5rem;
+    padding: 0.5rem !important;
     min-height: 300px;
     .mediumText {
       // font-size: 15px;

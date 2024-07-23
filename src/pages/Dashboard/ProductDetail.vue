@@ -651,11 +651,12 @@ const updateProductFunction = () => {
     country: data.value.country,
     condition: data.value.condition,
     subcategory_id: data.value.subcategory_id,
+    minimum_order: data.value.minimum_order,
     // ...data.value,
   };
   Loading.show();
   authAxios
-    .post(`${store.storedetails.slug}/${data.value.slug}/edit`, {
+    .post(`merchant/${store.storedetails.slug}/${data.value.slug}/edit`, {
       ...dataToSend,
     })
     .then((response) => {

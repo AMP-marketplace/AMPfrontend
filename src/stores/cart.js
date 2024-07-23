@@ -15,7 +15,11 @@ export const useCartStore = defineStore("apmcart", {
   getters: {
     totalPrice: (state) => {
       return Object.keys(state.cart).reduce((acc, id) => {
-        return acc + state.cart[id].product.price * state.cart[id].quantity;
+        return (
+          acc +
+          parseInt(state.cart[id].product.price.minimum_price) *
+            state.cart[id].quantity
+        );
       }, 0);
     },
   },

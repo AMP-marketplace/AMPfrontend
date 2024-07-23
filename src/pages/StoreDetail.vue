@@ -4,7 +4,10 @@
     <div v-else class="q-mt-lg create_store_2">
       <div>
         <div class="hero">
-          <img :src="storeDetails.banner.url" alt="" />
+          <img
+            :src="storeDetails.banner ? storeDetails.banner.url : ''"
+            alt=""
+          />
         </div>
         <div style="gap: 2rem" class="row items-center no-wrap justify-between">
           <div style="gap: 2rem" class="row q-mt-sm items-center no-wrap">
@@ -17,11 +20,7 @@
                   object-fit: cover;
                   border-radius: 10px;
                 "
-                :src="
-                  storeDetails.logo
-                    ? storeDetails.logo.url
-                    : '/images/mastercard.svg'
-                "
+                :src="storeDetails.logo ? storeDetails.logo.url : ''"
                 alt=""
               />
             </div>
@@ -31,7 +30,18 @@
               <p class="smallText q-my-sm">
                 {{ storeDetails.description }}
               </p>
-
+              <p>
+                Email:
+                <a :href="`mailto:${storeDetails?.user.email}`">
+                  {{ storeDetails?.user.email }}</a
+                >
+              </p>
+              <p>
+                Phone:
+                <a :href="`tel:${storeDetails?.user.phone}`">
+                  {{ storeDetails?.user.phone }}</a
+                >
+              </p>
               <small class="text-primary"
                 ><i class="fa-solid fa-location-dot"></i>
                 {{ storeDetails.address }}</small
@@ -91,51 +101,57 @@
       />
       <p class="smallText q-my-lg">No products</p>
     </div>
-
-    <q-toolbar id="reviews" class="text-black q-mt-xl">
-      <q-toolbar-title>Reviews</q-toolbar-title>
-      <q-btn
-        class="bg-green-7 text-white"
-        no-wrap
-        no-caps
-        @click="rateModal = !rateModal"
+    <div class="reviews_list">
+      <q-toolbar id="reviews" class="text-black q-mt-xl">
+        <q-toolbar-title>Reviews</q-toolbar-title>
+        <q-btn
+          class="bg-green-7 text-white"
+          no-wrap
+          no-caps
+          @click="rateModal = !rateModal"
+        >
+          Add Ratings
+        </q-btn>
+      </q-toolbar>
+      <q-list
+        v-if="storeDetails?.reviews?.length"
+        class="q-mb-lg"
+        separator
+        bordered
       >
-        Add Ratings
-      </q-btn>
-    </q-toolbar>
-    <q-list
-      v-if="storeDetails?.reviews?.length"
-      class="q-mb-lg"
-      separator
-      bordered
-    >
-      <q-item
-        v-for="(review, index) in storeDetails?.reviews"
-        :key="index"
-        class="q-my-sm"
-        clickable
-        v-ripple
-      >
-        <q-item-section avatar>
-          <q-avatar color="primary" text-color="white">
-            <img :src="review.media[0].url" alt="" />
-          </q-avatar>
-        </q-item-section>
+        <q-item
+          v-for="(review, index) in storeDetails?.reviews"
+          :key="index"
+          class="q-my-sm"
+          clickable
+          v-ripple
+        >
+          <q-item-section avatar>
+            <q-avatar
+              v-if="review?.media?.length"
+              color="primary"
+              text-color="white"
+            >
+              <img :src="review?.media ? review?.media[0]?.url : ''" alt="" />
+            </q-avatar>
+          </q-item-section>
 
-        <q-item-section>
-          <q-item-label>{{ review.remark }}</q-item-label>
-          <q-item-label caption lines="1"
-            >{{ review.author.name }} - {{ review.author.email }}</q-item-label
-          >
-        </q-item-section>
+          <q-item-section>
+            <q-item-label>{{ review.remark }}</q-item-label>
+            <q-item-label caption lines="1"
+              >{{ review.author.name }} -
+              {{ review.author.email }}</q-item-label
+            >
+          </q-item-section>
 
-        <q-item-section side>
-          <q-btn v-if="review.is_author" @click="deleteReview(review)">
-            Delete
-          </q-btn>
-        </q-item-section>
-      </q-item>
-    </q-list>
+          <q-item-section side>
+            <q-btn v-if="review.is_author" @click="deleteReview(review)">
+              Delete
+            </q-btn>
+          </q-item-section>
+        </q-item>
+      </q-list>
+    </div>
     <div style="margin: 0rem" class="auth">
       <div class="row justify-start q-mb-md">
         <q-rating

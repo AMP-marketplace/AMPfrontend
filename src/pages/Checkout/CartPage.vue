@@ -29,15 +29,18 @@ v
                         height: 107px;
                         object-fit: contain;
                       "
-                      :src="props.row.product.images[0].url"
+                      :src="
+                        props.row.product?.media
+                          ? props.row.product?.media[0]?.url
+                          : ''
+                      "
                       alt=""
                     />
                   </div>
                   <div>
                     <h6 class="smallText">{{ props.row.product.name }}</h6>
-                    <p class="smallerText q-mt-sm">
-                      {{ props.row.product.description }}
-                    </p>
+                    <!-- <p v-html="props.row.product.description" class="smallerText q-mt-sm">
+                    </p> -->
                   </div>
                 </div>
               </q-td>
@@ -45,13 +48,44 @@ v
             <template v-slot:body-cell-price="props">
               <q-td :props="props">
                 <p class="smallerText q-mt-sm">
+                  <!-- ₦{{ props.row.product.price.minimum_price.toLocaleString() }} -->
+                  {{
+                    getCountryCurrencySymbol(
+                      props.row.product?.country,
+                      props.row.product
+                    )
+                  }}
+                  {{
+                    props.row.product?.price?.minimum_price.replace(
+                      /\B(?=(\d{3})+(?!\d))/g,
+                      ","
+                    )
+                  }}
+                  <span v-if="props.row.product.price?.maximum_price !== '1'">
+                    -</span
+                  >
+                  <span v-if="props.row.product.price?.maximum_price !== '1'">
+                    {{
+                      getCountryCurrencySymbol(
+                        product?.country,
+                        props.row.product
+                      )
+                    }}{{
+                      props.row.product.price?.maximum_price.replace(
+                        /\B(?=(\d{3})+(?!\d))/g,
+                        ","
+                      )
+                    }}
+                  </span>
+                </p>
+                <!-- <p class="smallerText q-mt-sm">
                   ₦{{
                     (
                       props.row.product.price * props.row.quantity
                     ).toLocaleString()
                   }}
-                </p></q-td
-              >
+                </p> -->
+              </q-td>
             </template>
 
             <template v-slot:body-cell-quantity="props">
@@ -227,6 +261,7 @@ v
 </template>
 
 <script setup>
+import currencies from "app/currencies";
 import FooterCompVue from "src/components/FooterComp.vue";
 import { useCartStore } from "src/stores/cart";
 import { onMounted, ref } from "vue";
@@ -291,7 +326,12 @@ const onRequest = (props) => {
   // rows.value = cartStore.cart;
   console.log(rows.value);
 };
-
+function getCountryCurrencySymbol(countryName, product) {
+  const country = currencies.find(
+    (c) => c.code.toLowerCase() === product?.currency?.toLowerCase()
+  );
+  return country ? country.symbol : ""; // Return white flag if country not found
+}
 onMounted(async () => {
   try {
     onRequest();

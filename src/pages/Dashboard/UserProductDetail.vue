@@ -51,6 +51,19 @@
                   >Visit Store: {{ product.merchant?.business_name }}</span
                 >
               </router-link>
+
+              <p>
+                Email:
+                <a :href="`mailto:${product.merchant?.user.email}`">
+                  {{ product.merchant?.user.email }}</a
+                >
+              </p>
+              <p>
+                Phone:
+                <a :href="`tel:${product.merchant?.user.phone}`">
+                  {{ product.merchant?.user.phone }}</a
+                >
+              </p>
             </div>
             <div class="wrapper">
               <span class="price" data-total-price
@@ -131,51 +144,60 @@
           <h6 class="text-h4 text-weight-bold">Description</h6>
           <p v-html="product.description" class="product-text q-mt-md"></p>
         </div>
-        <q-toolbar id="reviews" class="text-black">
-          <q-toolbar-title>Reviews</q-toolbar-title>
-          <q-btn
-            class="bg-green-7 text-white"
-            no-wrap
-            no-caps
-            @click="rateModal = !rateModal"
+        <div class="reviews_list">
+          <q-toolbar id="reviews" class="text-black">
+            <q-toolbar-title>Reviews</q-toolbar-title>
+            <q-btn
+              class="bg-green-7 text-white"
+              no-wrap
+              no-caps
+              @click="rateModal = !rateModal"
+            >
+              Add Ratings
+            </q-btn>
+          </q-toolbar>
+          <q-list
+            v-if="product?.review?.length"
+            class="q-mb-lg"
+            separator
+            bordered
           >
-            Add Ratings
-          </q-btn>
-        </q-toolbar>
-        <q-list
-          v-if="product?.review?.length"
-          class="q-mb-lg"
-          separator
-          bordered
-        >
-          <q-item
-            v-for="(review, index) in product?.review"
-            :key="index"
-            class="q-my-sm"
-            clickable
-            v-ripple
-          >
-            <q-item-section avatar>
-              <q-avatar color="primary" text-color="white">
-                <img :src="review.media[0].url" alt="" />
-              </q-avatar>
-            </q-item-section>
+            <q-item
+              v-for="(review, index) in product?.review"
+              :key="index"
+              class="q-my-sm"
+              clickable
+              v-ripple
+            >
+              <q-item-section avatar>
+                <q-avatar
+                  v-if="review?.media?.length"
+                  color="primary"
+                  text-color="white"
+                >
+                  <img
+                    :src="review.media[0] ? review?.media[0]?.url : ''"
+                    alt=""
+                  />
+                </q-avatar>
+              </q-item-section>
 
-            <q-item-section>
-              <q-item-label>{{ review.remark }}</q-item-label>
-              <q-item-label caption lines="1"
-                >{{ review.author.name }} -
-                {{ review.author.email }}</q-item-label
-              >
-            </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ review.remark }}</q-item-label>
+                <q-item-label caption lines="1"
+                  >{{ review.author.name }} -
+                  {{ review.author.email }}</q-item-label
+                >
+              </q-item-section>
 
-            <q-item-section side>
-              <q-btn v-if="review.is_author" @click="deleteReview(review)">
-                Delete
-              </q-btn>
-            </q-item-section>
-          </q-item>
-        </q-list>
+              <q-item-section side>
+                <q-btn v-if="review.is_author" @click="deleteReview(review)">
+                  Delete
+                </q-btn>
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </div>
         <div style="margin: 0.5rem" class="auth">
           <div class="row justify-start q-mb-md">
             <q-rating

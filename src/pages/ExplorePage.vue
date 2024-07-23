@@ -23,20 +23,38 @@ v
               <h4 class="bigText q-pa-sm q-mb-md">Market Place</h4>
             </div>
             <div class="explore_categories">
-              <h6 class="smallText q-mb-md">Category</h6>
+              <h6 class="text-h5 q-mb-md">Category</h6>
               <!-- {{ categoryListArr }} -->
-              <div class="q-mt-md" v-if="loading">
-                <q-skeleton height="100px" />
+              <div>
+                <p class="text-weight-bold">MedSolutions</p>
+                <div class="q-mt-md" v-if="loading">
+                  <q-skeleton height="100px" />
+                </div>
+                <q-list v-else>
+                  <q-item
+                    clickable
+                    v-for="(cat, index) in medSolutionscategoryListArr"
+                    :key="index"
+                  >
+                    {{ cat.name }}
+                  </q-item>
+                </q-list>
               </div>
-              <q-list v-else>
-                <q-item
-                  clickable
-                  v-for="(cat, index) in categoryListArr"
-                  :key="index"
-                >
-                  {{ cat.name }}
-                </q-item>
-              </q-list>
+              <div class="q-mt-md">
+                <p class="text-weight-bold">MedEquipments</p>
+                <div class="q-mt-md" v-if="loading">
+                  <q-skeleton height="100px" />
+                </div>
+                <q-list v-else>
+                  <q-item
+                    clickable
+                    v-for="(cat, index) in medEquipcategoryListArr"
+                    :key="index"
+                  >
+                    {{ cat.name }}
+                  </q-item>
+                </q-list>
+              </div>
             </div>
           </div>
           <div class="q-pb-lg">
@@ -114,7 +132,7 @@ v
               class="responsive_grid"
             >
               <div v-for="product in filteredProducts" :key="product.id">
-                <ProductsComp :product="product" />
+                <ProductComp :product="product" />
               </div>
             </div>
             <div
@@ -156,7 +174,7 @@ v
         <q-list v-else>
           <q-item
             clickable
-            v-for="(cat, index) in categoryListArr"
+            v-for="(cat, index) in medSolutionscategoryListArr"
             :key="index"
           >
             {{ cat.name }}
@@ -176,12 +194,13 @@ v
 <script setup>
 import { authAxios } from "src/boot/axios";
 import { computed, onMounted, ref } from "vue";
-import ProductsComp from "../components/ProductsComp.vue";
+import ProductComp from "../components/ProductComp.vue";
 import FooterCompVue from "src/components/FooterComp.vue";
 let loadingProducts = ref(true);
 let loading = ref(true);
 let prodListArr = ref([]);
-let categoryListArr = ref([]);
+let medSolutionscategoryListArr = ref([]);
+let medEquipcategoryListArr = ref([]);
 const selectedSort = ref("name");
 const searchQuery = ref("");
 const drawer = ref(false);
@@ -193,9 +212,11 @@ const filteredProducts = computed(() => {
   if (selectedSort.value === "name") {
     filtered.sort((a, b) => a.name.localeCompare(b.name));
   } else if (selectedSort.value === "price") {
-    filtered.sort((a, b) => a.price - b.price);
+    filtered.sort(
+      (a, b) => parseInt(a.price.minimum_price) - parseInt(b.minimum_price)
+    );
   } else if (selectedSort.value === "date") {
-    filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
+    filtered.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
   }
 
   // Searching
@@ -213,7 +234,7 @@ const setSortParam = (sortParam) => {
 const getProducts = async () => {
   try {
     loadingProducts.value = true;
-    let prodList = await authAxios.get("product/list");
+    let prodList = await authAxios.get("products/index/all");
     console.log(prodList);
     prodListArr.value = prodList.data.data;
     loadingProducts.value = false;
@@ -224,11 +245,16 @@ const getProducts = async () => {
 const getCategories = async () => {
   try {
     loading.value = true;
-    let prodCatList = await authAxios.get(
+    let medsolutionsCatList = await authAxios.get(
       "data?fetch=subcategories&category=medsolutions"
     );
-    console.log(prodCatList);
-    // categoryListArr.value = prodCatList.data.data;
+    // let medEquipmentsCatList = await authAxios.get(
+    //   "data?fetch=subcategories&category=medequipment"
+    // );
+    // console.log(medsolutionsCatList);
+    // console.log(medEquipmentsCatList);
+    medSolutionscategoryListArr.value = medsolutionsCatList.data.data;
+    medEquipcategoryListArr.value = medsolutionsCatList.data.data;
     // console.log(categoryListArr.value);
     loading.value = false;
   } catch (error) {

@@ -29,7 +29,9 @@
               class="q-mt-lg row nav_wrap items-center no-wrap"
             >
               <small class="text-white">Trending:</small>
-              <q-btn color="white" outline rounded> All </q-btn>
+              <q-btn :to="{ name: 'explore' }" color="white" outline rounded>
+                All
+              </q-btn>
               <q-btn color="white" outline rounded> Cardiology </q-btn>
               <q-btn color="white" outline rounded> Dental </q-btn>
               <q-btn color="white" outline rounded> Hermodialysis </q-btn>
@@ -51,12 +53,24 @@
         <div class="row items-center justify-between">
           <h4 class="text-h6 text-weight-bold">New Products</h4>
           <div>
-            <router-link class="text_underline" to=""
+            <router-link class="text_underline" :to="{ name: 'explore' }"
               >See All New Products</router-link
             >
           </div>
         </div>
+        <div v-if="loadingProducts" class="responsive_grid">
+          <div v-for="n in 3" :key="n">
+            <q-card flat style="max-width: 300px">
+              <q-skeleton height="150px" square />
 
+              <q-card-section>
+                <q-skeleton type="text" class="text-subtitle1" />
+                <q-skeleton type="text" width="50%" class="text-subtitle1" />
+                <q-skeleton type="text" class="text-caption" />
+              </q-card-section>
+            </q-card>
+          </div>
+        </div>
         <div class="responsive_grid q-mt-md">
           <ProductCompVue
             :product="product"
@@ -105,68 +119,70 @@
 </template>
 
 <script setup>
+import { authAxios } from "src/boot/axios";
 import FooterCompVue from "src/components/FooterComp.vue";
 import ProductCompVue from "src/components/ProductComp.vue";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 useI18n();
 
+let loadingProducts = ref(true);
 const productsArr = ref([
-  {
-    category: "Biochemistry Analyzer",
-    name: "Semi auto chemistry Analyzer",
-    location: "Nigeria",
-    posted: "2 weeks ago",
-    views: "240",
-    amount: "499",
-    img: "/images/ambulance.jpeg",
-    condition: "Used",
-    flag: "/images/nigeria.png",
-  },
-  {
-    category: "Biochemistry Analyzer",
-    name: "Semi auto chemistry Analyzer",
-    location: "Nigeria",
-    posted: "2 weeks ago",
-    views: "240",
-    amount: "499",
-    img: "/images/product1.webp",
-    condition: "Used",
-    flag: "/images/nigeria.png",
-  },
-  {
-    category: "Biochemistry Analyzer",
-    name: "Semi auto chemistry Analyzer",
-    location: "Nigeria",
-    posted: "2 weeks ago",
-    views: "240",
-    amount: "499",
-    img: "/images/product2.png",
-    condition: "Used",
-    flag: "/images/nigeria.png",
-  },
-  {
-    category: "Biochemistry Analyzer",
-    name: "Semi auto chemistry Analyzer",
-    location: "Nigeria",
-    posted: "2 weeks ago",
-    views: "240",
-    amount: "499",
-    img: "/images/product3.jpeg",
-    condition: "Used",
-    flag: "/images/nigeria.png",
-  },
-  {
-    category: "Biochemistry Analyzer",
-    name: "Semi auto chemistry Analyzer",
-    location: "Nigeria",
-    posted: "2 weeks ago",
-    views: "240",
-    amount: "499",
-    img: "/images/product4.jpeg",
-    condition: "Used",
-    flag: "/images/nigeria.png",
-  },
+  // {
+  //   category: "Biochemistry Analyzer",
+  //   name: "Semi auto chemistry Analyzer",
+  //   location: "Nigeria",
+  //   posted: "2 weeks ago",
+  //   views: "240",
+  //   amount: "499",
+  //   img: "/images/ambulance.jpeg",
+  //   condition: "Used",
+  //   flag: "/images/nigeria.png",
+  // },
+  // {
+  //   category: "Biochemistry Analyzer",
+  //   name: "Semi auto chemistry Analyzer",
+  //   location: "Nigeria",
+  //   posted: "2 weeks ago",
+  //   views: "240",
+  //   amount: "499",
+  //   img: "/images/product1.webp",
+  //   condition: "Used",
+  //   flag: "/images/nigeria.png",
+  // },
+  // {
+  //   category: "Biochemistry Analyzer",
+  //   name: "Semi auto chemistry Analyzer",
+  //   location: "Nigeria",
+  //   posted: "2 weeks ago",
+  //   views: "240",
+  //   amount: "499",
+  //   img: "/images/product2.png",
+  //   condition: "Used",
+  //   flag: "/images/nigeria.png",
+  // },
+  // {
+  //   category: "Biochemistry Analyzer",
+  //   name: "Semi auto chemistry Analyzer",
+  //   location: "Nigeria",
+  //   posted: "2 weeks ago",
+  //   views: "240",
+  //   amount: "499",
+  //   img: "/images/product3.jpeg",
+  //   condition: "Used",
+  //   flag: "/images/nigeria.png",
+  // },
+  // {
+  //   category: "Biochemistry Analyzer",
+  //   name: "Semi auto chemistry Analyzer",
+  //   location: "Nigeria",
+  //   posted: "2 weeks ago",
+  //   views: "240",
+  //   amount: "499",
+  //   img: "/images/product4.jpeg",
+  //   condition: "Used",
+  //   flag: "/images/nigeria.png",
+  // },
 ]);
 
 // const { locale } = useI18n();
@@ -174,4 +190,27 @@ const productsArr = ref([
 // function changeLanguage(lang) {
 //   locale.value = lang;
 // }
+const getProducts = () => {
+  authAxios
+    .get("products/index/all")
+    .then((response) => {
+      console.log(response);
+      productsArr.value = response.data.data;
+      loadingProducts.value = false;
+    })
+    .catch(({ response }) => {
+      // console.log(response);
+      loadingProducts.value = false;
+      Notify.create({
+        message: response.data.error,
+        color: "red",
+        position: "bottom",
+        actions: [{ icon: "close", color: "white" }],
+      });
+    });
+};
+onMounted(() => {
+  getProducts();
+  // getCategories();
+});
 </script>

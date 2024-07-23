@@ -656,62 +656,76 @@ const createStore = () => {
 
 const publishOrUnpublishStore = () => {
   puborUnpubLoadBtn.value = true;
-  if (!store.storedetails.published) {
-    authAxios
-      .post(`merchant/${store.storedetails.slug}/publish`, {
-        publish: 1,
-      })
-      .then((response) => {
-        console.log(response);
-        puborUnpubLoadBtn.value = false;
-        Notify.create({
-          message:
-            response.data.message +
-            ". You have successfully published your store.",
-          color: "green",
-          position: "top",
-        });
-
-        store.storedetails = response.data.data;
-      })
-      .catch(({ response }) => {
-        // console.log(response);
-        puborUnpubLoadBtn.value = false;
-        Notify.create({
-          message: response.data.message,
-          color: "red",
-          position: "top",
-          actions: [{ icon: "close", color: "white" }],
-        });
-      });
+  if (store.userdetails.banner === null) {
+    Notify.create({
+      message: "Please upload a banner image",
+      color: "red",
+      position: "top",
+    });
+  } else if (store.userdetails.logo === null) {
+    Notify.create({
+      message: "Please upload a logo image",
+      color: "red",
+      position: "top",
+    });
   } else {
-    authAxios
-      .post(`merchant/${store.storedetails.slug}/publish`, {
-        publish: 0,
-      })
-      .then((response) => {
-        console.log(response);
-        puborUnpubLoadBtn.value = false;
-        Notify.create({
-          message:
-            response.data.message +
-            ". You have successfully unpublished your store.",
-          color: "green",
-          position: "top",
-        });
+    if (!store.storedetails.is_published) {
+      authAxios
+        .post(`merchant/${store.storedetails.slug}/publish`, {
+          publish: 1,
+        })
+        .then((response) => {
+          console.log(response);
+          puborUnpubLoadBtn.value = false;
+          Notify.create({
+            message:
+              response.data.message +
+              ". You have successfully published your store.",
+            color: "green",
+            position: "top",
+          });
 
-        store.storedetails = response.data.data;
-      })
-      .catch(({ response }) => {
-        // console.log(response);
-        puborUnpubLoadBtn.value = false;
-        Notify.create({
-          message: response.data.message,
-          color: "red",
-          position: "top",
-          actions: [{ icon: "close", color: "white" }],
+          store.storedetails = response.data.data;
+        })
+        .catch(({ response }) => {
+          // console.log(response);
+          puborUnpubLoadBtn.value = false;
+          Notify.create({
+            message: response.data.message,
+            color: "red",
+            position: "top",
+            actions: [{ icon: "close", color: "white" }],
+          });
         });
-      });
+    } else {
+      authAxios
+        .post(`merchant/${store.storedetails.slug}/publish`, {
+          publish: 0,
+        })
+        .then((response) => {
+          console.log(response);
+          puborUnpubLoadBtn.value = false;
+          Notify.create({
+            message:
+              response.data.message +
+              ". You have successfully unpublished your store.",
+            color: "green",
+            position: "top",
+          });
+
+          store.storedetails = response.data.data;
+        })
+        .catch(({ response }) => {
+          // console.log(response);
+          puborUnpubLoadBtn.value = false;
+          Notify.create({
+            message: response.data.message,
+            color: "red",
+            position: "top",
+            actions: [{ icon: "close", color: "white" }],
+          });
+        });
+    }
   }
 };
 const addProductFCN = () => {

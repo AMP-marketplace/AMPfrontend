@@ -208,11 +208,11 @@ const routes = [
     ],
   },
 
-  {
-    path: "/admin/login",
-    component: () => import("pages/admin/LoginPage.vue"),
-    name: "admin.login",
-  },
+  // {
+  //   path: "/admin/login",
+  //   component: () => import("pages/admin/LoginPage.vue"),
+  //   name: "admin.login",
+  // },
 
   // Always leave this as last one,
   // but you can also remove it

@@ -44,7 +44,7 @@ v
                     {{ errors.email[0] }}
                   </small>
                 </div>
-                <!-- <p class="text-info q-my-md smallerText">
+                <!-- <p class="text-primary q-my-md smallerText">
                   You can create an account after checkout.
                 </p> -->
                 <q-separator />
@@ -81,7 +81,13 @@ v
                       <div class="input_wrap">
                         <div class="input">
                           <select v-model="country_code">
-                            <option value="+234">+234</option>
+                            <option
+                              v-for="(country, index) in countries"
+                              :key="index"
+                              :value="country.phoneCode"
+                            >
+                              {{ country.phoneCode }} {{ country.flag }}
+                            </option>
                           </select>
                         </div>
                       </div>
@@ -224,7 +230,7 @@ v
         <div class="checkout_details">
           <h4 class="bigMediumText">Order Summary</h4>
           <q-separator class="q-mt-md" />
-          <p class="smallerText q-mb-md text-info">
+          <p class="smallerText q-mb-md text-primary">
             {{ cartStore.cart.length }} Items in Cart
           </p>
           <div class="q-my-lg">
@@ -236,7 +242,7 @@ v
             >
               <img
                 style="width: 82px; height: 82px; object-fit: contain"
-                :src="item.product.images[0].url"
+                :src="item.product.media ? item.product.media[0].url : ''"
                 :alt="item.product.name"
               />
               <div>
@@ -244,7 +250,7 @@ v
                   {{ item.product.name }}
                 </p>
                 <p>
-                  <span class="text-info"
+                  <span class="text-primary"
                     >Purchase quantity : {{ item.quantity }}</span
                   >
                 </p>
@@ -252,7 +258,7 @@ v
                   <!-- <span class="q-mx-sm"></span> -->
                   <span class="text-weight-bold"
                     >₦{{
-                      (item.product.price * item.quantity).toLocaleString()
+                      parseInt(item.product.price.minimum_price) * item.quantity
                     }}</span
                   >
                 </p>
@@ -263,27 +269,18 @@ v
           <q-separator class="q-my-md" />
           <div class="row q-mt-sm justify-between items-center">
             <p class="smallerText">VAT</p>
-            <p class="smallText">
-              ₦{{ (cartStore.totalPrice * 0.075).toLocaleString() }}
-            </p>
+            <p class="smallText">₦{{ cartStore.totalPrice * 0.075 }}</p>
           </div>
           <q-separator class="q-my-md" />
           <div class="row q-mt-sm justify-between items-center">
             <p class="smallerText">Sub Total</p>
-            <p class="smallText">
-              ₦{{ cartStore.totalPrice.toLocaleString() }}
-            </p>
+            <p class="smallText">₦{{ cartStore.totalPrice }}</p>
           </div>
           <q-separator class="q-my-md" />
           <div class="row q-mt-sm justify-between items-center">
             <p class="smallerText">Order Total</p>
             <p class="smallText">
-              ₦{{
-                (
-                  cartStore.totalPrice +
-                  cartStore.totalPrice * 0.075
-                ).toLocaleString()
-              }}
+              ₦{{ cartStore.totalPrice + cartStore.totalPrice * 0.075 }}
             </p>
           </div>
         </div>
@@ -340,6 +337,7 @@ import { Loading, Notify, QSpinnerRings } from "quasar";
 import { authAxios } from "src/boot/axios";
 import { useMyAuthStore } from "src/stores/auth";
 import { useRoute, useRouter } from "vue-router";
+import countries from "app/countries";
 let route = useRoute();
 let router = useRouter();
 let cartStore = useCartStore();
@@ -353,6 +351,7 @@ let viewConfirmPassword = ref(false);
 let countriesArr = ref([]);
 let countriesBaseArr = [];
 let country_code = ref("+234");
+
 watch(
   () => authStore.token,
   (newValue, oldValue) => {
@@ -479,14 +478,6 @@ const updateShippingDetails = () => {
     });
 };
 const createOrder = () => {
-  // const cartItems = cartStore.cart.map((item, index) => ({
-  //   [`cart_items[${index}][product_id]`]: item.product.id,
-  //   [`cart_items[${index}][quantity]`]: item.quantity,
-  // }));
-
-  // Flatten the array to a single object
-  // const dataToSend = Object.assign({}, ...cartItems);
-  // console.log(dataToSend);
   if (!cartStore.cart.length) {
     Loading.hide();
     Notify.create({
@@ -589,7 +580,11 @@ const initPayment = () => {
 onMounted(async () => {
   try {
     onRequest();
-    getCountries();
+    countriesBaseArr = countries.map((country) => ({
+      ...country,
+      label: country.name,
+      value: country.code,
+    }));
   } catch (error) {
     console.error(error);
   }

@@ -271,6 +271,8 @@ const submitForm = () => {
         });
 
         store.setUserDetails(response.data);
+        store.storedetails = response.data.data.merchant;
+        store.userstores.push(response.data.data.merchant);
         router.replace({
           name: "all.set",
         });

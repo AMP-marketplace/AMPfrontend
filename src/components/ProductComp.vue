@@ -2,15 +2,17 @@
   <div class="product_card">
     <div class="row items-center q-my-sm justify-between">
       <div>
-        <q-badge color="orange" text-color="black"
+        <q-badge class="q-mr-sm" color="orange" text-color="black"
           ><i class="ri-check-line text-white"></i
         ></q-badge>
-        {{ product?.subcategory?.name }}
+        <span class="cat_text">
+          {{ product?.subcategory?.name }}
+        </span>
       </div>
       <div>
         <q-badge
           rounded
-          color="orange"
+          color="green-5"
           :label="product?.condition"
           class="q-pa-sm"
         />
@@ -116,9 +118,12 @@
           product?.price?.minimum_price.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
         }}
         <span v-if="product?.price?.maximum_price !== '1'"> -</span>
-        <span v-if="product?.price?.maximum_price !== '1'">{{
-          product?.price?.maximum_price.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-        }}</span>
+        <span v-if="product?.price?.maximum_price !== '1'">
+          {{ getCountryCurrencySymbol(product?.country)
+          }}{{
+            product?.price?.maximum_price.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+          }}</span
+        >
       </p>
     </div>
   </div>
