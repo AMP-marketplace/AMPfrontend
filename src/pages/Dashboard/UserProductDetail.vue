@@ -1,16 +1,16 @@
 <template>
   <q-layout>
-    <div class="load row justify-center q-mb-xl" v-if="loading">
+    <div class="load q-pt-xl row justify-center q-mb-xl" v-if="loading">
       <q-skeleton width="90%" height="300px" />
     </div>
-    <article class="container" v-else>
+    <article id="mainCOn" class="container" v-else>
       <section class="section product" aria-label="product">
         <div class="container">
           <div>
             <q-carousel swipeable animated v-model="slide" thumbnails infinite>
               <q-carousel-slide
                 :name="index + 1"
-                v-for="(images, index) in product.images"
+                v-for="(images, index) in product.media"
                 :key="index"
                 :img-src="images.url"
               />
@@ -21,29 +21,61 @@
             <p class="product-subtitle">{{ product.name }}</p>
 
             <h1 class="h1 product-title">
-              Quantity - {{ product.quantity }} {{ product?.unit?.name }}(s)
+              Minumum Order Quantity -
+              <q-badge class="orange" :label="product.minimum_order" />
+            </h1>
+            <h1 class="h1 product-title">
+              Condition -
+              <q-badge class="orange" :label="product.condition" />
+            </h1>
+            <h1 class="h1 product-title">
+              Country -
+              <q-badge class="orange" :label="product.country" />
+            </h1>
+            <h1 class="h1 product-title">
+              Currency -
+              <q-badge class="orange" :label="product.currency" />
             </h1>
             <div>
               <router-link
                 :to="{
                   name: 'store.detail',
                   query: {
-                    name: product.store?.name,
-                    id: product.store?.id,
+                    name: product.merchant?.name,
+                    id: product.merchant?.id,
+                    slug: product.merchant?.slug,
                   },
                 }"
               >
-                <span class="badge">Store: {{ product.store?.name }}</span>
+                <span class="badge"
+                  >Visit Store: {{ product.merchant?.business_name }}</span
+                >
               </router-link>
             </div>
             <div class="wrapper">
               <span class="price" data-total-price
-                >₦{{ parseInt(product.price).toLocaleString() }}</span
+                >{{ getCountryCurrencySymbol(product?.country) }}
+                {{
+                  product?.price?.minimum_price.replace(
+                    /\B(?=(\d{3})+(?!\d))/g,
+                    ","
+                  )
+                }}
+                <span v-if="product?.price?.maximum_price !== '1'"> - </span>
+                <span v-if="product?.price?.maximum_price !== '1'"
+                  >{{ getCountryCurrencySymbol(product?.country)
+                  }}{{
+                    product?.price?.maximum_price.replace(
+                      /\B(?=(\d{3})+(?!\d))/g,
+                      ","
+                    )
+                  }}</span
+                ></span
               >
 
-              <del class="del"
+              <!-- <del class="del"
                 >₦{{ (parseInt(product.price) + 500).toLocaleString() }}</del
-              >
+              > -->
             </div>
 
             <div class="btn-group">
@@ -98,31 +130,161 @@
         <div class="desc_wrap q-mt-lg">
           <h6 class="text-h4 text-weight-bold">Description</h6>
           <p v-html="product.description" class="product-text q-mt-md"></p>
-          <!-- <h6 class="text-h3 text-weight-bold">Specifications</h6>
-          <p v-html="product.content"></p> -->
+        </div>
+        <q-toolbar id="reviews" class="text-black">
+          <q-toolbar-title>Reviews</q-toolbar-title>
+          <q-btn
+            class="bg-green-7 text-white"
+            no-wrap
+            no-caps
+            @click="rateModal = !rateModal"
+          >
+            Add Ratings
+          </q-btn>
+        </q-toolbar>
+        <q-list
+          v-if="product?.review?.length"
+          class="q-mb-lg"
+          separator
+          bordered
+        >
+          <q-item
+            v-for="(review, index) in product?.review"
+            :key="index"
+            class="q-my-sm"
+            clickable
+            v-ripple
+          >
+            <q-item-section avatar>
+              <q-avatar color="primary" text-color="white">
+                <img :src="review.media[0].url" alt="" />
+              </q-avatar>
+            </q-item-section>
+
+            <q-item-section>
+              <q-item-label>{{ review.remark }}</q-item-label>
+              <q-item-label caption lines="1"
+                >{{ review.author.name }} -
+                {{ review.author.email }}</q-item-label
+              >
+            </q-item-section>
+
+            <q-item-section side>
+              <q-btn v-if="review.is_author" @click="deleteReview(review)">
+                Delete
+              </q-btn>
+            </q-item-section>
+          </q-item>
+        </q-list>
+        <div style="margin: 0.5rem" class="auth">
+          <div class="row justify-start q-mb-md">
+            <q-rating
+              v-model="product.rating"
+              size="2em"
+              color="green-7"
+              disable
+              icon="star_border"
+              icon-selected="star"
+            />
+          </div>
+          <div class="text-left q-mb-sm">
+            <div class="text-body1">Please kindly leave a review</div>
+          </div>
+
+          <form @submit.prevent="uploadReview">
+            <div class="input_wrap">
+              <div class="input">
+                <textarea
+                  placeholder="Leave a comment"
+                  v-model="data.remark"
+                  required
+                  cols="20"
+                  rows="5"
+                ></textarea>
+              </div>
+
+              <div>
+                <q-file v-model="data.media" label="Upload review file" />
+              </div>
+            </div>
+            <q-btn
+              class="apply bg-primary q-px-xl q-mt-md"
+              no-caps
+              :loading="loadingReview"
+              flat
+              type="submit"
+              rounded
+              text-color="white"
+            >
+              Submit
+            </q-btn>
+          </form>
         </div>
       </section>
     </article>
     <FooterComp />
+
+    <q-dialog class="dialog" v-model="rateModal">
+      <div class="auth">
+        <q-card class="rate">
+          <div class="text-center q-mb-sm">
+            <div class="bigMediumText">Rate product</div>
+          </div>
+
+          <div class="auth">
+            <div class="row justify-center">
+              <q-rating
+                v-model="ratingModel"
+                size="2em"
+                color="info"
+                icon="star_border"
+                icon-selected="star"
+              />
+            </div>
+          </div>
+
+          <div class="total no-wrap row justify-center q-mt-md items-center">
+            <q-btn
+              class="apply bg-primary q-px-xl q-mt-md"
+              no-caps
+              flat
+              @click="rateProduct"
+              rounded
+              :loading="loadingRating"
+              text-color="white"
+            >
+              Submit
+            </q-btn>
+          </div>
+        </q-card>
+      </div>
+    </q-dialog>
   </q-layout>
 </template>
 
 <script setup>
-import { Notify } from "quasar";
+import { Dialog, Loading, Notify, QSpinnerOval } from "quasar";
 import { authAxios } from "src/boot/axios";
 import { onMounted, ref, watch } from "vue";
 import FooterComp from "src/components/FooterComp.vue";
-let loading = ref(false);
 import { useCartStore } from "src/stores/cart";
 import { useRoute, useRouter } from "vue-router";
 import { useMyAuthStore } from "src/stores/auth";
+import countries from "app/countries";
+import currencies from "app/currencies";
 const route = useRouter();
 let signleRouteData = useRoute();
 let store = useCartStore();
 let authStore = useMyAuthStore();
 const routeParams = ref(route.params);
-let product = ref({});
+let product = ref({ rating: 0 });
+let data = ref({ media: null });
 let qty = ref(1);
+let ratingModel = ref(0);
+let loading = ref(false);
+let rateModal = ref(false);
+let loadingReview = ref(false);
+let loadingRating = ref(false);
 let slide = ref(1);
 let recommendedProducts = ref({});
 watch(routeParams, (newParams, oldParams) => {
@@ -151,20 +313,141 @@ const removeFromQty = () => {
     return;
   }
 };
+
+function getCountryFlag(countryName) {
+  const country = countries.find(
+    (c) => c.name.toLowerCase() === countryName?.toLowerCase()
+  );
+  return country ? country.flag : "🏳️"; // Return white flag if country not found
+}
+function getCountryCurrencySymbol(countryName) {
+  const country = currencies.find(
+    (c) => c.code.toLowerCase() === product.value?.currency?.toLowerCase()
+  );
+  return country ? country.symbol : ""; // Return white flag if country not found
+}
+const deleteReview = (review) => {
+  Dialog.create({
+    title: "Note",
+    message: `Are you sure you want to delete this review?`,
+    cancel: true,
+    persistent: true,
+  })
+    .onOk(() => {
+      Loading.show({
+        spinner: QSpinnerOval,
+        message: "Deleting review...",
+      });
+      authAxios
+        .delete(`review/delete/`)
+        .then(({ data }) => {
+          Loading.hide();
+          console.log(data);
+          getDetail();
+        })
+        .catch(({ response }) => {
+          Loading.hide();
+          loading.value = false;
+        });
+    })
+    .onCancel(() => {
+      // console.log('>>>> Cancel')
+    })
+    .onDismiss(() => {
+      // console.log('I am triggered on both OK and Cancel')
+    });
+};
 const getProductDetail = () => {
   loading.value = true;
   authAxios
-    .get(`product/show/${signleRouteData.query.id}`)
+    .get(`${signleRouteData.query.slug}/show`)
     .then(({ data }) => {
       console.log(data);
       product.value = {
         ...data.data,
       };
       loading.value = false;
+
+      document.getElementById("mainCOn").scrollIntoView({ behavior: "smooth" });
     })
     .catch(({ response }) => {
       loading.value = false;
     });
+};
+const rateProduct = () => {
+  loadingRating.value = true;
+  authAxios
+    .post(`product/${signleRouteData.query.slug}/rating/create`, {
+      value: ratingModel.value,
+    })
+    .then(({ data }) => {
+      console.log(data);
+      Notify.create({
+        message: "Ratings successfully added",
+        position: "top",
+        color: "green",
+      });
+      getDetail();
+      loadingRating.value = false;
+      rateModal.value = false;
+      document.getElementById("reviews").scrollIntoView({ behavior: "smooth" });
+    })
+    .catch(({ response }) => {
+      loadingRating.value = false;
+      Notify.create({
+        message: "An error occurred",
+        position: "top",
+        color: "red",
+      });
+    });
+};
+const uploadReview = () => {
+  if (!data.value.media) {
+    Notify.create({
+      message: "Please upload a review file",
+      position: "top",
+      color: "red",
+    });
+
+    return;
+  } else {
+    const formData = new FormData();
+    formData.append("remark", data.value.remark);
+    formData.append("media[]", data.value.media);
+    loadingReview.value = true;
+    authAxios
+      .post(`product/${signleRouteData.query.slug}/review/create`, formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
+      .then((response) => {
+        Notify.create({
+          message: "Review successfully added",
+          position: "top",
+          color: "green",
+        });
+        loadingReview.value = false;
+        data.value = { media: null };
+        getDetail();
+      })
+      .catch(({ response }) => {
+        loadingReview.value = false;
+        Notify.create({
+          message: "An error occurred",
+          position: "top",
+          color: "red",
+        });
+      });
+  }
+};
+const getDetail = async () => {
+  try {
+    let prodData = await authAxios.get(`${signleRouteData.query.slug}/show`);
+    // console.log(prodData);
+    product.value = prodData.data.data;
+    document.getElementById("reviews").scrollIntoView({ behavior: "smooth" });
+  } catch (error) {}
 };
 const getRecommendedProducts = () => {
   authAxios
@@ -293,8 +576,8 @@ section {
 
 .product-content .product-subtitle {
   color: hsl(146, 75%, 30%);
-  font-size: var(--fs-4);
-  font-weight: var(--fw-700);
+  font-size: 1.6rem;
+  font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 1px;
 }
@@ -332,8 +615,8 @@ section {
 
 .product-content .price {
   color: var(--eerie-black);
-  font-size: var(--fs-1);
-  font-weight: var(--fw-700);
+  font-size: 1.5rem;
+  font-weight: 700;
 }
 
 .product-content .badge {

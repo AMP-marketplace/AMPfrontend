@@ -10,28 +10,28 @@
             <label for="">First Name <span>*</span></label>
             <div class="input">
               <input
-                v-model="data.firstname"
+                v-model="data.first_name"
                 placeholder="Enter first name"
                 required
                 type="text"
               />
             </div>
-            <small v-if="errors.firstname" class="text-red text-weight-bold">
-              {{ errors.firstname[0] }}
+            <small v-if="errors.first_name" class="text-red text-weight-bold">
+              {{ errors.first_name[0] }}
             </small>
           </div>
           <div class="input_wrap">
             <label for="">Last Name <span>*</span></label>
             <div class="input">
               <input
-                v-model="data.lastname"
+                v-model="data.last_name"
                 placeholder="Enter last name"
                 required
                 type="text"
               />
             </div>
-            <small v-if="errors.lastname" class="text-red text-weight-bold">
-              {{ errors.lastname[0] }}
+            <small v-if="errors.last_name" class="text-red text-weight-bold">
+              {{ errors.last_name[0] }}
             </small>
           </div>
           <div class="input_wrap">
@@ -351,12 +351,14 @@ const submitForm = () => {
         position: "top",
       });
 
-      store.setUserDetails(response);
+      store.setUserDetails(response.data);
       loading.value = false;
       verifyModal.value = true;
 
-      // data.value = {};
-
+      data.value = {};
+      router.replace({
+        name: "dashboard",
+      });
       // store.setToken(response.data);
     })
     .catch(({ response }) => {

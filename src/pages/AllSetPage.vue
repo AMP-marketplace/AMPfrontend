@@ -32,7 +32,7 @@
             no-caps
             rounded
             v-if="stores.role === 'merchant'"
-            color="primary"
+            color="green-6"
             >Create Store</q-btn
           >
           <q-btn
@@ -42,8 +42,8 @@
             :key="index"
             no-caps
             rounded
-            color="green-6"
-            >{{ store.name }}</q-btn
+            color="primary"
+            >Sign in to{{ store.business_name }}</q-btn
           >
         </div>
       </div>

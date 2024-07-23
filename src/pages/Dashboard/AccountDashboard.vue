@@ -3,7 +3,7 @@
     <div style="gap: 1rem" class="row no-wrap justify-end">
       <div class="">
         <q-btn
-          :color="!store.storedetails.published ? 'red-7' : 'green-7'"
+          :color="!store.storedetails.is_published ? 'red-7' : 'green-7'"
           class="q-px-md"
           no-caps
           :disable="prodListArr.length < 1"
@@ -13,7 +13,7 @@
           v-if="store.storedetails.business_name"
         >
           {{
-            store.storedetails.published === false
+            store.storedetails.is_published === false
               ? "Publish store"
               : "Unublish store"
           }}
@@ -98,8 +98,11 @@
         <div
           v-if="showAddProductImage"
           style="gap: 1rem"
-          class="input justify-between row items-center no-wrap"
+          class="input justify-between column items-center no-wrap"
         >
+          <div class="smallText text-weight-bold">
+            Note that this will be your main/display product image
+          </div>
           <!-- {{ addedProductData }} -->
           <q-file
             @update:model-value="setProductImage"
@@ -142,14 +145,26 @@
               ></textarea> -->
             </div>
           </div>
-          <div class="input_wrap">
-            <label for="">Price <span>*</span></label>
-            <div class="input">
-              <select @change="togglePriceType" v-model="typeOfPrice">
-                <option value="fixed">Fixed</option>
-                <option value="negotiable">Negotiable</option>
-                <option value="range">Range</option>
-              </select>
+          <div class="auth_grid">
+            <div class="input_wrap">
+              <label for="">Price <span>*</span></label>
+              <div class="input">
+                <select @change="togglePriceType" v-model="typeOfPrice">
+                  <option value="fixed">Fixed</option>
+                  <option value="negotiable">Negotiable</option>
+                  <option value="range">Range</option>
+                </select>
+              </div>
+            </div>
+            <div class="input_wrap">
+              <label for="">Condition <span>*</span></label>
+              <div class="input">
+                <select v-model="data.condition">
+                  <option value="new">New</option>
+                  <option value="refurbished">Refurbished</option>
+                  <!-- <option value="range">Range</option> -->
+                </select>
+              </div>
             </div>
           </div>
           <div v-if="typeOfPrice === 'range'" class="auth_grid">
@@ -187,7 +202,7 @@
               />
             </div>
           </div>
-          <div class="input_wrap">
+          <!-- <div class="input_wrap">
             <label for="">Quantity in stock<span>*</span></label>
             <div class="input">
               <input
@@ -197,7 +212,7 @@
                 type="text"
               />
             </div>
-          </div>
+          </div> -->
           <div class="input_wrap">
             <label for="">Minimum Product Sale<span>*</span></label>
             <div class="input">
@@ -205,7 +220,7 @@
                 v-model="data.minimum_order"
                 placeholder="3"
                 required
-                type="text"
+                type="number"
               />
             </div>
           </div>
@@ -263,21 +278,39 @@
               </select>
             </div>
           </div> -->
-          <div class="input_wrap">
-            <label for="">Currency<span>*</span></label>
-            <div class="input">
-              <select v-model="data.currency" required>
-                <option disabled value="">Choose</option>
-                <option
-                  v-for="currency in currencies"
-                  :key="currency.name"
-                  :value="currency.name"
-                >
-                  {{ currency.name }} {{ currency.flag }}
-                </option>
-              </select>
+          <div class="auth_grid">
+            <div class="input_wrap">
+              <label for="">Country<span>*</span></label>
+              <div class="input">
+                <select v-model="data.country" required>
+                  <option disabled value="">Choose</option>
+                  <option
+                    v-for="country in countries"
+                    :key="country.name"
+                    :value="country.name"
+                  >
+                    {{ country.name }} {{ country.flag }}
+                  </option>
+                </select>
+              </div>
+            </div>
+            <div class="input_wrap">
+              <label for="">Currency<span>*</span></label>
+              <div class="input">
+                <select v-model="data.currency" required>
+                  <option disabled value="">Choose</option>
+                  <option
+                    v-for="currency in currencies"
+                    :key="currency.code"
+                    :value="currency.code"
+                  >
+                    {{ currency.name }} {{ currency.flag }}
+                  </option>
+                </select>
+              </div>
             </div>
           </div>
+
           <!-- <q-btn @click="addAttribute" flat no-caps no-wrap color="primary">
             + Add attributes
           </q-btn>
@@ -352,6 +385,7 @@ import { useRoute, useRouter } from "vue-router";
 import countries from "../../../countries";
 import FooterCompVue from "src/components/FooterComp.vue";
 import currencies from "../../../currencies";
+
 let store = useMyAuthStore();
 let router = useRouter();
 let route = useRoute();
@@ -375,11 +409,13 @@ let coverFile = ref(null);
 let productImageFile = ref(null);
 let profileFile = ref(null);
 let productImagePreview = ref("");
+let cancelAddproductodal = ref("");
 let profileFilePreview = ref("");
 let selectedCategories = ref("");
 let typeOfPrice = ref("fixed");
 let coverFilePreview = ref("");
 let addProductModal = ref(false);
+let editState = ref(false);
 let storeDetailsLoadBtn = ref(false);
 let loadingProducts = ref(true);
 let puborUnpubLoadBtn = ref(false);
@@ -469,18 +505,17 @@ const setProductImage = (props) => {
     productImagePreview.value = e.target.result;
   };
   reader.readAsDataURL(props);
-
+  const formData = new FormData();
+  formData.append("media[]", productImageFile.value);
   Loading.show({
     spinner: QSpinnerOval,
     message: "Uploading image...",
   });
+
   authAxios
     .post(
       `merchant/${store.storedetails.slug}/${addedProductData.value.slug}/upload/media`,
-      {
-        media: productImageFile.value,
-        // role: "main",
-      },
+      formData,
       {
         headers: {
           "Content-Type": "multipart/form-data",
@@ -500,7 +535,7 @@ const setProductImage = (props) => {
       router.replace({
         name: "account.dashboard",
       });
-      // getProducts();
+      getProducts();
     })
     .catch(({ response }) => {
       // console.log(response);
@@ -583,15 +618,6 @@ const onRejected = () => {
     message: `Your upload size should be less than 2mb `,
   });
 };
-const addAttribute = () => {
-  data.value.attributes.push({
-    name: "",
-    value: "",
-  });
-};
-const removeAttribute = (counter) => {
-  data.value.attributes.splice(counter, 1);
-};
 
 const createStore = () => {
   storeDetailsLoadBtn.value = true;
@@ -632,7 +658,7 @@ const publishOrUnpublishStore = () => {
   puborUnpubLoadBtn.value = true;
   if (!store.storedetails.published) {
     authAxios
-      .post(`merchant/store/${store.storedetails.id}/publish`, {
+      .post(`merchant/${store.storedetails.slug}/publish`, {
         publish: 1,
       })
       .then((response) => {
@@ -660,7 +686,7 @@ const publishOrUnpublishStore = () => {
       });
   } else {
     authAxios
-      .post(`merchant/store/${store.storedetails.id}/publish`, {
+      .post(`merchant/${store.storedetails.slug}/publish`, {
         publish: 0,
       })
       .then((response) => {
@@ -692,6 +718,7 @@ const addProductFCN = () => {
   let dataToSend = {
     ...data.value,
     is_negotiable: typeOfPrice.value === "negotiable" ? 1 : 0,
+    maximum_price: data.value.maximum_price ? data.value.maximum_price : "1",
   };
   Loading.show();
   authAxios
@@ -713,9 +740,11 @@ const addProductFCN = () => {
       // console.log(response);
       Loading.hide();
 
-      errors.value = response.data.data.errors;
+      errors.value = response.data.errors;
       Notify.create({
-        message: response.data.message,
+        message: response.data.message
+          ? response.data.message
+          : Object.values(response.data.errors) + ",",
         color: "red",
         position: "top",
         actions: [{ icon: "close", color: "white" }],
@@ -726,9 +755,7 @@ const getProducts = async () => {
   try {
     // Loading.show();
     loadingProducts.value = true;
-    let prodList = await authAxios.get(
-      `merchant/${store.storedetails.slug}/products`
-    );
+    let prodList = await authAxios.get(`${store.storedetails.slug}/products`);
     console.log(prodList);
     loadingProducts.value = false;
     prodListArr.value = prodList.data.data;

@@ -8,9 +8,17 @@
           unique store
         </p> -->
       </div>
-      <div class="">
+      <div style="gap: 0.5rem" class="row items-center no-wrap">
         <q-btn
-          :color="data.published === false ? 'red-7' : 'green-7'"
+          no-caps
+          no-wrap
+          class="bg-blue-7 text-white"
+          :to="{ name: 'account.dashboard' }"
+        >
+          Go home
+        </q-btn>
+        <q-btn
+          :color="data.is_published === false ? 'red-7' : 'green-7'"
           class="q-px-md"
           no-caps
           :loading="puborUnpubLoadBtn"
@@ -18,7 +26,7 @@
           no-wrap
         >
           {{
-            data.published === false ? "Publish product" : "Unublish product"
+            data.is_published === false ? "Publish product" : "Unublish product"
           }}
         </q-btn>
       </div>
@@ -40,7 +48,7 @@
             <q-carousel-slide
               style="background-size: contain; background-repeat: no-repeat"
               :name="index + 1"
-              v-for="(images, index) in data.images"
+              v-for="(images, index) in data.media"
               :key="index"
               :img-src="images.url"
             />
@@ -134,12 +142,12 @@
             />
           </div>
         </div>
-        <div class="input_wrap">
+        <!-- <div class="input_wrap">
           <label for="">Quantity in stock<span>*</span></label>
           <div class="input">
             <input placeholder="10" required type="text" />
           </div>
-        </div>
+        </div> -->
         <!-- {{ productCategoryListArr }} -->
         <div class="input_wrap">
           <label for="">Minimum Product Sale<span>*</span></label>
@@ -200,14 +208,40 @@
               <option
                 v-for="currency in currencies"
                 :key="currency.name"
-                :value="currency.name"
+                :value="currency.code"
               >
                 {{ currency.name }} {{ currency.flag }}
               </option>
             </select>
           </div>
         </div>
-
+        <div class="auth_grid">
+          <div class="input_wrap">
+            <label for="">Country<span>*</span></label>
+            <div class="input">
+              <select v-model="data.country" required>
+                <option disabled value="">Choose</option>
+                <option
+                  v-for="country in countries"
+                  :key="country.name"
+                  :value="country.name"
+                >
+                  {{ country.name }} {{ country.flag }}
+                </option>
+              </select>
+            </div>
+          </div>
+          <div class="input_wrap">
+            <label for="">Condition <span>*</span></label>
+            <div class="input">
+              <select v-model="data.condition">
+                <option value="new">New</option>
+                <option value="refurbished">Refurbished</option>
+                <!-- <option value="range">Range</option> -->
+              </select>
+            </div>
+          </div>
+        </div>
         <div class="row justify-end q-mt-lg">
           <q-btn
             color="primary"
@@ -231,13 +265,11 @@
         <!-- <h6 class="text-h6 text-center">
           Do you want to change the main image or upload another image?
         </h6> -->
-        <div class="q-mt-sm">
-          <!-- {{ imageRole }} -->
+        <!-- <div class="q-mt-sm">
           <q-select v-model="imageRole" :options="options" label="Select" />
-        </div>
+        </div> -->
       </div>
       <q-file
-        v-if="imageRole"
         @update:model-value="setProductImage"
         accept=".png,.jpeg,.svg,.jpg"
         class="column profile_field justify-center items-center"
@@ -250,6 +282,20 @@
         </div>
         <div class="smallText">Upload another product image</div>
       </q-file>
+      <!-- <q-file
+        v-if="imageRole"
+        @update:model-value="setProductImage"
+        accept=".png,.jpeg,.svg,.jpg"
+        class="column profile_field justify-center items-center"
+        v-model="AnotherproductImageFile"
+        max-file-size="2097152"
+        @rejected="onRejected"
+      >
+        <div class="img q-mb-sm">
+          <img src="../../assets/upload.svg" alt="" />
+        </div>
+        <div class="smallText">Upload another product image</div>
+      </q-file> -->
     </q-card>
   </q-dialog>
   <q-dialog v-model="editImageModal">
@@ -275,7 +321,7 @@
         <q-item-label header>Images</q-item-label>
 
         <q-item
-          v-for="(images, index) in data.images"
+          v-for="(images, index) in data.media"
           :key="index"
           clickable
           v-ripple
@@ -288,20 +334,21 @@
 
           <q-item-section>
             <q-item-label lines="1">Image {{ index + 1 }}</q-item-label>
-            <q-item-label caption>{{
+            <q-item-label caption>{{ images.size }}</q-item-label>
+            <!-- <q-item-label caption>{{
               new Date(images.created_at).toLocaleDateString("en-US", {
                 day: "numeric",
                 month: "long",
                 year: "numeric",
               })
-            }}</q-item-label>
+            }}</q-item-label> -->
           </q-item-section>
 
           <q-item-section side>
             <div style="gap: 1rem" class="row items-center no-wrap">
-              <q-btn @click="editImageProps(images)" color="green-7"
+              <!-- <q-btn @click="editImageProps(images)" color="green-7"
                 ><i class="fa-solid fa-pen-to-square"></i
-              ></q-btn>
+              ></q-btn> -->
               <q-btn @click="deleteImageProps(images)" color="red-7"
                 ><i class="fa-solid fa-trash"></i
               ></q-btn>
@@ -322,6 +369,7 @@ import ProductsComp from "src/components/ProductsComp.vue";
 let store = useMyAuthStore();
 import { useRoute, useRouter } from "vue-router";
 import currencies from "app/currencies";
+import countries from "app/countries";
 let router = useRouter();
 let route = useRoute();
 let data = ref({
@@ -385,23 +433,17 @@ const filterFn = (val, update, abort) => {
 
 const setProductImage = (props) => {
   AnotherproductImageFile.value = props;
-  // var reader = new FileReader();
-  // reader.onload = (e) => {
-  //   productImagePreview.value = e.target.result;
-  // };
-  // reader.readAsDataURL(props);
+
   Loading.show({
     spinner: QSpinnerOval,
     message: "Uploading product image...",
   });
-
+  const formData = new FormData();
+  formData.append("media[]", AnotherproductImageFile.value);
   authAxios
     .post(
-      `merchant/product/${route.query.id}/upload-image`,
-      {
-        image: AnotherproductImageFile.value,
-        role: imageRole.value === "Main" ? "main" : "",
-      },
+      `merchant/${store.storedetails.slug}/${data.value.slug}/upload/media`,
+      formData,
       {
         headers: {
           "Content-Type": "multipart/form-data",
@@ -417,6 +459,7 @@ const setProductImage = (props) => {
         position: "top",
       });
       Loading.hide();
+      AnotherproductImageFile.value = null;
       AddProductImageModal.value = false;
       getProducts();
     })
@@ -498,7 +541,9 @@ const deleteImageProps = (imageData) => {
         message: "Deleting...",
       });
       authAxios
-        .post(`merchant/product/${imageData.id}/delete-image`)
+        .post(
+          `merchant/${store.storedetails.slug}/${data.value.slug}/remove/media?key=${imageData.key}`
+        )
         .then((response) => {
           console.log(response);
           Notify.create({
@@ -531,61 +576,6 @@ const deleteImageProps = (imageData) => {
       // console.log('I am triggered on both OK and Cancel')
     });
 };
-const changeProductImage = (props) => {
-  console.log(props);
-  productImageFile.value = props;
-  var reader = new FileReader();
-  reader.onload = (e) => {
-    productImagePreview.value = e.target.result;
-  };
-  reader.readAsDataURL(props);
-
-  Loading.show({
-    spinner: QSpinnerOval,
-    message: "Updating product image...",
-  });
-  let urlToSend = data.value.images.length
-    ? `merchant/product/${data.value.images[0].id}/change-image`
-    : `merchant/product/${data.value.id}/upload-image`;
-  authAxios
-    .post(
-      urlToSend,
-      {
-        image: productImageFile.value,
-        role: "main",
-      },
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }
-    )
-    .then((response) => {
-      console.log(response);
-
-      Notify.create({
-        message:
-          response.data.message + ", product image successfully updated.",
-        color: "green",
-        position: "top",
-      });
-      Loading.hide();
-      productImageFile.value = null;
-      getProducts();
-    })
-    .catch(({ response }) => {
-      // console.log(response);
-      storeDetailsLoadBtn.value = false;
-      Loading.hide();
-      errors.value = response.data.data.errors;
-      Notify.create({
-        message: response.data.message,
-        color: "red",
-        position: "top",
-        actions: [{ icon: "close", color: "white" }],
-      });
-    });
-};
 
 const onRejected = () => {
   Notify.create({
@@ -594,23 +584,12 @@ const onRejected = () => {
     message: `Your upload size should be less than 2mb `,
   });
 };
-const addAttribute = () => {
-  data.value.attributes.push({
-    name: "",
-    value: "",
-  });
-};
-const removeAttribute = (counter) => {
-  data.value.attributes.splice(counter, 1);
-};
 
 const publishorUnpublishProduct = () => {
   puborUnpubLoadBtn.value = true;
-  if (!data.value.published) {
+  if (!data.value.is_published) {
     authAxios
-      .post(`merchant/product/${data.value.id}/publish`, {
-        published: 1,
-      })
+      .post(`merchant/${store.storedetails.slug}/${data.value.slug}/publish`)
       .then((response) => {
         console.log(response);
         puborUnpubLoadBtn.value = false;
@@ -636,9 +615,7 @@ const publishorUnpublishProduct = () => {
       });
   } else {
     authAxios
-      .post(`merchant/product/${data.value.id}/publish`, {
-        published: 0,
-      })
+      .post(`merchant/${store.storedetails.slug}/${data.value.slug}/publish`)
       .then((response) => {
         console.log(response);
         puborUnpubLoadBtn.value = false;
@@ -666,12 +643,19 @@ const publishorUnpublishProduct = () => {
 };
 const updateProductFunction = () => {
   let dataToSend = {
-    ...data.value,
-    store_id: store.storedetails.id,
+    name: data.value.name,
+    currency: data.value.currency,
+    minimum_price: data.value.minimum_price,
+    minimum_price: data.value.maximum_price,
+    description: data.value.description,
+    country: data.value.country,
+    condition: data.value.condition,
+    subcategory_id: data.value.subcategory_id,
+    // ...data.value,
   };
   Loading.show();
   authAxios
-    .post(`merchant/product/${data.value.id}/update`, {
+    .post(`${store.storedetails.slug}/${data.value.slug}/edit`, {
       ...dataToSend,
     })
     .then((response) => {
@@ -700,10 +684,13 @@ const updateProductFunction = () => {
 };
 const getProducts = async () => {
   try {
-    let prodList = await authAxios.get("merchant/product/list");
-    data.value = prodList.data.data.data.filter(
-      (product) => product.id === parseInt(route.query.id)
-    )[0];
+    let getProdDetail = await authAxios.get(`${route.query.slug}/show`);
+    data.value = {
+      ...getProdDetail.data.data,
+      subcategory_id: getProdDetail.data.data.subcategory.id,
+      maximum_price: getProdDetail.data.data.price.maximum_price,
+      minimum_price: getProdDetail.data.data.price.minimum_price,
+    };
     Loading.hide();
   } catch (error) {
     console.error(error);
@@ -726,19 +713,34 @@ onMounted(async () => {
   try {
     // console.log(route.query.id);
     Loading.show();
-    let getProdDetail = await authAxios.get(`product/show/${route.query.id}`);
-    let prodCatList = await authAxios.get("product/category/list");
-    let prodUnitList = await authAxios.get("product/unit/list");
-    let currList = await authAxios.get("currency/list");
+    let getProdDetail = await authAxios.get(`${route.query.slug}/show`);
+    let prodCatList = await authAxios.get("data?fetch=categories");
     console.log(getProdDetail);
-
+    console.log(prodCatList);
     productCategoryListArr.value = prodCatList.data.data;
-    productUnitListArr.value = prodUnitList.data.data;
-    currencyListArr.value = currList.data.data;
-    // prodListArr.value = prodList.data.data.data;
-    getProducts();
+
+    if (getProdDetail.data.data.price.maximum_price) {
+      typeOfPrice.value = "range";
+    } else {
+      typeOfPrice.value = "fixed";
+    }
+
+    let mainCatSlug = prodCatList.data.data.find(
+      (cat) =>
+        cat.id === parseInt(getProdDetail.data.data.subcategory.category_id)
+    );
+    selectedCategories.value = mainCatSlug.slug;
+    getSubcategories();
+    data.value = {
+      ...getProdDetail.data.data,
+      subcategory_id: getProdDetail.data.data.subcategory.id,
+      maximum_price: getProdDetail.data.data.price.maximum_price,
+      minimum_price: getProdDetail.data.data.price.minimum_price,
+    };
+    Loading.hide();
   } catch (error) {
     console.error(error);
+    Loading.hide();
   }
 });
 </script>

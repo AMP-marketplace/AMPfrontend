@@ -2,9 +2,9 @@
   <div>
     <div class="stores_card">
       <div class="img">
-        <img v-if="storeData.banner" :src="storeData.banner" alt="" />
+        <img v-if="storeData.banner" :src="storeData.banner.url" alt="" />
         <img v-else :src="img" alt="" />
-        <h6 class="mediumText">{{ storeData.name }}</h6>
+        <h6 class="mediumText">{{ storeData.business_name }}</h6>
         <!-- <q-btn flat><i class="fa-regular fa-heart"></i></q-btn> -->
       </div>
       <p class="smallText q-mt-sm">
@@ -16,6 +16,7 @@
             name: 'store.detail',
             query: {
               name: storeData.name,
+              slug: storeData.slug,
               id: storeData.id,
             },
           }"

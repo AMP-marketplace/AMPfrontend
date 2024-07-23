@@ -135,14 +135,14 @@
                 <q-item-section> History </q-item-section>
               </q-item> -->
               <q-separator />
-              <q-item
+              <!-- <q-item
                 :to="{ name: 'dispatch.riders' }"
                 class="navLinks"
                 clickable
                 v-ripple
               >
                 <q-item-section> Dispatch Drivers </q-item-section>
-              </q-item>
+              </q-item> -->
               <q-item
                 :to="{ name: 'account.info' }"
                 class="navLinks"

@@ -5,10 +5,15 @@
         <q-badge color="orange" text-color="black"
           ><i class="ri-check-line text-white"></i
         ></q-badge>
-        {{ product.subcategory.name }}
+        {{ product?.subcategory?.name }}
       </div>
       <div>
-        <q-badge rounded color="orange" label="New" class="q-pa-sm" />
+        <q-badge
+          rounded
+          color="orange"
+          :label="product?.condition"
+          class="q-pa-sm"
+        />
       </div>
     </div>
 
@@ -16,27 +21,27 @@
       <router-link
         :to="{
           name:
-            store.role === 'merchant'
+            store.role === 'merchant' && route.name === 'account.dashboard'
               ? 'product.detail'
               : 'user.product.detail',
 
           query: {
-            name: product.name,
-            slug: product.slug,
-            id: product.id,
+            name: product?.name,
+            slug: product?.slug,
+            id: product?.id,
           },
         }"
       >
         <img
-          :src="product.media.length ? product.media[0].url : ''"
-          :alt="product.name"
+          :src="product?.media?.length ? product?.media[0]?.url : ''"
+          :alt="product?.name"
         />
       </router-link>
     </div>
     <div style="gap: 0.5rem" class="row justify-end items-center no-wrap">
       <q-btn
         no-caps
-        class="addtocart"
+        class="addtocart q-mt-sm"
         no-wrap
         v-if="store.role !== 'merchant'"
         @click="cartStore.addTocart(product)"
@@ -46,13 +51,14 @@
 
       <q-btn
         v-if="
-          store.storedetails.id === product.merchant.id &&
+          store.storedetails.id === product?.merchant?.id &&
           route.name === 'account.dashboard'
         "
         :to="{
           name: 'product.detail',
           query: {
-            id: product.id,
+            id: product?.id,
+            slug: product?.slug,
           },
         }"
         flat
@@ -60,18 +66,18 @@
       ></q-btn>
     </div>
     <div class="content q-mt-sm">
-      <p class="text-grey-7">{{ product.subcategory.name }}</p>
+      <p class="text-grey-7">{{ product?.subcategory?.name }}</p>
       <router-link
         :to="{
           name:
-            store.role === 'merchant'
+            store.role === 'merchant' && route.name === 'account.dashboard'
               ? 'product.detail'
               : 'user.product.detail',
 
           query: {
-            name: product.name,
-            slug: product.slug,
-            id: product.id,
+            name: product?.name,
+            slug: product?.slug,
+            id: product?.id,
           },
         }"
       >
@@ -80,8 +86,8 @@
       <div>
         <p style="gap: 0.6rem" class="row items-center no-wrap">
           <i class="ri-map-pin-line text-h6 text-grey-7"></i>
-          <span class="text-grey-7"> {{ product.merchant.country }} </span>
-          <span>{{ getCountryFlag(product.currency) }}</span>
+          <span class="text-grey-7"> {{ product?.country }} </span>
+          <span>{{ getCountryFlag(product?.country) }}</span>
           <!-- <img
             style="width: 30px"
             :src=""
@@ -90,25 +96,29 @@
         </p>
         <p style="gap: 0.6rem" class="row items-center no-wrap">
           <i class="ri-time-line text-h6 text-grey-7"></i>
-          <span class="text-grey-7"> 2 weeks ago </span>
+          <span class="text-grey-7">
+            {{ product?.created_at ? formatDate() : "" }}
+          </span>
         </p>
-        <p style="gap: 0.6rem" class="row text-grey-7 items-center no-wrap">
+        <!-- <p style="gap: 0.6rem" class="row text-grey-7 items-center no-wrap">
           <i class="ri-arrow-left-up-fill text-h6"></i>
           <span class="text-grey-7"> Sell </span>
-        </p>
+        </p> -->
         <p style="gap: 0.6rem" class="row items-center no-wrap">
           <i class="ri-eye-line text-h6 text-grey-7"></i>
-          <span class="text-grey-7">50 Views </span>
+          <span class="text-grey-7">{{ product?.views }} Views </span>
         </p>
       </div>
 
       <p class="text-blue-10 q-mt-md text-h6 text-weight-bold">
-        {{ getCountryCurrencySymbol(product.currency) }}
+        {{ getCountryCurrencySymbol(product?.country) }}
         {{
-          product.price?.minimum_price.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+          product?.price?.minimum_price.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
         }}
-        -
-        {{ product.price?.maximum_price.replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
+        <span v-if="product?.price?.maximum_price !== '1'"> -</span>
+        <span v-if="product?.price?.maximum_price !== '1'">{{
+          product?.price?.maximum_price.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+        }}</span>
       </p>
     </div>
   </div>
@@ -118,24 +128,31 @@
 import { useMyAuthStore } from "src/stores/auth";
 import { useCartStore } from "src/stores/cart";
 import { useRoute } from "vue-router";
+import { formatDistanceToNow, parseISO } from "date-fns";
 let route = useRoute();
 let store = useMyAuthStore();
 let cartStore = useCartStore();
 import currencies from "app/currencies";
+import countries from "app/countries";
 
 let props = defineProps({
   product: Object,
 });
 
+function formatDate() {
+  const date = parseISO(props.product?.created_at);
+  const formattedDate = formatDistanceToNow(date, { addSuffix: true });
+  return formattedDate;
+}
 function getCountryFlag(countryName) {
-  const country = currencies.find(
-    (c) => c.name.toLowerCase() === countryName.toLowerCase()
+  const country = countries.find(
+    (c) => c.name.toLowerCase() === countryName?.toLowerCase()
   );
   return country ? country.flag : "🏳️"; // Return white flag if country not found
 }
 function getCountryCurrencySymbol(countryName) {
   const country = currencies.find(
-    (c) => c.name.toLowerCase() === countryName.toLowerCase()
+    (c) => c.code.toLowerCase() === props?.product?.currency?.toLowerCase()
   );
   return country ? country.symbol : ""; // Return white flag if country not found
 }

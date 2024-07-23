@@ -8,20 +8,6 @@
     <div v-if="!bankDetails.account_name || editState" class="auth">
       <form @submit.prevent="addInfo">
         <div class="auth_grid">
-          <!-- <div class="input_wrap">
-            <label for="">Account Name <span>*</span></label>
-            <div class="input">
-              <input
-                v-model="data.account_name"
-                placeholder="Enter account name"
-                required
-                type="text"
-              />
-            </div>
-            <small v-if="errors.account_name" class="text-weight-bold text-red">
-              {{ errors.account_name[0] }}
-            </small>
-          </div> -->
           <div class="input_wrap">
             <label for="">Choose Bank <span>*</span></label>
             <div class="input">
@@ -57,6 +43,20 @@
               {{ errors.account_number[0] }}
             </small>
           </div>
+        </div>
+        <div class="input_wrap">
+          <label for="">Account Name <span>*</span></label>
+          <div class="input">
+            <input
+              v-model="data.account_name"
+              placeholder="Enter account name"
+              required
+              type="text"
+            />
+          </div>
+          <small v-if="errors.account_name" class="text-weight-bold text-red">
+            {{ errors.account_name[0] }}
+          </small>
         </div>
 
         <div style="gap: 1rem" class="row items-center justify-end q-mt-lg">
@@ -100,7 +100,7 @@
       </p>
       <p class="mediumText q-mt-sm">
         Bank:
-        <span style="font-weight: 400">{{ bankDetails?.bank_name }}</span>
+        <span style="font-weight: 400">{{ bankDetails?.bank }}</span>
       </p>
     </div>
   </div>
@@ -136,13 +136,14 @@ const addInfo = () => {
   if (editState.value) {
     Loading.show();
     authAxios
-      .post("auth/bank/save-account", {
+      .post("nuban/create", {
         ...dataToSend,
       })
       .then((response) => {
         console.log(response);
         editState.value = !editState.value;
-        bankDetails.value = response.data.data;
+        // bankDetails.value = response.data.data;
+        getInfo();
         Loading.hide();
         Notify.create({
           message: response.data.message,
@@ -163,11 +164,12 @@ const addInfo = () => {
   } else {
     Loading.show();
     authAxios
-      .post("auth/bank/save-account", {
+      .post("nuban/create", {
         ...dataToSend,
       })
       .then((response) => {
         console.log(response);
+        getInfo();
         bankDetails.value = response.data.data;
         Loading.hide();
         Notify.create({
@@ -192,8 +194,8 @@ const addInfo = () => {
 const getInfo = async () => {
   try {
     Loading.show();
-    let accountInfo = await authAxios.get("auth/bank/details");
-    let bankList = await authAxios.get("banks/list");
+    let bankList = await authAxios.get("data?fetch=banks");
+    let accountInfo = await authAxios.get("nuban/show/user");
 
     console.log(accountInfo);
     console.log(bankList);
@@ -203,6 +205,7 @@ const getInfo = async () => {
     Loading.hide();
   } catch (error) {
     console.error(error);
+    Loading.hide();
   }
 };
 

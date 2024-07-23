@@ -16,9 +16,11 @@ v
 
       <div>
         <div class="stores_list q-mb-xl">
-          <q-item v-for="(stores, index) in categoryListArr" :key="index"
+          <q-item>Med Solutions </q-item>
+          <q-item>Med Equipments </q-item>
+          <!-- <q-item v-for="(stores, index) in categoryListArr" :key="index"
             >{{ stores.name }}
-          </q-item>
+          </q-item> -->
         </div>
 
         <div v-if="loadingProducts" class="q-pa-md responsive_grid">
@@ -78,22 +80,21 @@ const getCategories = async () => {
   try {
     loading.value = true;
     let prodCatList = await authAxios.get("product/category/list");
-
     categoryListArr.value = prodCatList.data.data;
-    // console.log(categoryListArr.value);
     loading.value = false;
   } catch (error) {
+    loading.value = false;
     console.error(error);
   }
 };
 
 const getStores = () => {
   authAxios
-    .get("store/list")
+    .get("merchant/index/all")
     .then((response) => {
       console.log(response);
       loading.value = false;
-      storesArr.value = response.data.data.data;
+      storesArr.value = response.data.data;
       loadingProducts.value = false;
     })
     .catch(({ response }) => {
@@ -109,7 +110,7 @@ const getStores = () => {
 };
 onMounted(() => {
   getStores();
-  getCategories();
+  // getCategories();
 });
 </script>
 

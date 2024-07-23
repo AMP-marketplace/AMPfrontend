@@ -292,7 +292,7 @@ const submitForm = () => {
 
       data.value = {};
       loading.value = false;
-      if (response.data.data.role[0].name === "shopper") {
+      if (response.data.data.roles[0].name === "shopper") {
         store.setUserDetails(response.data);
         if (route.query.redirect) {
           router.replace({ name: route.query.redirect });
