@@ -569,7 +569,9 @@ const initPayment = () => {
         Object.values(response.data.data.errors).map((error) => error + ",")
       );
       Notify.create({
-        message: response.data.message,
+        message: response.data.message
+          ? response.data.message
+          : Object.values(response.data.errors) + ",",
         color: "red",
         position: "top",
         actions: [{ icon: "close", color: "white" }],

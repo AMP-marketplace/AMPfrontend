@@ -41,7 +41,7 @@ v
                 </q-list>
               </div>
               <div class="q-mt-md">
-                <p class="text-weight-bold">MedEquipments</p>
+                <p class="text-weight-bold">MedComponents</p>
                 <div class="q-mt-md" v-if="loading">
                   <q-skeleton height="100px" />
                 </div>

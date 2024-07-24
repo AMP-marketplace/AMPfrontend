@@ -206,6 +206,7 @@ const onRequest = (props) => {
     })
     .catch(({ response }) => {
       loading.value = false;
+      rows.value = [];
     });
 };
 const getProducts = async () => {

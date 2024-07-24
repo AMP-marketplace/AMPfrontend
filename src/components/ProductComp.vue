@@ -12,9 +12,33 @@
       <div>
         <q-badge
           rounded
-          color="green-5"
+          v-if="product?.condition === 'new'"
           :label="product?.condition"
-          class="q-pa-sm"
+          class="q-pa-sm new text-white"
+        />
+        <q-badge
+          v-if="product?.condition === 'refurbished'"
+          rounded
+          :label="product?.condition"
+          class="q-pa-sm refurbished text-white"
+        />
+        <q-badge
+          v-if="product?.condition === 'open_box'"
+          rounded
+          :label="product?.condition"
+          class="q-pa-sm open_box text-white"
+        />
+        <q-badge
+          v-if="product?.condition === 'used'"
+          rounded
+          :label="product?.condition"
+          class="q-pa-sm used text-white"
+        />
+        <q-badge
+          v-if="product?.condition === 'damaged'"
+          rounded
+          :label="product?.condition"
+          class="q-pa-sm damaged text-white"
         />
       </div>
     </div>

@@ -1106,6 +1106,10 @@ hr {
   }
   .auth_grid {
     grid-template-columns: 1fr;
+    gap: 0;
+    .input_wrap {
+      margin: 0.5rem 0;
+    }
   }
 
   .q-dialog .q-card {

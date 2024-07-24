@@ -353,7 +353,7 @@ const submitForm = () => {
 
       store.setUserDetails(response.data);
       loading.value = false;
-      verifyModal.value = true;
+      // verifyModal.value = true;
 
       data.value = {};
       router.replace({
@@ -364,11 +364,11 @@ const submitForm = () => {
     .catch(({ response }) => {
       console.log(response);
       loading.value = false;
-      errors.value = response.data.data.errors || {};
+      errors.value = response.data.errors || {};
       Notify.create({
         message: response.data.message
           ? response.data.message
-          : "Recheck your credentials",
+          : Object.values(response.data.errors) + ",",
         color: "red",
         position: "top",
         actions: [{ icon: "close", color: "white" }],

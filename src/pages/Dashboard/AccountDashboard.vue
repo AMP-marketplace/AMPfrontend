@@ -106,10 +106,10 @@
           <!-- {{ addedProductData }} -->
           <q-file
             @update:model-value="setProductImage"
-            accept=".png,.jpeg,.svg,.jpg"
+            accept=".png,.jpeg,.jpg"
             class="column profile_field justify-center items-center"
             v-model="productImageFile"
-            max-file-size="2097152"
+            max-file-size="512000"
             @rejected="onRejected"
           >
             <div class="img q-mb-sm">
@@ -299,6 +299,10 @@
               <div class="input">
                 <select v-model="data.currency" required>
                   <option disabled value="">Choose</option>
+                  <option value="USD">USD($) - 🇺🇸</option>
+                </select>
+                <!-- <select v-model="data.currency" required>
+                  <option disabled value="">Choose</option>
                   <option
                     v-for="currency in currencies"
                     :key="currency.code"
@@ -306,7 +310,7 @@
                   >
                     {{ currency.name }} {{ currency.flag }}
                   </option>
-                </select>
+                </select> -->
               </div>
             </div>
           </div>
@@ -615,7 +619,7 @@ const onRejected = () => {
   Notify.create({
     type: "negative",
     position: "top",
-    message: `Your upload size should be less than 2mb `,
+    message: `Your upload size should be less than 500kb `,
   });
 };
 

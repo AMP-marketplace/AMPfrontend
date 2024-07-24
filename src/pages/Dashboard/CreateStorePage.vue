@@ -73,7 +73,21 @@
 
           <!-- {{ data }} -->
 
-          <div class="input_wrap q-sel">
+          <div class="input_wrap">
+            <label for=""> Country <span>*</span></label>
+            <div class="input">
+              <select v-model="basicStoreData.country">
+                <option
+                  v-for="(country, index) in countries"
+                  :key="index"
+                  :value="country.name"
+                >
+                  {{ country.name }} {{ country.flag }}
+                </option>
+              </select>
+            </div>
+          </div>
+          <!-- <div class="input_wrap q-sel">
             <label for=""> Country <span>*</span></label>
             <div class="input">
               <q-select
@@ -97,7 +111,7 @@
             <small v-if="errors.country_id" class="text-weight-bold text-red">
               {{ errors.country_id[0] }}
             </small>
-          </div>
+          </div> -->
           <!-- <div class="input_wrap">
             <label for="">City<span>*</span></label>
             <div class="input">
@@ -446,6 +460,10 @@
             <div class="input">
               <select v-model="data.currency" required>
                 <option disabled value="">Choose</option>
+                <option value="USD">USD($) - 🇺🇸</option>
+              </select>
+              <!-- <select v-model="data.currency" required>
+                <option disabled value="">Choose</option>
                 <option
                   v-for="currency in currencies"
                   :key="currency.name"
@@ -453,7 +471,7 @@
                 >
                   {{ currency.name }} {{ currency.flag }}
                 </option>
-              </select>
+              </select> -->
             </div>
           </div>
           <!-- <q-btn @click="addAttribute" flat no-caps no-wrap color="primary">
@@ -530,6 +548,7 @@ import { useRoute, useRouter } from "vue-router";
 import countries from "../../../countries";
 import FooterCompVue from "src/components/FooterComp.vue";
 import currencies from "../../../currencies";
+import conntries from "../../../countries";
 let store = useMyAuthStore();
 let router = useRouter();
 let route = useRoute();
@@ -539,6 +558,7 @@ let data = ref({
   maximum_price: "",
   // attributes: [],
 });
+
 let basicStoreData = ref({});
 let addedProductData = ref({});
 let productCategoryListArr = ref([]);
@@ -775,7 +795,7 @@ const createStore = () => {
   authAxios
     .post("merchant/onboard", {
       ...basicStoreData.value,
-      country: basicStoreData.value.country.name,
+      // country: basicStoreData.value.country.name,
     })
     .then((response) => {
       console.log(response);

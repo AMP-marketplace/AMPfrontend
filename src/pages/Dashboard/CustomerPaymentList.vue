@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container">
     <div class="auth">
       <div class="q-mt-lg">
         <div class="row items-center justify-between">

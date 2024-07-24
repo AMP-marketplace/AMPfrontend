@@ -66,9 +66,27 @@ p {
 
 .q-btn {
   min-height: auto;
-  text-transform: capitalize;
+  // text-transform: capitalize;
   &::before {
     box-shadow: none;
+  }
+}
+
+.q-badge {
+  &.new {
+    background: #28a745;
+  }
+  &.refurbished {
+    background: #007bff;
+  }
+  &.used {
+    background: #fd7e14;
+  }
+  &.open_box {
+    background: #6f42c1;
+  }
+  &.damaged {
+    background: #dc3545;
   }
 }
 
@@ -299,6 +317,19 @@ header {
   .nav_wrap {
     gap: 0.5rem !important;
     flex-wrap: wrap;
+  }
+  .small_container {
+    width: 95%;
+    padding: 0.5rem;
+  }
+  .auth .input_wrap .input {
+    padding: 0.6rem;
+  }
+  .footer {
+    padding: 3rem 1rem;
+  }
+  .auth {
+    margin-top: 1rem;
   }
   .container {
     margin-inline: auto !important;

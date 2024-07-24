@@ -390,10 +390,12 @@ const submitForm = () => {
         position: "top",
       });
       loading.value = false;
-      verifyModal.value = true;
+      // verifyModal.value = true;
 
       store.setUserDetails(response.data);
-
+      router.replace({
+        name: "all.set",
+      });
       // data.value = {};
     })
     .catch(({ response }) => {
@@ -403,7 +405,7 @@ const submitForm = () => {
       Notify.create({
         message: response.data.message
           ? response.data.message
-          : "Recheck your credentials",
+          : Object.values(response.data.errors) + ",",
         color: "red",
         position: "top",
         actions: [{ icon: "close", color: "white" }],
