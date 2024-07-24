@@ -15,7 +15,7 @@
           {{
             store.storedetails.is_published === false
               ? "Publish store"
-              : "Unublish store"
+              : "Unpublish store"
           }}
         </q-btn>
       </div>
@@ -88,7 +88,7 @@
           {{ editState ? "Edit product" : "Upload product" }}
         </h4>
 
-        <q-btn @click="cancelAddproductodal" flat rounded>
+        <q-btn @click="addProductModal = !addProductModal" flat rounded>
           <img src="../../assets/circle.svg" alt="" />
         </q-btn>
       </div>
@@ -192,6 +192,17 @@
             </div>
           </div>
           <div v-if="typeOfPrice === 'fixed'" class="input_wrap">
+            <label for="">Product Price <span>*</span></label>
+            <div class="input">
+              <input
+                v-model="data.minimum_price"
+                placeholder="N0.00"
+                required
+                type="text"
+              />
+            </div>
+          </div>
+          <div v-if="typeOfPrice === 'negotiable'" class="input_wrap">
             <label for="">Product Price <span>*</span></label>
             <div class="input">
               <input
@@ -536,9 +547,11 @@ const setProductImage = (props) => {
       });
       Loading.hide();
       addProductModal.value = false;
-      router.replace({
-        name: "account.dashboard",
-      });
+      showAddProductImage.value = false;
+      productImageFile.value = null;
+      // router.replace({
+      //   name: "account.dashboard",
+      // });
       getProducts();
     })
     .catch(({ response }) => {
@@ -751,6 +764,7 @@ const addProductFCN = () => {
         color: "green",
         position: "top",
       });
+      data.value = {};
       addedProductData.value = response.data.data;
       showAddProductImage.value = true;
     })

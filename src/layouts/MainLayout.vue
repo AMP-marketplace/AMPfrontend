@@ -109,6 +109,8 @@
                       color="primary"
                       label="Logout"
                       class="q-mt-sm"
+                      no-wrap
+                      no-caps
                       push
                       :to="{
                         name: 'logout',

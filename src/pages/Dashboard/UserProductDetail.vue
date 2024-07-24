@@ -52,7 +52,7 @@
                 >
               </router-link>
 
-              <p>
+              <!-- <p>
                 Email:
                 <a :href="`mailto:${product.merchant?.user.email}`">
                   {{ product.merchant?.user.email }}</a
@@ -63,7 +63,7 @@
                 <a :href="`tel:${product.merchant?.user.phone}`">
                   {{ product.merchant?.user.phone }}</a
                 >
-              </p>
+              </p> -->
             </div>
             <div class="wrapper">
               <span class="price" data-total-price

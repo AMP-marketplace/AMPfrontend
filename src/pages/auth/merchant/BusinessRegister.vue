@@ -103,10 +103,16 @@
             <div class="input_wrap">
               <label for="">Password<span>*</span></label>
               <div class="rules">
-                <p>Minimum of 8 characters</p>
+                <p v-for="(requirement, index) in requirements" :key="index">
+                  <span
+                    :class="requirement.met ? 'icon-check' : 'icon-cancel'"
+                  ></span>
+                  {{ requirement.text }}
+                </p>
+                <!-- <p>Minimum of 8 characters</p>
                 <p>At least one numeric character is requried</p>
                 <p>A special character is required</p>
-                <p>An uppercase and lowercase character is required</p>
+                <p>An uppercase and lowercase character is required</p> -->
               </div>
               <div class="input row justify-between no-wrap">
                 <input
@@ -341,13 +347,13 @@ import { Notify } from "quasar";
 import { authAxios } from "src/boot/axios";
 import { useMyAuthStore } from "src/stores/auth";
 import { useRouter } from "vue-router";
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import FooterCompVue from "src/components/FooterComp.vue";
 import countries from "../../../../countries";
 let store = useMyAuthStore();
 
 let router = useRouter();
-let data = ref({});
+let data = ref({ password: "" });
 let errors = ref({});
 let country_code = ref("+234");
 let viewPassword = ref(false);
@@ -369,6 +375,28 @@ const formatPhoneNumber = (phone) => {
     return phone;
   }
 };
+const requirements = ref([
+  { text: "Minimum of 8 characters", met: false },
+  { text: "At least one numeric character is required", met: false },
+  { text: "A special character is required", met: false },
+  { text: "An uppercase and lowercase character is required", met: false },
+]);
+
+const checkRequirements = (password) => {
+  requirements.value[0].met = password.length >= 8;
+  requirements.value[1].met = /\d/.test(password);
+  requirements.value[2].met = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+  requirements.value[3].met = /[a-z]/.test(password) && /[A-Z]/.test(password);
+};
+
+// Watch for changes in the password and update requirements
+watch(
+  () => data.value.password,
+  (newPassword) => {
+    checkRequirements(newPassword);
+  }
+);
+
 const submitForm = () => {
   let newData = {
     ...data.value,
@@ -377,40 +405,48 @@ const submitForm = () => {
     phone: country_code.value + formatPhoneNumber(data.value.phone),
   };
   console.log(newData);
-  loading.value = true;
-  authAxios
-    .post("register", {
-      ...newData,
-    })
-    .then((response) => {
-      console.log(response);
-      Notify.create({
-        message: response.data.message,
-        color: "green",
-        position: "top",
-      });
-      loading.value = false;
-      // verifyModal.value = true;
-
-      store.setUserDetails(response.data);
-      router.replace({
-        name: "all.set",
-      });
-      // data.value = {};
-    })
-    .catch(({ response }) => {
-      console.log(response);
-      loading.value = false;
-      errors.value = response.data.errors || {};
-      Notify.create({
-        message: response.data.message
-          ? response.data.message
-          : Object.values(response.data.errors) + ",",
-        color: "red",
-        position: "top",
-        actions: [{ icon: "close", color: "white" }],
-      });
+  if (data.value.password !== data.value.confirm_password) {
+    Notify.create({
+      message: "Password does not match",
+      color: "red",
+      position: "top",
     });
+  } else {
+    loading.value = true;
+    authAxios
+      .post("register", {
+        ...newData,
+      })
+      .then((response) => {
+        console.log(response);
+        Notify.create({
+          message: response.data.message,
+          color: "green",
+          position: "top",
+        });
+        loading.value = false;
+        // verifyModal.value = true;
+
+        store.setUserDetails(response.data);
+        router.replace({
+          name: "all.set",
+        });
+        // data.value = {};
+      })
+      .catch(({ response }) => {
+        console.log(response);
+        loading.value = false;
+        errors.value = response.data.errors || {};
+        Notify.create({
+          message: response.data.message
+            ? response.data.message
+            : Object.values(response.data.errors) + ",",
+          color: "red",
+          position: "top",
+          actions: [{ icon: "close", color: "white" }],
+        });
+      });
+  }
 };
 const handleOnComplete = (value) => {
   console.log("OTP completed: ", value);
@@ -585,4 +621,14 @@ onMounted(() => {
 });
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.icon-check::before {
+  content: "✔"; /* You can replace this with an actual icon */
+  color: green;
+}
+
+.icon-cancel::before {
+  content: "✖"; /* You can replace this with an actual icon */
+  color: red;
+}
+</style>

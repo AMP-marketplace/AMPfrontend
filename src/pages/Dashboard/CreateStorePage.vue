@@ -297,7 +297,7 @@
         <div
           v-if="showAddProductImage"
           style="gap: 1rem"
-          class="input justify-between row items-center no-wrap"
+          class="input justify-between column items-center no-wrap"
         >
           <div class="smallText text-weight-bold">
             Note that this will be your main/display product image
@@ -307,7 +307,7 @@
             accept=".png,.jpeg,.svg,.jpg"
             class="column profile_field justify-center items-center"
             v-model="productImageFile"
-            max-file-size="2097152"
+            max-file-size="512000"
             @rejected="onRejected"
           >
             <div class="img q-mb-sm">
@@ -334,14 +334,26 @@
               <q-editor v-model="data.description" min-height="5rem" />
             </div>
           </div>
-          <div class="input_wrap">
-            <label for="">Price <span>*</span></label>
-            <div class="input">
-              <select v-model="typeOfPrice">
-                <option value="fixed">Fixed</option>
-                <option value="negotiable">Negotiable</option>
-                <option value="range">Range</option>
-              </select>
+          <div class="auth_grid">
+            <div class="input_wrap">
+              <label for="">Price <span>*</span></label>
+              <div class="input">
+                <select @change="togglePriceType" v-model="typeOfPrice">
+                  <option value="fixed">Fixed</option>
+                  <option value="negotiable">Negotiable</option>
+                  <option value="range">Range</option>
+                </select>
+              </div>
+            </div>
+            <div class="input_wrap">
+              <label for="">Condition <span>*</span></label>
+              <div class="input">
+                <select v-model="data.condition">
+                  <option value="new">New</option>
+                  <option value="refurbished">Refurbished</option>
+                  <!-- <option value="range">Range</option> -->
+                </select>
+              </div>
             </div>
           </div>
           <div v-if="typeOfPrice === 'range'" class="auth_grid">
@@ -379,7 +391,18 @@
               />
             </div>
           </div>
-          <div class="input_wrap">
+          <div v-if="typeOfPrice === 'negotiable'" class="input_wrap">
+            <label for="">Product Price <span>*</span></label>
+            <div class="input">
+              <input
+                v-model="data.minimum_price"
+                placeholder="N0.00"
+                required
+                type="text"
+              />
+            </div>
+          </div>
+          <!-- <div class="input_wrap">
             <label for="">Quantity in stock<span>*</span></label>
             <div class="input">
               <input
@@ -389,7 +412,7 @@
                 type="text"
               />
             </div>
-          </div>
+          </div> -->
           <div class="input_wrap">
             <label for="">Minimum Product Sale<span>*</span></label>
             <div class="input">
@@ -455,23 +478,40 @@
               </select>
             </div>
           </div> -->
-          <div class="input_wrap">
-            <label for="">Currency<span>*</span></label>
-            <div class="input">
-              <select v-model="data.currency" required>
-                <option disabled value="">Choose</option>
-                <option value="USD">USD($) - 🇺🇸</option>
-              </select>
-              <!-- <select v-model="data.currency" required>
-                <option disabled value="">Choose</option>
-                <option
-                  v-for="currency in currencies"
-                  :key="currency.name"
-                  :value="currency.name"
-                >
-                  {{ currency.name }} {{ currency.flag }}
-                </option>
-              </select> -->
+          <div class="auth_grid">
+            <div class="input_wrap">
+              <label for="">Country<span>*</span></label>
+              <div class="input">
+                <select v-model="data.country" required>
+                  <option disabled value="">Choose</option>
+                  <option
+                    v-for="country in countries"
+                    :key="country.name"
+                    :value="country.name"
+                  >
+                    {{ country.name }} {{ country.flag }}
+                  </option>
+                </select>
+              </div>
+            </div>
+            <div class="input_wrap">
+              <label for="">Currency<span>*</span></label>
+              <div class="input">
+                <select v-model="data.currency" required>
+                  <option disabled value="">Choose</option>
+                  <option value="USD">USD($) - 🇺🇸</option>
+                </select>
+                <!-- <select v-model="data.currency" required>
+                  <option disabled value="">Choose</option>
+                  <option
+                    v-for="currency in currencies"
+                    :key="currency.code"
+                    :value="currency.code"
+                  >
+                    {{ currency.name }} {{ currency.flag }}
+                  </option>
+                </select> -->
+              </div>
             </div>
           </div>
           <!-- <q-btn @click="addAttribute" flat no-caps no-wrap color="primary">
@@ -548,7 +588,7 @@ import { useRoute, useRouter } from "vue-router";
 import countries from "../../../countries";
 import FooterCompVue from "src/components/FooterComp.vue";
 import currencies from "../../../currencies";
-import conntries from "../../../countries";
+// import countries from "../../../countries";
 let store = useMyAuthStore();
 let router = useRouter();
 let route = useRoute();
@@ -665,7 +705,8 @@ const setProductImage = (props) => {
     productImagePreview.value = e.target.result;
   };
   reader.readAsDataURL(props);
-
+  const formData = new FormData();
+  formData.append("media[]", productImageFile.value);
   Loading.show({
     spinner: QSpinnerOval,
     message: "Uploading image...",
@@ -673,10 +714,7 @@ const setProductImage = (props) => {
   authAxios
     .post(
       `merchant/${store.storedetails.slug}/${addedProductData.value.slug}/upload/media`,
-      {
-        media: productImageFile.value,
-        // role: "main",
-      },
+      formData,
       {
         headers: {
           "Content-Type": "multipart/form-data",
@@ -776,7 +814,7 @@ const onRejected = () => {
   Notify.create({
     type: "negative",
     position: "top",
-    message: `Your upload size should be less than 2mb `,
+    message: `Your upload size should be less than 500kb `,
   });
 };
 const addAttribute = () => {
@@ -888,6 +926,7 @@ const addProductFCN = () => {
   let dataToSend = {
     ...data.value,
     is_negotiable: typeOfPrice.value === "negotiable" ? 1 : 0,
+    maximum_price: data.value.maximum_price ? data.value.maximum_price : "1",
   };
   Loading.show();
   authAxios
@@ -902,6 +941,7 @@ const addProductFCN = () => {
         color: "green",
         position: "top",
       });
+      data.value = {};
       addedProductData.value = response.data.data;
       showAddProductImage.value = true;
     })
@@ -909,9 +949,11 @@ const addProductFCN = () => {
       // console.log(response);
       Loading.hide();
 
-      errors.value = response.data.data.errors;
+      errors.value = response.data.errors;
       Notify.create({
-        message: response.data.message,
+        message: response.data.message
+          ? response.data.message
+          : Object.values(response.data.errors) + ",",
         color: "red",
         position: "top",
         actions: [{ icon: "close", color: "white" }],
@@ -947,7 +989,7 @@ const getSubcategories = async () => {
 };
 onMounted(async () => {
   try {
-    if (route.query.create === "new" && !store.storedetails.business_name) {
+    if (route.query.create === "new") {
       progress.value = 1;
     } else {
       progress.value = 2;

@@ -14,31 +14,31 @@
           rounded
           v-if="product?.condition === 'new'"
           :label="product?.condition"
-          class="q-pa-sm new text-white"
+          class="q-pa-sm new"
         />
         <q-badge
           v-if="product?.condition === 'refurbished'"
           rounded
           :label="product?.condition"
-          class="q-pa-sm refurbished text-white"
+          class="q-pa-sm refurbished"
         />
         <q-badge
           v-if="product?.condition === 'open_box'"
           rounded
           :label="product?.condition"
-          class="q-pa-sm open_box text-white"
+          class="q-pa-sm open_box"
         />
         <q-badge
           v-if="product?.condition === 'used'"
           rounded
           :label="product?.condition"
-          class="q-pa-sm used text-white"
+          class="q-pa-sm used"
         />
         <q-badge
           v-if="product?.condition === 'damaged'"
           rounded
           :label="product?.condition"
-          class="q-pa-sm damaged text-white"
+          class="q-pa-sm damaged"
         />
       </div>
     </div>
@@ -125,6 +125,14 @@
           <span class="text-grey-7">
             {{ product?.created_at ? formatDate() : "" }}
           </span>
+        </p>
+        <p
+          v-if="product?.is_negotiable"
+          style="gap: 0.6rem"
+          class="row items-center no-wrap"
+        >
+          <i class="ri-shake-hands-line text-h6 text-grey-7"></i>
+          <span class="text-grey-7"> Negotiable: YES </span>
         </p>
         <!-- <p style="gap: 0.6rem" class="row text-grey-7 items-center no-wrap">
           <i class="ri-arrow-left-up-fill text-h6"></i>

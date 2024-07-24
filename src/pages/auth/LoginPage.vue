@@ -271,11 +271,18 @@ const submitForm = () => {
         });
 
         store.setUserDetails(response.data);
-        store.storedetails = response.data.data.merchant;
-        store.userstores.push(response.data.data.merchant);
-        router.replace({
-          name: "all.set",
-        });
+        if (response.data.data.merchant.business_name) {
+          store.storedetails = response.data.data.merchant;
+          store.userstores.push(response.data.data.merchant);
+          router.replace({
+            name: "account.dashboard",
+          });
+        } else {
+          router.replace({
+            name: "all.set",
+          });
+        }
+
         // router.replace({
         //   name: "create.store",
         //   query: {

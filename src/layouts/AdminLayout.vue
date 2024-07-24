@@ -34,6 +34,8 @@
                   <q-btn
                     color="primary"
                     label="Logout"
+                    no-caps
+                    no-wrap
                     push
                     :to="{ name: 'logout' }"
                     size="sm"

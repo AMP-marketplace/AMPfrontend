@@ -31,20 +31,26 @@
             no-wrap
             no-caps
             rounded
-            v-if="stores.role === 'merchant'"
+            v-if="stores.role === 'merchant' && !stores.userstores.length"
             color="green-6"
             >Create Store</q-btn
           >
-          <q-btn
-            no-wrap
-            @click="setStore(store)"
-            v-for="(store, index) in stores.userstores"
-            :key="index"
-            no-caps
-            rounded
-            color="primary"
-            >Sign in to{{ store.business_name }}</q-btn
+          <div
+            style="gap: 1rem"
+            class="row items-center no-wrap"
+            v-if="stores.userstores.length"
           >
+            <q-btn
+              no-wrap
+              @click="setStore(store)"
+              v-for="(store, index) in stores.userstores"
+              :key="index"
+              no-caps
+              rounded
+              color="primary"
+              >Sign in to{{ store.business_name }}</q-btn
+            >
+          </div>
         </div>
       </div>
     </div>

@@ -74,22 +74,30 @@ p {
 
 .q-badge {
   &.new {
-    background: #28a745;
+    background: rgba(40, 167, 69, 0.2);
+    color: #28a745;
   }
   &.refurbished {
-    background: #007bff;
+    background: rgba(0, 123, 255, 0.2);
+    color: #007bff;
   }
   &.used {
-    background: #fd7e14;
+    background: rgba(253, 126, 20, 0.2);
+    color: #fd7e14;
   }
   &.open_box {
-    background: #6f42c1;
+    background: rgba(111, 66, 193, 0.2);
+    color: #6f42c1;
   }
   &.damaged {
-    background: #dc3545;
+    background: rgba(220, 53, 69, 0.2);
+    color: #dc3545;
   }
 }
-
+.links_left {
+  position: sticky;
+  top: 5%;
+}
 .input_wrap {
   input,
   select,
@@ -330,6 +338,9 @@ header {
   }
   .auth {
     margin-top: 1rem;
+  }
+  .header .top_nav {
+    padding: 0.5rem 0;
   }
   .container {
     margin-inline: auto !important;

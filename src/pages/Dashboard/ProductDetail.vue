@@ -15,7 +15,7 @@
           class="bg-blue-7 text-white"
           :to="{ name: 'account.dashboard' }"
         >
-          Go home
+          <i class="ri-arrow-left-line q-mr-sm"></i> Go back
         </q-btn>
         <q-btn
           :color="data.is_published === false ? 'red-7' : 'green-7'"
@@ -26,7 +26,9 @@
           no-wrap
         >
           {{
-            data.is_published === false ? "Publish product" : "Unublish product"
+            data.is_published === false
+              ? "Publish product"
+              : "Unpublish product"
           }}
         </q-btn>
       </div>
@@ -76,7 +78,9 @@
           no-caps
           type="submit"
         >
-          Add another product image
+          {{
+            data?.media?.length ? "Add another product image" : "Upload image"
+          }}
         </q-btn>
       </div>
       <form @submit.prevent="updateProductFunction">
@@ -132,6 +136,17 @@
           </div>
         </div>
         <div v-if="typeOfPrice === 'fixed'" class="input_wrap">
+          <label for="">Product Price <span>*</span></label>
+          <div class="input">
+            <input
+              v-model="data.minimum_price"
+              placeholder="N0.00"
+              required
+              type="text"
+            />
+          </div>
+        </div>
+        <div v-if="typeOfPrice === 'negotiable'" class="input_wrap">
           <label for="">Product Price <span>*</span></label>
           <div class="input">
             <input
@@ -261,7 +276,7 @@
   <q-dialog v-model="AddProductImageModal">
     <q-card>
       <div>
-        <h6 class="text-h6 text-center">Do you want to another image?</h6>
+        <h6 class="text-h6 text-center">Do you want to add another image?</h6>
         <!-- <h6 class="text-h6 text-center">
           Do you want to change the main image or upload another image?
         </h6> -->
@@ -317,7 +332,13 @@
   </q-dialog>
   <q-dialog v-model="actionsModal">
     <q-card>
-      <q-list bordered separator padding class="rounded-borders">
+      <q-list
+        v-if="data.media.length"
+        bordered
+        separator
+        padding
+        class="rounded-borders"
+      >
         <q-item-label header>Images</q-item-label>
 
         <q-item
@@ -356,6 +377,9 @@
           </q-item-section>
         </q-item>
       </q-list>
+      <div v-else>
+        <p>You have not uploaded any images</p>
+      </div>
     </q-card>
   </q-dialog>
 </template>
@@ -646,7 +670,7 @@ const updateProductFunction = () => {
     name: data.value.name,
     currency: data.value.currency,
     minimum_price: data.value.minimum_price,
-    minimum_price: data.value.maximum_price,
+    maximum_price: data.value.maximum_price ? data.value.maximum_price : "1",
     description: data.value.description,
     country: data.value.country,
     condition: data.value.condition,
@@ -674,9 +698,11 @@ const updateProductFunction = () => {
       // console.log(response);
       Loading.hide();
 
-      errors.value = response.data.data.errors;
+      errors.value = response.data.errors;
       Notify.create({
-        message: response.data.message,
+        message: response.data.message
+          ? response.data.message
+          : Object.values(response.data.errors) + ",",
         color: "red",
         position: "top",
         actions: [{ icon: "close", color: "white" }],
