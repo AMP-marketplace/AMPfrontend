@@ -215,6 +215,19 @@
               icon="star_border"
               icon-selected="star"
             />
+            <div class="input_wrap">
+              <div class="input">
+                <select v-model="rating_type">
+                  <option value="Top rated seller">Top Rated Seller</option>
+                  <option value="Excellent customer service">
+                    Excellent Customer Service
+                  </option>
+                  <option value="Fast shipping">Fast Shipping</option>
+                  <option value="Trusted supplier">Trusted Supplier</option>
+                  <option value="Responsive eller">Responsive Seller</option>
+                </select>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -257,6 +270,7 @@ let rateModal = ref(false);
 let loading = ref(false);
 let ratingModel = ref(0);
 let loadingReview = ref(false);
+let rating_type = ref("");
 let productCategoryListArr = ref([]);
 let prodListArr = ref([]);
 let storeDetails = ref({ rating: 0 });

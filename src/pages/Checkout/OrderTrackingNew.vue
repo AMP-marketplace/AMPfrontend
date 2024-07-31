@@ -28,9 +28,9 @@ v
             color="secondary"
           >
             <q-timeline-entry
-              title="Order Accepted"
+              title="Order Paid"
               side="left"
-              v-if="data.status === 'accepted'"
+              v-if="data.status === 'paid'"
               color="primary"
               icon="fa-solid fa-check"
             >
@@ -44,24 +44,22 @@ v
             >
             </q-timeline-entry>
 
-            <div v-if="data.trackings.length">
+            <div>
               <q-timeline-entry
                 title="Order Proccessed"
-                :subtitle="formatDate(data.trackings[0].created_at)"
+                :subtitle="formatDate(data.created_at)"
                 side="left"
-                v-if="data.trackings[0].status === 'processed'"
+                v-if="data.status === 'status'"
                 color="primary"
                 icon="fa-solid fa-check"
               >
-                <div>
-                  Your order has been processed and will be dispatched to you
-                </div>
+                <div>Your order has been status and is in process</div>
               </q-timeline-entry>
               <q-timeline-entry
                 title="Order Dispatched"
-                :subtitle="formatDate(data.trackings[1]?.created_at)"
+                :subtitle="formatDate(data.created_at)"
                 side="left"
-                v-if="data.trackings[1]?.status === 'dispatched'"
+                v-if="data.status === 'dispatched'"
                 color="primary"
                 icon="fa-solid fa-check"
               >
@@ -71,7 +69,7 @@ v
               <q-timeline-entry
                 title="Order Arrival"
                 subtitle="Awaiting"
-                v-if="data.trackings[1]?.status === 'dispatched'"
+                v-if="data.status === 'dispatched'"
                 side="left"
               >
                 <div>You will be notified when your driver get’s to you</div>
@@ -79,7 +77,7 @@ v
               <q-timeline-entry
                 title="Order Delivered"
                 :subtitle="formatDate(data.trackings[2]?.created_at)"
-                v-if="data.trackings[2]?.status === 'delivered'"
+                v-if="data.status === 'delivered'"
                 side="left"
                 color="primary"
                 icon="fa-solid fa-check"
@@ -89,59 +87,7 @@ v
                   code to confirm
                 </div>
               </q-timeline-entry>
-              <!-- <q-timeline-entry
-                title="Order Confirmed"
-                v-if="orderConfirmed"
-                side="left"
-                color="green"
-                icon="fa-solid fa-check"
-              >
-                <div>Your order has been confirmed.</div>
-              </q-timeline-entry> -->
             </div>
-            <!-- <q-timeline-entry
-              title="Order Dispatched"
-              :subtitle="formatDate(data.trackings[0].created_at)"
-              side="left"
-              v-if="data.trackings[0].status === 'processed'"
-              color="primary"
-              icon="fa-solid fa-check"
-            >
-              <div>
-                Your order has been processed and will be dispatched to you
-              </div>
-            </q-timeline-entry>
-            <q-timeline-entry
-              title="Order Dispatched"
-              :subtitle="formatDate(data.trackings[1].status.created_at)"
-              side="left"
-              v-if="data.trackings[1].status === 'dispatched'"
-              color="primary"
-              icon="fa-solid fa-check"
-            >
-              <div>Your order is on it’s way to you</div>
-            </q-timeline-entry>
-            <q-timeline-entry
-              title="Order Arrival"
-              subtitle="Awaiting"
-              v-if="data.status === 'dispatched'"
-              side="left"
-            >
-              <div>You will be notified when your driver get’s to you</div>
-            </q-timeline-entry>
-            <q-timeline-entry
-              title="Order Delivered"
-              :subtitle="formatDate(data.trackings[2].created_at)"
-              v-if="data.trackings[2].status === 'delivered'"
-              side="left"
-              color="primary"
-              icon="fa-solid fa-check"
-            >
-              <div>
-                Your order has been delivered, kindly enter your confirmation
-                code to confirm
-              </div>
-            </q-timeline-entry> -->
           </q-timeline>
 
           <div v-if="data.status !== 'declined'">
@@ -193,7 +139,7 @@ v
                       color="primary"
                       class="q-px-xl q-mt-md"
                       rounded
-                      :disable="!data.trackings[2]?.status === 'delivered'"
+                      :disable="!data.status === 'delivered'"
                       no-wrap
                       no-caps
                       type="submit"
@@ -217,39 +163,46 @@ v
             <div class="q-my-lg">
               <div>
                 <div
+                  v-for="(product, index) in data.products"
+                  :key="index"
                   style="gap: 0.5rem"
                   class="row no-wrap q-my-md items-center"
                 >
+                  <!-- {{ product.product.media }} -->
                   <img
                     style="width: 82px; height: 82px; object-fit: contain"
-                    :src="data.product.images[0].url"
-                    :alt="data.product.name"
+                    :src="
+                      product?.product?.media?.length
+                        ? product?.product?.media[0]?.url
+                        : ''
+                    "
+                    :alt="product.product.name"
                   />
                   <div>
                     <p class="smallText">
-                      {{ data.product.name }}
+                      {{ product.product.name }}
                     </p>
                     <p>
                       <span class="text-info"
-                        >Purchase quantity : {{ data.quantity }}</span
+                        >Purchase quantity : {{ product.quantity }}</span
                       >
                     </p>
                     <p class="smallerText">
                       <!-- <span class="q-mx-sm"></span> -->
                       <span class="text-weight-bold"
                         >₦{{
-                          (data.product.price * data.quantity).toLocaleString()
+                          (product.price * data.unit).toLocaleString()
                         }}</span
                       >
                     </p>
                   </div>
                   <q-separator />
                 </div>
-                <p>
+                <!-- <p>
                   Tracking number:<strong class="text-red">{{
                     data.tracking_number
                   }}</strong>
-                </p>
+                </p> -->
               </div>
 
               <!-- <q-separator class="q-my-md" />
@@ -285,14 +238,14 @@ v
                 <p class="smallerText q-mb-md text-info">Order number</p>
                 <p class="mediumText">NL2309443064</p>
               </div> -->
-              <div style="gap: 1rem" class="q-my-lg row items-center no-wrap">
+              <!-- <div style="gap: 1rem" class="q-my-lg row items-center no-wrap">
                 <p class="smallerText text-info">Store Name:</p>
                 <p class="mediumText">{{ data.store.name }}</p>
               </div>
               <div style="gap: 1rem" class="q-my-lg row items-center no-wrap">
                 <p class="smallerText text-info">Store Address:</p>
                 <p class="mediumText">{{ data.store.address }}</p>
-              </div>
+              </div> -->
               <!-- <div class="q-mt-sm">
                 <h4 class="bigMediumText">Contact Number</h4>
                 <q-separator class="q-mt-md" />
@@ -389,11 +342,10 @@ const formatDate = (datetimeString) => {
     hour12: true,
   }).format(date);
 };
-
 const getOrders = async () => {
   try {
     let orderlistResp = await authAxios.get(
-      `customer/order/${route.query.order_id}/trackings`
+      `order/show/${route.query.order_id}`
     );
     console.log(orderlistResp);
     data.value = orderlistResp.data.data;

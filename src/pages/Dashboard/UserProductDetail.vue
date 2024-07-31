@@ -262,6 +262,38 @@
                 icon="star_border"
                 icon-selected="star"
               />
+
+              <div class="input_wrap">
+                  <div class="input">
+                    <select v-model="rating_type">
+                      <option
+                        value="Top rated seller"
+                      >
+                        Top Rated Seller
+                      </option>
+                      <option
+                        value="Excellent customer service"
+                      >
+                        Excellent Customer Service
+                      </option>
+                      <option
+                        value="Fast shipping"
+                      >
+                        Fast Shipping
+                      </option>
+                      <option
+                        value="Trusted supplier"
+                      >
+                        Trusted Supplier
+                      </option>
+                      <option
+                        value="Responsive eller"
+                      >
+                        Responsive Seller
+                      </option>
+                    </select>
+                  </div>
+                </div>
             </div>
           </div>
 
@@ -307,6 +339,7 @@ let loading = ref(false);
 let rateModal = ref(false);
 let loadingReview = ref(false);
 let loadingRating = ref(false);
+let rating_type = ref('');
 let slide = ref(1);
 let recommendedProducts = ref({});
 watch(routeParams, (newParams, oldParams) => {

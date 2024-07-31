@@ -342,9 +342,10 @@ const columns = [
   {
     name: "product",
     required: true,
-    label: "Product",
+    label: "Products",
     align: "left",
-    field: "product",
+    field: (row) =>
+      `${row.products.map((product) => product.product.name.toString())} `,
     sortable: true,
   },
   {
@@ -448,10 +449,22 @@ const onRequest = (props) => {
   loading.value = true;
 
   authAxios
-    .get(`merchant/order/list`)
+    .get(`order/index`)
     .then(({ data }) => {
       console.log(data);
       rows.value = data.data;
+      loading.value = false;
+    })
+    .catch(({ response }) => {
+      loading.value = false;
+    });
+};
+const getOrders = () => {
+  loading.value = true;
+  authAxios
+    .get(`order/index`)
+    .then(({ data }) => {
+      console.log(data);
       loading.value = false;
     })
     .catch(({ response }) => {
@@ -583,6 +596,7 @@ const declineOrder = (order) => {
 onMounted(async () => {
   try {
     onRequest();
+    // getOrders();
   } catch (error) {
     console.error(error);
   }

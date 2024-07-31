@@ -19,6 +19,11 @@ const routes = [
         name: "store.detail",
       },
       {
+        path: "/order-payment/success",
+        component: () => import("pages/Checkout/PaymentSuccess.vue"),
+        name: "payment.success",
+      },
+      {
         path: "/explore",
         component: () => import("pages/ExplorePage.vue"),
         name: "explore",

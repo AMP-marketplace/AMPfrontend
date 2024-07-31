@@ -240,13 +240,17 @@ header {
 
 @media (min-width: 1100px) {
   .stores_wrap {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
   }
   .responsive_grid {
     grid-template-columns: repeat(3, 1fr) !important;
   }
 }
 @media (min-width: 1300px) {
+  .responsive_grid {
+    grid-template-columns: repeat(4, 1fr) !important;
+    // place-items: center;
+  }
   .new_products {
     .responsive_grid {
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));

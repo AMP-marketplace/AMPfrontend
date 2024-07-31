@@ -67,7 +67,7 @@ v
                   <span v-if="props.row.product.price?.maximum_price !== '1'">
                     {{
                       getCountryCurrencySymbol(
-                        product?.country,
+                        props.row.product?.country,
                         props.row.product
                       )
                     }}{{
@@ -191,17 +191,23 @@ v
             </div>
             <!-- <p style="opacity: 1" class="smallerText">₦21.00</p> -->
           </div>
-          <div class="row q-mt-sm justify-between items-center">
+          <!-- <div class="row q-mt-sm justify-between items-center">
             <p style="opacity: 1" class="smallerText">VAT(7.5%)</p>
             <p style="opacity: 1" class="smallerText">
               ₦{{ (cartStore.totalPrice * 0.075).toLocaleString() }}
             </p>
-          </div>
+          </div> -->
           <!-- <div class="row q-mt-sm justify-between items-center">
             <p style="opacity: 1" class="smallerText">GST(10%)</p>
             <p style="opacity: 1" class="smallerText">₦1.91</p>
           </div> -->
           <div class="row q-mt-sm justify-between items-center">
+            <p style="opacity: 1" class="smallerText">Order Total</p>
+            <p style="opacity: 1" class="smallText">
+              ₦{{ cartStore.totalPrice.toLocaleString() }}
+            </p>
+          </div>
+          <!-- <div class="row q-mt-sm justify-between items-center">
             <p style="opacity: 1" class="smallerText">Order Total</p>
             <p style="opacity: 1" class="smallText">
               ₦{{
@@ -211,7 +217,7 @@ v
                 ).toLocaleString()
               }}
             </p>
-          </div>
+          </div> -->
 
           <div class="q-mt-lg">
             <q-btn

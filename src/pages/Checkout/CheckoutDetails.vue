@@ -49,29 +49,29 @@ v
                 </p> -->
                 <q-separator />
 
-                <div v-if="!authStore.token" class="input_wrap">
+                <div class="input_wrap">
                   <label for="">First Name <span>*</span></label>
                   <div class="input">
-                    <input v-model="data.firstname" required type="text" />
+                    <input v-model="data.first_name" required type="text" />
                   </div>
 
                   <small
-                    v-if="errors.firstname"
+                    v-if="errors.first_name"
                     class="text-red text-weight-bold"
                   >
-                    {{ errors.firstname[0] }}
+                    {{ errors.first_name[0] }}
                   </small>
                 </div>
-                <div v-if="!authStore.token" class="input_wrap">
+                <div class="input_wrap">
                   <label for="">Last Name <span>*</span></label>
                   <div class="input">
-                    <input v-model="data.lastname" required type="text" />
+                    <input v-model="data.last_name" required type="text" />
                   </div>
                   <small
-                    v-if="errors.lastname"
+                    v-if="errors.last_name"
                     class="text-red text-weight-bold"
                   >
-                    {{ errors.lastname[0] }}
+                    {{ errors.last_name[0] }}
                   </small>
                 </div>
                 <div v-if="!authStore.token" class="phone">
@@ -154,6 +154,12 @@ v
                     <input v-model="data.city" required type="text" />
                   </div>
                 </div>
+                <div class="input_wrap">
+                  <label for="">State <span>*</span></label>
+                  <div class="input">
+                    <input v-model="data.state" required type="text" />
+                  </div>
+                </div>
                 <!-- <div class="input_wrap">
                 <label for="">State/Province<span>*</span></label>
                 <div class="input">
@@ -168,7 +174,7 @@ v
                 <div class="input_wrap">
                   <label for="">Zip/Postal Code <span>*</span></label>
                   <div class="input">
-                    <input v-model="data.zip_code" required type="number" />
+                    <input v-model="data.postal_code" required type="number" />
                   </div>
                 </div>
 
@@ -184,7 +190,7 @@ v
                   <label for=""> Country <span>*</span></label>
                   <div class="input">
                     <q-select
-                      v-model="data.country_id"
+                      v-model="data.country"
                       use-input
                       @filter="filterFn"
                       behavior="dialog"
@@ -202,10 +208,10 @@ v
                     >
                   </div>
                   <small
-                    v-if="errors.country_id"
+                    v-if="errors.country"
                     class="text-weight-bold text-red"
                   >
-                    {{ errors.country_id[0] }}
+                    {{ errors.country[0] }}
                   </small>
                 </div>
 
@@ -266,23 +272,29 @@ v
               <q-separator />
             </div>
           </div>
-          <q-separator class="q-my-md" />
+          <!-- <q-separator class="q-my-md" />
           <div class="row q-mt-sm justify-between items-center">
             <p class="smallerText">VAT</p>
             <p class="smallText">₦{{ cartStore.totalPrice * 0.075 }}</p>
-          </div>
+          </div> -->
           <q-separator class="q-my-md" />
           <div class="row q-mt-sm justify-between items-center">
             <p class="smallerText">Sub Total</p>
-            <p class="smallText">₦{{ cartStore.totalPrice }}</p>
+            <p class="smallText">${{ cartStore.totalPrice }}</p>
           </div>
           <q-separator class="q-my-md" />
           <div class="row q-mt-sm justify-between items-center">
             <p class="smallerText">Order Total</p>
             <p class="smallText">
-              ₦{{ cartStore.totalPrice + cartStore.totalPrice * 0.075 }}
+              ${{ cartStore.totalPrice.toLocaleString() }}
             </p>
           </div>
+          <!-- <div class="row q-mt-sm justify-between items-center">
+            <p class="smallerText">Order Total</p>
+            <p class="smallText">
+              ₦{{ cartStore.totalPrice + cartStore.totalPrice * 0.075 }}
+            </p>
+          </div> -->
         </div>
       </div>
     </div>
@@ -403,19 +415,29 @@ const onRequest = (props) => {
     };
   }
 };
+
+const formatPhoneNumber = (phone) => {
+  if (phone.startsWith("0")) {
+    return phone.slice(1);
+  }
+};
+
 const handleCheckout = () => {
   if (authStore.token) {
     updateShippingDetails();
   } else {
+    console.log(data.value);
     loadBtn.value = true;
     authAxios
-      .post("customer/signup", {
-        firstname: data.value.firstname,
-        lastname: data.value.lastname,
+      .post("register", {
+        first_name: data.value.first_name,
+        last_name: data.value.last_name,
         email: data.value.email,
-        phone: country_code.value + data.value.phone,
+        phone: data.value.phone.startsWith("0")
+          ? country_code.value + formatPhoneNumber(data.value.phone)
+          : country_code.value + data.value.phone,
         password: data.value.password,
-        confirm_password: data.value.password,
+        role_id: "2",
       })
       .then((response) => {
         console.log(response);
@@ -425,17 +447,17 @@ const handleCheckout = () => {
         //   position: "top",
         // });
         loadBtn.value = false;
-        authStore.setUserDetails(response);
+        authStore.setUserDetails(response.data);
         updateShippingDetails();
       })
       .catch(({ response }) => {
         console.log(response);
         loadBtn.value = false;
-        errors.value = response.data.data.errors || {};
+        errors.value = response.data.errors || {};
         Notify.create({
           message: response.data.message
             ? response.data.message
-            : "Recheck your credentials",
+            : "Recheck your credentials or login",
           color: "red",
           position: "top",
           actions: [{ icon: "close", color: "white" }],
@@ -452,20 +474,26 @@ const updateShippingDetails = () => {
     messageColor: "white",
   });
   authAxios
-    .post("customer/shipping/address/update", {
-      // ...data.value,
-      country_id: data.value.country_id.value,
-      city_id: 2,
-      state_id: 3,
-      zip_code: data.value.zip_code.toString(),
-      street_address: data.value.street_address,
+    .post("shipping/address/create", {
+      first_name: data.value.first_name
+        ? data.value.first_name
+        : authStore.userdetails.first_name,
+      last_name: data.value.last_name
+        ? data.value.last_name
+        : authStore.userdetails.last_name,
+      country: data.value.country.value,
+      state: data.value.state,
+      city: data.value.city,
+      postal_code: data.value.postal_code.toString(),
+      address_line_1: data.value.street_address,
+      address_line_2: null,
     })
     .then((response) => {
       console.log(response);
       // loadBtn.value = false;
-      authStore.userdetails.address = response.data.data.street_address;
-      // authStore.userdetails.zip_code = response.data.data.zip_code;
-      createOrder();
+      // authStore.userdetails.address = response.data.street_address;
+      // authStore.userdetails.postal_code = response.data.data.postal_code;
+      createOrder(response.data.data.id);
     })
     .catch(({ response }) => {
       errors.value = response.data.data.errors;
@@ -477,7 +505,7 @@ const updateShippingDetails = () => {
       });
     });
 };
-const createOrder = () => {
+const createOrder = (shipping_id) => {
   if (!cartStore.cart.length) {
     Loading.hide();
     Notify.create({
@@ -489,25 +517,25 @@ const createOrder = () => {
     return;
   } else {
     const result = cartStore.cart.map((item) => ({
-      product_id: item.product.id,
-      quantity: item.quantity,
+      id: item.product.id,
+      unit: item.quantity,
+      price: item.product.price.minimum_price,
     }));
+    console.log(result);
     const formData = new FormData();
-    for (var key in result) {
-      formData.append(key, JSON.stringify(result[key]));
-    }
+    result.forEach((item, index) => {
+      formData.append(`products[${index}][id]`, item.id);
+      formData.append(`products[${index}][unit]`, item.unit);
+      formData.append(`products[${index}][price]`, item.price);
+    });
+    formData.append("shipping_address_id", shipping_id);
+    formData.append("total_amount", cartStore.totalPrice);
     authAxios
-      .post(
-        "customer/order/create",
-        {
-          cart_items: result,
+      .post("order/create", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
         },
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
-      )
+      })
       .then((response) => {
         console.log(response);
         loadBtn.value = false;
@@ -535,48 +563,7 @@ const createOrder = () => {
   }
 };
 const initPayment = () => {
-  Loading.show({
-    spinner: QSpinnerRings,
-    spinnerColor: "yellow",
-    spinnerSize: 140,
-    message: "Initializing payment...",
-    messageColor: "white",
-  });
-  // customer/payment/initialize
-  authAxios
-    .post("customer/order/payment/initialize")
-    .then((response) => {
-      console.log(response);
-      loadBtn.value = false;
-      Notify.create({
-        message: response.data.message,
-        color: "green",
-        position: "top",
-      });
-      cartStore.cart = [];
-
-      // cartStore.orderDetail = response.data.data;
-      console.log(response.data.data.paystack);
-      Loading.hide();
-      window.location.href = response.data.data.data.authorization_url;
-      // router.replace({ name: "order.tracking" });
-    })
-    .catch(({ response }) => {
-      Loading.hide();
-      loadBtn.value = false;
-      errors.value = response.data.data.errors;
-      console.log(
-        Object.values(response.data.data.errors).map((error) => error + ",")
-      );
-      Notify.create({
-        message: response.data.message
-          ? response.data.message
-          : Object.values(response.data.errors) + ",",
-        color: "red",
-        position: "top",
-        actions: [{ icon: "close", color: "white" }],
-      });
-    });
+  window.location.href = cartStore.orderDetail;
 };
 
 onMounted(async () => {

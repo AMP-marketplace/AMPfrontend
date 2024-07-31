@@ -134,7 +134,7 @@
 
     <q-drawer class="drawer" v-model="leftDrawerOpen" show-if-above bordered>
       <div class="q-mt-lg">
-        <h4 class="bigText q-pa-sm q-mb-md">My Dashbaord</h4>
+        <h4 class="bigText q-pa-sm q-mb-md">My Dashboard</h4>
         <q-list>
           <q-item
             :to="{ name: 'dashboard' }"
