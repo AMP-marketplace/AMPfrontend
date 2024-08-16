@@ -205,9 +205,13 @@ header {
 }
 .sponsors {
   .responsive_grid {
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
     gap: 1rem;
     align-items: center;
+
+    img {
+      max-width: 150px;
+    }
   }
 }
 .q-btn-dropdown--simple * + .q-btn-dropdown__arrow {

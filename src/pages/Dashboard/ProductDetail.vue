@@ -98,7 +98,11 @@
         <div class="input_wrap">
           <label for="">Description <span>*</span></label>
           <div class="input editor">
-            <q-editor v-model="data.description" min-height="5rem" />
+            <q-editor
+              placeholder="Do your best to include all the necessary descriptions for this product including key attributes, lead times ie the amount of time from order placement until dispatch etc"
+              v-model="data.description"
+              min-height="5rem"
+            />
           </div>
         </div>
         <div class="input_wrap">
@@ -251,7 +255,10 @@
             <div class="input">
               <select v-model="data.condition">
                 <option value="new">New</option>
+                <option value="used">Used</option>
                 <option value="refurbished">Refurbished</option>
+                <option value="pre-owned">Pre owned</option>
+                <option value="open box">Open Box</option>
                 <!-- <option value="range">Range</option> -->
               </select>
             </div>

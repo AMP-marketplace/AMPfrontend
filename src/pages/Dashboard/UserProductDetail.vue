@@ -52,6 +52,10 @@
                 >
               </router-link>
 
+              <div class="q-mt-md">
+                <q-separator />
+              </div>
+
               <!-- <p>
                 Email:
                 <a :href="`mailto:${product.merchant?.user.email}`">
@@ -139,11 +143,98 @@
             </div>
           </div>
         </div>
+        <div class="grid items-center">
+          <div class="desc_wrap">
+            <h6 class="text-h4 text-weight-bold">Description</h6>
+            <p v-html="product.description" class="product-text q-mt-md"></p>
+          </div>
+          <div>
+            <div class="q-my-md">
+              <h6 class="text-h6 text-weight-bold">Delivery</h6>
+              <p>
+                Shipping to be negotiated. Contact supplier for more details(you
+                can chat or call seller)
+              </p>
+            </div>
+            <q-separator />
+            <div class="q-my-md">
+              <h6 class="text-weight-bold text-h5">Seller information</h6>
+              <div class="q-mt-sm">
+                <p>
+                  Name: <strong>{{ product.merchant?.business_name }}</strong>
+                </p>
+                <p>
+                  Address: <strong>{{ product.merchant?.address }}</strong>
+                </p>
+                <p>
+                  Country: <strong>{{ product.merchant?.country }}</strong>
+                </p>
+              </div>
+              <div class="bg-grey-3 q-mt-sm q-pa-sm">
+                <p>
+                  <i class="ri-phone-line q-mr-sm"></i>
+                  {{ product.merchant?.user?.phone }}
+                </p>
+              </div>
+              <div class="q-mt-sm">
+                <q-btn
+                  @click="chatSeller"
+                  flat
+                  :loading="loadingChatBtn"
+                  no-caps
+                  no-wrap
+                  class="bg-green-7 text-white"
+                >
+                  <i class="ri-chat-2-line q-mr-sm"></i> Chat seller
+                </q-btn>
+              </div>
+            </div>
+            <q-separator />
+            <div class="q-my-md">
+              <h6 class="text-h6 text-weight-bold">
+                Payments for this product
+              </h6>
+              <div class="q-mt-md">
+                <div style="gap: 1rem" class="row items-start no-wrap">
+                  <div>
+                    <i class="ri-git-repository-private-line"></i>
+                  </div>
+                  <div>
+                    <p class="text-weight-bold">Secure payments</p>
+                    <p class="">
+                      Every payment you make on Africa medical marketplace is
+                      secured with strict SSL encryption and PCI DSS data
+                      protection protocols.
+                    </p>
+                  </div>
+                </div>
+                <div style="gap: 1rem" class="row q-mt-sm items-start no-wrap">
+                  <div>
+                    <i class="ri-refund-line"></i>
+                  </div>
+                  <div>
+                    <p class="text-weight-bold">Refund policy</p>
+                    <p class="">
+                      Claim a refund if your order doesn't ship, is missing, or
+                      arrives with product issues
+                    </p>
+                  </div>
+                </div>
+              </div>
 
-        <div class="desc_wrap q-mt-lg">
-          <h6 class="text-h4 text-weight-bold">Description</h6>
-          <p v-html="product.description" class="product-text q-mt-md"></p>
+              <p class="q-mt-md text-grey-8">
+                Africa medical marketplace protects all your orders placed and
+                paid on the platform with
+
+                <strong class="">
+                  <i class="ri-shield-line q-mr-xs text-yellow-10"></i>Trade
+                  assurance
+                </strong>
+              </p>
+            </div>
+          </div>
         </div>
+
         <div class="reviews_list">
           <q-toolbar id="reviews" class="text-black">
             <q-toolbar-title>Reviews</q-toolbar-title>
@@ -264,36 +355,18 @@
               />
 
               <div class="input_wrap">
-                  <div class="input">
-                    <select v-model="rating_type">
-                      <option
-                        value="Top rated seller"
-                      >
-                        Top Rated Seller
-                      </option>
-                      <option
-                        value="Excellent customer service"
-                      >
-                        Excellent Customer Service
-                      </option>
-                      <option
-                        value="Fast shipping"
-                      >
-                        Fast Shipping
-                      </option>
-                      <option
-                        value="Trusted supplier"
-                      >
-                        Trusted Supplier
-                      </option>
-                      <option
-                        value="Responsive eller"
-                      >
-                        Responsive Seller
-                      </option>
-                    </select>
-                  </div>
+                <div class="input">
+                  <select v-model="rating_type">
+                    <option value="Top rated seller">Top Rated Seller</option>
+                    <option value="Excellent customer service">
+                      Excellent Customer Service
+                    </option>
+                    <option value="Fast shipping">Fast Shipping</option>
+                    <option value="Trusted supplier">Trusted Supplier</option>
+                    <option value="Responsive eller">Responsive Seller</option>
+                  </select>
                 </div>
+              </div>
             </div>
           </div>
 
@@ -313,6 +386,16 @@
         </q-card>
       </div>
     </q-dialog>
+
+    <q-dialog v-model="chatModal" class="chatDialog">
+      <div>
+        <ChatPage
+          :product="product"
+          :conversationMessages="conversationMessages"
+          :conversationDetails="conversationDetails"
+        />
+      </div>
+    </q-dialog>
   </q-layout>
 </template>
 
@@ -321,9 +404,11 @@ import { Dialog, Loading, Notify, QSpinnerOval } from "quasar";
 import { authAxios } from "src/boot/axios";
 import { onMounted, ref, watch } from "vue";
 import FooterComp from "src/components/FooterComp.vue";
+import ChatPage from "src/components/ChatPage.vue";
 import { useCartStore } from "src/stores/cart";
 import { useRoute, useRouter } from "vue-router";
 import { useMyAuthStore } from "src/stores/auth";
+
 import countries from "app/countries";
 import currencies from "app/currencies";
 const route = useRouter();
@@ -336,10 +421,14 @@ let data = ref({ media: null });
 let qty = ref(1);
 let ratingModel = ref(0);
 let loading = ref(false);
+let chatModal = ref(false);
 let rateModal = ref(false);
+let loadingChatBtn = ref(false);
 let loadingReview = ref(false);
 let loadingRating = ref(false);
-let rating_type = ref('');
+let conversationDetails = ref({});
+let conversationMessages = ref([]);
+let rating_type = ref("");
 let slide = ref(1);
 let recommendedProducts = ref({});
 watch(routeParams, (newParams, oldParams) => {
@@ -503,6 +592,44 @@ const getDetail = async () => {
     product.value = prodData.data.data;
     document.getElementById("reviews").scrollIntoView({ behavior: "smooth" });
   } catch (error) {}
+};
+
+let chatSeller = () => {
+  loadingChatBtn.value = true;
+  authAxios
+    .post(`chat/create-or-get`, {
+      user_id: authStore.userdetails.id,
+      merchant_id: product.value.merchant.id,
+    })
+    .then((response) => {
+      loadingChatBtn.value = false;
+      console.log(response);
+      conversationDetails.value = response.data.data;
+      chatModal.value = true;
+      // getConversations(response.data.conversation.id);
+    })
+    .catch(({ response }) => {
+      // console.log(response);
+      loadingChatBtn.value = false;
+      errors = response.data.errors || {};
+    });
+  // chat = true;
+};
+
+let getConversations = (id) => {
+  authAxios
+    .get(`chat/${id}`)
+    .then((response) => {
+      console.log(response);
+      conversationMessages.value = response.data.messages;
+      console.log(conversationMessages);
+      chat = true;
+    })
+    .catch(({ response }) => {
+      // $q.loading.hide();
+
+      errors = error.errors || {};
+    });
 };
 const getRecommendedProducts = () => {
   authAxios

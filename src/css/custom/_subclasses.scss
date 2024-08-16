@@ -454,13 +454,18 @@ hr {
   &.q-dialog-plugin {
     padding: 1rem;
   }
+
   .q-option-group {
     div {
       margin: 2px 0;
     }
   }
 }
-
+.q-dialog.chatDialog {
+  .q-card {
+    padding: 0;
+  }
+}
 .q-dialog__backdrop {
   background: rgba(2, 2, 3, 0.63);
 }

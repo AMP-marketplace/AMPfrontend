@@ -296,6 +296,8 @@ const submitForm = () => {
         store.setUserDetails(response.data);
         if (route.query.redirect) {
           router.replace({ name: route.query.redirect });
+        } else if (store.previousRoute) {
+          router.replace({ name: store.previousRoute });
         } else {
           router.replace({ name: "dashboard" });
         }

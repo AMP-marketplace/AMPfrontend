@@ -1,10 +1,11 @@
 import { boot } from "quasar/wrappers";
 import VOtpInput from "vue3-otp-input";
-
+import clickOutside from "vue3-clickoutside-component";
 // "async" is optional;
 // more info on params: https://v2.quasar.dev/quasar-cli/boot-files
 export default boot(({ app, router }) => {
   app.component("v-otp-input", VOtpInput);
+  app.component("v-click-outside", clickOutside);
 
   // Watch for clicks outside the component or element
   app.directive("click-outside-app", {
@@ -28,4 +29,6 @@ export default boot(({ app, router }) => {
       document.removeEventListener("click", el.__vueClickEventHandler__);
     },
   });
+
+  app.use(clickOutside);
 });

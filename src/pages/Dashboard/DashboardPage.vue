@@ -53,7 +53,7 @@
           </div>
         </div>
       </div>
-      <q-skeleton v-if="!addressArr.length" height="150px" />
+      <q-skeleton v-if="!addressArr.length && loadingPage" height="150px" />
       <q-list v-else class="bg-white">
         <q-item
           class="q-my-sm bg-grey-2"
@@ -103,6 +103,14 @@
 
         <!-- <q-separator v-if="addressArr.length" spaced inset /> -->
       </q-list>
+
+      <div
+        v-if="!addressArr.length && !loadingPage"
+        class="column items-center text-center justify-center"
+      >
+        <img style="width: 150px" src="/images/box.png" alt="" />
+        <p class="q-mt-sm">You have not checked out with any addresses yet</p>
+      </div>
     </div>
   </div>
 </template>
@@ -115,6 +123,7 @@ import { onMounted, ref } from "vue";
 let store = useMyAuthStore();
 
 let loading = ref(false);
+let loadingPage = ref(true);
 let addressArr = ref([]);
 
 const setDefault = (address) => {
@@ -173,6 +182,7 @@ const onRequest = () => {
       console.log(data);
       addressArr.value = data.data;
       loading.value = false;
+      loadingPage.value = false;
     })
     .catch(({ response }) => {
       loading.value = false;

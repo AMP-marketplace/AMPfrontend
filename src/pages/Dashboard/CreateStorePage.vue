@@ -350,7 +350,11 @@
               <div class="input">
                 <select v-model="data.condition">
                   <option value="new">New</option>
+                  <option value="used">Used</option>
                   <option value="refurbished">Refurbished</option>
+                  <option value="pre-owned">Pre owned</option>
+                  <option value="open box">Open Box</option>
+
                   <!-- <option value="range">Range</option> -->
                 </select>
               </div>

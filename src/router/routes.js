@@ -19,10 +19,11 @@ const routes = [
         name: "store.detail",
       },
       {
-        path: "/order-payment/success",
-        component: () => import("pages/Checkout/PaymentSuccess.vue"),
-        name: "payment.success",
+        path: "/plans",
+        component: () => import("pages/PlansPage.vue"),
+        name: "plans.page",
       },
+
       {
         path: "/explore",
         component: () => import("pages/ExplorePage.vue"),
@@ -39,10 +40,16 @@ const routes = [
         name: "cart",
       },
       {
-        path: "/success",
-        component: () => import("pages/SuccessPage.vue"),
-        name: "success.page",
+        path: "/order-payment/success",
+        component: () => import("src/pages/SubscriptionSuccessPage.vue"),
+        name: "subscription.success.page",
       },
+      // {
+      //   path: "/order-payment/success",
+      //   component: () => import("pages/Checkout/PaymentSuccess.vue"),
+      //   name: "payment.success",
+      // },
+
       {
         path: "/checkout",
         component: () => import("pages/Checkout/CheckoutDetails.vue"),

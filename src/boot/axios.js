@@ -68,8 +68,10 @@ export default boot(({ app, store, router }) => {
 
           store.state.value.ampauth.previousRoute =
             router.currentRoute.value.name;
-
-          return router.replace({ name: "logout" });
+          console.log(router.currentRoute.value.name);
+          return router.replace({
+            name: "logout",
+          });
         } else {
           Notify.create({
             message: e.response.data.message
@@ -122,31 +124,23 @@ export default boot(({ app, store, router }) => {
   });
 
   router.beforeEach((to, from, next) => {
-    // const store = app.config.globalProperties.$store;
-    // console.log(store);
-    // console.log(store);
-    // console.log(store);
-
     if (store.state.value.ampauth.token) {
       authAxios.defaults.headers.common[
         "Authorization"
       ] = `Bearer ${store.state.value.ampauth.token}`;
     }
     if (to.name === "logout") {
-      // console.log(store.buildadom);
-      // console.log(store.buildadom.token);
-      // console.log(store.buildadom.userdetails);
-      console.log(store.state.value.ampauth.token);
       if (to.query.redirect && to.name !== "account.dashboard") {
-        console.log("there");
         if (store.state.value.ampauth.role === "merchant") {
-          console.log("first");
           store.state.value.ampauth.token = "";
           store.state.value.ampauth.userdetails = {};
           store.state.value.ampauth.storedetails = {};
           store.state.value.ampauth.userstores = [];
           router.replace({
             name: "merchant.login",
+            query: {
+              name: from.name,
+            },
           });
         } else if (to.query.redirect === "dashboard") {
           store.state.value.ampauth.token = "";
@@ -155,6 +149,9 @@ export default boot(({ app, store, router }) => {
           store.state.value.ampauth.userstores = [];
           router.replace({
             name: "customer.login",
+            query: {
+              name: from.name,
+            },
           });
         } else {
           store.state.value.ampauth.token = "";
@@ -163,6 +160,9 @@ export default boot(({ app, store, router }) => {
           store.state.value.ampauth.userstores = [];
           router.replace({
             name: to.query.redirect,
+            query: {
+              name: from.name,
+            },
           });
         }
 

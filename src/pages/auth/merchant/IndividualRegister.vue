@@ -13,6 +13,7 @@
                 v-model="data.first_name"
                 placeholder="Enter first name"
                 required
+                name="firstname"
                 type="text"
               />
             </div>
@@ -27,6 +28,7 @@
                 v-model="data.last_name"
                 placeholder="Enter last name"
                 required
+                name="lastname"
                 type="text"
               />
             </div>
@@ -41,6 +43,7 @@
                 v-model="data.email"
                 placeholder="Enter email"
                 required
+                name="email"
                 type="email"
               />
             </div>
@@ -72,6 +75,7 @@
                     v-model="data.phone"
                     placeholder="Enter phone number"
                     required
+                    name="phone"
                     type="text"
                   />
                 </div>
@@ -336,6 +340,8 @@ let store = useMyAuthStore();
 const formatPhoneNumber = (phone) => {
   if (phone.startsWith("0")) {
     return phone.slice(1);
+  } else {
+    return phone;
   }
 };
 
@@ -347,7 +353,7 @@ const requirements = ref([
 ]);
 
 const checkRequirements = (password) => {
-  requirements.value[0].met = password.length >= 8;
+  requirements.value[0].met = password?.length >= 8;
   requirements.value[1].met = /\d/.test(password);
   requirements.value[2].met = /[!@#$%^&*(),.?":{}|<>]/.test(password);
   requirements.value[3].met = /[a-z]/.test(password) && /[A-Z]/.test(password);

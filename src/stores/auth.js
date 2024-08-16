@@ -20,8 +20,9 @@ export const useMyAuthStore = defineStore("ampauth", {
   },
   actions: {
     setUserDetails(data) {
+      console.log(data);
       const token = data.token;
-      const user = data.data.user;
+      const user = data.data.user ? data.data.user : data.data;
       const typeOfUser = data.data.role
         ? data.data.role[0].name
         : data.data.roles[0].name;

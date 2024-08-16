@@ -151,6 +151,14 @@
               >
                 <q-item-section> Account Information </q-item-section>
               </q-item>
+              <q-item
+                :to="{ name: 'account.info' }"
+                class="navLinks"
+                clickable
+                v-ripple
+              >
+                <q-item-section> Analytics </q-item-section>
+              </q-item>
             </q-list>
           </div>
 

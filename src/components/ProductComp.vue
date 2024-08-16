@@ -40,6 +40,12 @@
           :label="product?.condition"
           class="q-pa-sm damaged"
         />
+        <q-badge
+          v-if="product?.condition === 'pre_owned'"
+          rounded
+          :label="product?.condition"
+          class="q-pa-sm open_box"
+        />
       </div>
     </div>
 

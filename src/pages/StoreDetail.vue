@@ -101,100 +101,123 @@
       />
       <p class="smallText q-my-lg">No products</p>
     </div>
-    <div class="reviews_list">
-      <q-toolbar id="reviews" class="text-black q-mt-xl">
-        <q-toolbar-title>Reviews</q-toolbar-title>
-        <q-btn
-          class="bg-green-7 text-white"
-          no-wrap
-          no-caps
-          @click="rateModal = !rateModal"
+    <div v-if="!loadingProducts">
+      <div class="reviews_list">
+        <q-toolbar id="reviews" class="text-black q-mt-xl">
+          <q-toolbar-title>Reviews</q-toolbar-title>
+          <q-btn
+            class="bg-green-7 text-white"
+            no-wrap
+            no-caps
+            @click="rateModal = !rateModal"
+          >
+            Add Ratings
+          </q-btn>
+        </q-toolbar>
+        <q-list
+          v-if="storeDetails?.reviews?.length"
+          class="q-mb-lg"
+          separator
+          bordered
         >
-          Add Ratings
-        </q-btn>
-      </q-toolbar>
-      <q-list
-        v-if="storeDetails?.reviews?.length"
-        class="q-mb-lg"
-        separator
-        bordered
-      >
-        <q-item
-          v-for="(review, index) in storeDetails?.reviews"
-          :key="index"
-          class="q-my-sm"
-          clickable
-          v-ripple
-        >
-          <q-item-section avatar>
-            <q-avatar
-              v-if="review?.media?.length"
-              color="primary"
-              text-color="white"
-            >
-              <img :src="review?.media ? review?.media[0]?.url : ''" alt="" />
-            </q-avatar>
-          </q-item-section>
+          <q-item
+            v-for="(review, index) in storeDetails?.reviews"
+            :key="index"
+            class="q-my-sm"
+            clickable
+            v-ripple
+          >
+            <q-item-section avatar>
+              <q-avatar
+                v-if="review?.media?.length"
+                color="primary"
+                text-color="white"
+              >
+                <img
+                  :src="
+                    review?.media
+                      ? review?.media[0]?.url
+                      : 'https://w7.pngwing.com/pngs/178/595/png-transparent-user-profile-computer-icons-login-user-avatars-thumbnail.png'
+                  "
+                  alt=""
+                />
+              </q-avatar>
+              <q-avatar v-else color="primary" text-color="white">
+                <img
+                  src="https://w7.pngwing.com/pngs/178/595/png-transparent-user-profile-computer-icons-login-user-avatars-thumbnail.png
+                  "
+                  alt=""
+                />
+              </q-avatar>
+            </q-item-section>
 
-          <q-item-section>
-            <q-item-label>{{ review.remark }}</q-item-label>
-            <q-item-label caption lines="1"
-              >{{ review.author.name }} -
-              {{ review.author.email }}</q-item-label
-            >
-          </q-item-section>
+            <q-item-section>
+              <q-item-label>{{ review.remark }}</q-item-label>
+              <q-item-label caption lines="1"
+                >{{ review.author.name }} -
+                {{ review.author.email }}</q-item-label
+              >
+            </q-item-section>
 
-          <q-item-section side>
-            <q-btn v-if="review.is_author" @click="deleteReview(review)">
-              Delete
-            </q-btn>
-          </q-item-section>
-        </q-item>
-      </q-list>
-    </div>
-    <div style="margin: 0rem" class="auth">
-      <div class="row justify-start q-mb-md">
-        <q-rating
-          v-model="storeDetails.rating"
-          size="2em"
-          color="green-7"
-          disable
-          icon="star_border"
-          icon-selected="star"
-        />
+            <q-item-section side>
+              <q-btn v-if="review.is_author" @click="deleteReview(review)">
+                Delete
+              </q-btn>
+            </q-item-section>
+          </q-item>
+        </q-list>
       </div>
-      <div class="text-left q-mb-sm">
-        <div class="text-body1">Please kindly leave a review</div>
-      </div>
-
-      <form @submit.prevent="uploadReview">
-        <div class="input_wrap">
-          <div class="input">
-            <textarea
-              placeholder="Leave a comment"
-              v-model="data.remark"
-              required
-              cols="20"
-              rows="5"
-            ></textarea>
-          </div>
-
-          <div>
-            <q-file v-model="data.media" label="Upload review file" />
+      <div style="margin: 0rem" class="auth">
+        <div>
+          <div
+            v-for="(rating, index) in storeDetails.ratings"
+            :key="index"
+            class="row items-center justify-start q-mb-md"
+          >
+            <p>{{ rating.topic }}:</p>
+            <q-rating
+              v-model="rating.average_rating"
+              size="2em"
+              color="green-7"
+              disable
+              icon="star_border"
+              icon-selected="star"
+            />
           </div>
         </div>
-        <q-btn
-          class="apply bg-primary q-px-xl q-mt-md"
-          no-caps
-          :loading="loadingReview"
-          flat
-          type="submit"
-          rounded
-          text-color="white"
-        >
-          Submit
-        </q-btn>
-      </form>
+        <div class="text-left q-mb-sm">
+          <div class="text-body1">Please kindly leave a review</div>
+        </div>
+
+        <form @submit.prevent="uploadReview">
+          <div class="input_wrap">
+            <div class="input">
+              <textarea
+                placeholder="Leave a comment"
+                v-model="data.remark"
+                required
+                cols="20"
+                rows="5"
+              ></textarea>
+            </div>
+
+            <div>
+              <q-file v-model="data.media" label="Upload review file" />
+            </div>
+          </div>
+          <q-btn
+            class="apply bg-primary q-px-xl q-mt-md"
+            no-caps
+            :loading="loadingReview"
+            flat
+            type="submit"
+            rounded
+            text-color="white"
+          >
+            Submit
+          </q-btn>
+        </form>
+      </div>
     </div>
   </div>
   <FooterCompVue />
@@ -207,7 +230,7 @@
         </div>
 
         <div class="auth">
-          <div class="row justify-center">
+          <div style="gap: 1rem" class="column items-center justify-center">
             <q-rating
               v-model="ratingModel"
               size="2em"
@@ -216,15 +239,17 @@
               icon-selected="star"
             />
             <div class="input_wrap">
+              <label for="">Rating kind</label>
               <div class="input">
                 <select v-model="rating_type">
-                  <option value="Top rated seller">Top Rated Seller</option>
-                  <option value="Excellent customer service">
-                    Excellent Customer Service
+                  <option disabled value="">Select</option>
+                  <option
+                    v-for="ratingTopic in ratingTopicsListArr"
+                    :key="ratingTopic.slug"
+                    value="Excellent customer service"
+                  >
+                    {{ ratingTopic.name }}
                   </option>
-                  <option value="Fast shipping">Fast Shipping</option>
-                  <option value="Trusted supplier">Trusted Supplier</option>
-                  <option value="Responsive eller">Responsive Seller</option>
                 </select>
               </div>
             </div>
@@ -273,6 +298,7 @@ let loadingReview = ref(false);
 let rating_type = ref("");
 let productCategoryListArr = ref([]);
 let prodListArr = ref([]);
+let ratingTopicsListArr = ref([]);
 let storeDetails = ref({ rating: 0 });
 let data = ref({ media: null });
 
@@ -379,32 +405,58 @@ const getStore = async () => {
     storeDetails.value = storeDataResp.data.data;
   } catch (error) {}
 };
+const getRatingTopic = async () => {
+  try {
+    let ratingTopicsList = await authAxios.get(`data?fetch=ratingtopics`);
+    console.log(ratingTopicsList);
+    ratingTopicsListArr.value = ratingTopicsList.data.data;
+  } catch (error) {}
+};
 const rateStore = () => {
-  loadingRating.value = true;
-  authAxios
-    .post(`merchant/${route.query.slug}/rating/create`, {
-      value: ratingModel.value,
-    })
-    .then(({ data }) => {
-      console.log(data);
-      Notify.create({
-        message: "Ratings successfully added",
-        position: "top",
-        color: "green",
-      });
-      getStore();
-      loadingRating.value = false;
-      rateModal.value = false;
-      document.getElementById("reviews").scrollIntoView({ behavior: "smooth" });
-    })
-    .catch(({ response }) => {
-      loadingRating.value = false;
-      Notify.create({
-        message: "An error occurred",
-        position: "top",
-        color: "red",
-      });
+  if (!ratingModel.value) {
+    Notify.create({
+      message: "Please select a rating",
+      position: "top",
+      color: "red",
     });
+    return;
+  } else if (!rating_type.value) {
+    Notify.create({
+      message: "Please select a rating kind",
+      position: "top",
+      color: "red",
+    });
+
+    return;
+  } else {
+    loadingRating.value = true;
+    authAxios
+      .post(`${route.query.slug}/${rating_type.value}/rate`, {
+        value: ratingModel.value,
+      })
+      .then(({ data }) => {
+        console.log(data);
+        Notify.create({
+          message: "Ratings successfully added",
+          position: "top",
+          color: "green",
+        });
+        getStore();
+        loadingRating.value = false;
+        rateModal.value = false;
+        document
+          .getElementById("reviews")
+          .scrollIntoView({ behavior: "smooth" });
+      })
+      .catch(({ response }) => {
+        loadingRating.value = false;
+        Notify.create({
+          message: "An error occurred",
+          position: "top",
+          color: "red",
+        });
+      });
+  }
 };
 onMounted(async () => {
   try {
@@ -414,6 +466,7 @@ onMounted(async () => {
     storeDetails.value = storeDataResp.data.data;
     // productCategoryListArr.value = prodCatList.data.data;
     getProducts();
+    getRatingTopic();
   } catch (error) {
     loadingProducts.value = false;
     console.error(error);

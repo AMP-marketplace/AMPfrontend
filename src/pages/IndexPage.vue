@@ -58,7 +58,7 @@
             >
           </div>
         </div>
-        <div v-if="loadingProducts" class="responsive_grid">
+        <div v-if="loadingProducts" class="responsive_grid q-mt-md">
           <div v-for="n in 3" :key="n">
             <q-card flat style="max-width: 300px">
               <q-skeleton height="150px" square />

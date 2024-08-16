@@ -308,10 +308,6 @@ v
           <div class="smallText q-mt-md text-center">
             You have succesfully placed an order...
           </div>
-          <!-- <div class="smallText q-mt-md text-center">
-            You have succesfully placed an order , now you can <br />
-            keep track or your order till it reaches you
-          </div> -->
         </div>
 
         <div class="total no-wrap row justify-center q-mt-md items-center">
@@ -325,16 +321,6 @@ v
           >
             Continue to pay
           </q-btn>
-          <!-- <q-btn
-            class="apply bg-primary q-px-xl q-mt-md"
-            no-caps
-            flat
-            :to="{ name: 'order.tracking' }"
-            rounded
-            text-color="white"
-          >
-            Track Order
-          </q-btn> -->
         </div>
       </q-card>
     </div>

@@ -2,7 +2,11 @@
   <div class="merchant">
     <div class="auth_grid">
       <div class="left">
-        <img src="../../../assets/man_smile.png" alt="" />
+        <img
+          style="height: 100%; object-fit: cover"
+          src="../../../assets/man_smile.png"
+          alt=""
+        />
       </div>
 
       <div class="right">
@@ -43,6 +47,28 @@
             Register as a business
           </q-btn>
         </div>
+        <p class="text-body1 text-center">
+          Customer already have an account?
+          <router-link
+            :to="{
+              name: 'customer.login',
+            }"
+            class="text-primary text-weight-bold"
+          >
+            Login
+          </router-link>
+        </p>
+        <p class="text-body1 text-center">
+          Business already have an account?
+          <router-link
+            :to="{
+              name: 'merchant.login',
+            }"
+            class="text-primary text-weight-bold"
+          >
+            Login
+          </router-link>
+        </p>
       </div>
     </div>
   </div>
