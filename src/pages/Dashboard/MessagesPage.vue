@@ -1,5 +1,9 @@
 <template>
-  <div class="loader" v-if="loadingCol">
+  <div
+    style="height: 70vh"
+    class="loader column justify-center items-center"
+    v-if="loadingCol"
+  >
     <div>
       <q-spinner-comment color="primary" size="5em" />
     </div>
@@ -7,17 +11,14 @@
   <div v-if="!loadingCol" class="wrapp">
     <div class="top">
       <span class="title">
-        <!-- <i class="fa-solid q-mr-sm fa-message"></i> -->
-        <img src="/images/messages.svg" alt="" />
+        <img style="width: 40px" src="/images/messages.svg" alt="" />
         Messages | {{ rows.length }}
       </span>
 
       <div class="sort_area">
-        <div class="left">
-          <q-btn flat class="active">Recent </q-btn>
-          <q-btn flat class="regular"> Expired </q-btn>
-          <q-btn flat class="regular"> Archived </q-btn>
-        </div>
+        <q-btn flat class="active">Recent </q-btn>
+        <q-btn flat class="regular"> Expired </q-btn>
+        <q-btn flat class="regular"> Archived </q-btn>
       </div>
     </div>
     <div v-if="rows.length" class="style q-py-md">
@@ -36,7 +37,7 @@
         <template v-slot:body-cell-user="props">
           <q-td :props="props">
             <!-- {{ props.row }} -->
-            <div @click="getConversations(props.row.id)" class="name_row">
+            <div @click="getConversations(props.row.slug)" class="name_row">
               <q-avatar size="50px" class="shadow-10">
                 <img
                   :src="
@@ -48,13 +49,13 @@
               </q-avatar>
               <div class="name">
                 <div class="name_top">
-                  {{ props.row.user }}
+                  {{ props.row.customer.name }}
                 </div>
                 <div class="name_down">
-                  {{ props.row.kind }}
+                  {{ props.row.customer.email }}
                 </div>
                 <div class="name_last">
-                  {{ props.row.chat }}
+                  {{ props.row.customer.phone }}
                 </div>
               </div>
             </div>
@@ -88,85 +89,24 @@
       <div class="empty_text">You currently have no notifications</div>
     </div>
 
-    <q-dialog v-model="chatDialog" class="dailog" persistent>
-      <chat-page
-        :conversationMessages="conversationMessages"
-        :productData="productData"
-        :conversationDetails="conversationDetails"
-        @refresh-message="getConversations"
-        @closeModal="close"
-        @convo="getConversations"
-      />
-    </q-dialog>
-    <q-dialog v-model="advertdialog" persistent>
-      <q-card class="card">
-        <div class="dialog_content">
-          <div class="dialog_top advert">
-            <div class="left_dialog">
-              <img src="/images/listing1.png" alt="" />
-            </div>
-
-            <div class="det">
-              <div class="title name_top">Michael Nnamani</div>
-              <div class="name_down act text-weight-bold">Active</div>
-            </div>
-          </div>
-          <div class="dialog_top advert">
-            <div class="left_dialog">
-              <img src="/images/listing2.png" alt="" />
-            </div>
-
-            <div class="det">
-              <div class="title name_top">Ankara Head Wrap Gown</div>
-              <div class="name_down text-black">₦50,000</div>
-            </div>
-          </div>
-          <div class="chatArea">
-            <p class="text-center today">Today</p>
-            <div style="width: 100%; max-width: 400px">
-              <q-chat-message
-                name="me"
-                avatar="https://cdn.quasar.dev/img/avatar1.jpg"
-                :text="['hey, how are you?']"
-                sent
-              />
-              <q-chat-message
-                name="Jane"
-                avatar="https://cdn.quasar.dev/img/avatar2.jpg"
-                :text="['doing fine, how r you?']"
-              />
-
-              <q-chat-message
-                name="Jane"
-                avatar="https://cdn.quasar.dev/img/avatar5.jpg"
-                bg-color="amber"
-              >
-                <q-spinner-dots size="2rem" />
-              </q-chat-message>
-            </div>
-
-            <div class="input_area">
-              <div class="inp_wra">
-                <i class="fa-solid fa-face-smile"></i>
-                <input type="text" placeholder="Type something...." />
-                <i class="fa-solid fa-microphone"></i>
-              </div>
-            </div>
-          </div>
-
-          <q-btn @click="advertdialog = false" class="close">
-            <i class="fa-solid fa-xmark"></i>
-          </q-btn>
-        </div>
-      </q-card>
+    <q-dialog v-model="chatDialog" class="chatDialog" persistent>
+      <div>
+        <chat-page
+          :conversationMessages="conversationMessages"
+          :conversationDetails="conversationDetails"
+          @closeModal="closeModalToggle"
+          :product="productData"
+        />
+      </div>
     </q-dialog>
   </div>
 </template>
 
-<script>
-import { useMeta } from "quasar";
-import { ref } from "vue";
+<script setup>
+import { Loading, useMeta } from "quasar";
+import { onMounted, ref } from "vue";
 import ChatPage from "src/components/ChatPage.vue";
+import { authAxios } from "src/boot/axios";
 const columns = [
   {
     name: "user",
@@ -185,131 +125,96 @@ const columns = [
     sortable: true,
   },
 ];
+useMeta({
+  title: "Messages",
+});
 
-export default {
-  components: { ChatPage },
-  setup() {
-    useMeta({
-      title: "Messages",
-    });
-  },
-  data() {
-    return {
-      columns,
-      advertdialog: false,
-      rows: [],
-      errors: [],
-      image: ref(null),
-      rowData: {},
-      data: {},
-      files: null,
-      editstate: false,
-      createstate: null,
-      conversationDetails: {},
-      productData: {},
-      conversationMessages: [],
-      chatDialog: false,
-      filter: "",
-      curl: "",
-      separator: "",
-      mode: "list",
-      loading: false,
-      loadingCol: true,
-      editLoad: false,
-      thisId: "",
-      pagination: {
-        sortBy: "id",
-        descending: false,
-        page: 1,
-        rowsPerPage: 5,
-        // rowsNumber: 100,
-      },
-      loaders: {
-        delete: false,
-        category: false,
-        deleteBtn: [],
-        save: [],
-      },
-    };
-  },
+let rows = ref([]);
+let errors = ref([]);
+let loadingBtn = ref(false);
+let rowData = ref({});
+let data = ref({});
+let conversationDetails = ref({});
+let productData = ref({});
+let conversationMessages = ref([]);
+let chatDialog = ref(false);
+let filter = ref("");
+let curl = ref("");
+let separator = ref("");
+let mode = ref("list");
+let loading = ref(false);
+let loadingCol = ref(true);
+let editLoad = ref(false);
+let thisId = ref("");
+let pagination = ref({
+  sortBy: "id",
+  descending: false,
+  page: 1,
+  rowsPerPage: 5,
+  // rowsNumber: 100,
+});
+let loaders = ref({
+  delete: false,
+  category: false,
+  deleteBtn: [],
+  save: [],
+});
 
-  mounted() {
-    this.onRequest({
-      pagination: this.pagination,
-      filter: undefined,
-    });
-  },
-
-  methods: {
-    close() {
-      this.chatDialog = false;
-      // console.log("first");
-    },
-    onRequest(props) {
-      this.loadingCol = true;
-      const url = `${this.$store.leegoluauth.vendorDetails.slug}/conversations`;
-      this.curl = url;
-      this.$api
-        .get(url)
-        .then(({ data }) => {
-          console.log(data);
-          this.loadingCol = false;
-          this.rows = data.conversations;
-          // this.count = data.count;
-        })
-        .catch(({ response }) => {
-          // console.log(response);
-          this.loadingCol = false;
-          this.rows = [];
-        });
-    },
-
-    getConversations(id) {
-      this.thisId = id.id;
-      // console.log(id);
-      // this.$q.loading.show();
-      this.$api
-        .get(`${this.$store.leegoluauth.vendorDetails.slug}/${id}/messages`)
-        .then((response) => {
-          // this.$q.loading.hide();
-          // console.log(response);
-          this.conversationMessages = response.data.messages;
-          this.conversationDetails = id;
-          this.productData = response.data.product;
-          // this.subscribeToChannel(id);
-          this.chatDialog = true;
-        })
-        .catch(({ response }) => {
-          this.loadingBtn = false;
-          // this.$q.loading.hide();
-
-          this.errors = error.errors || {};
-        });
-    },
-
-    subscribeToChannel(id) {
-      // console.log(id);
-      const channel = window.Echo.join(`message.${id.id}`);
-
-      channel.listen("message", (event) => {
-        console.log("Received new message:", event.message);
-        this.conversationMessages.push(event.message);
-      });
-    },
-
-    refreshtitle() {
-      if (this.curl !== "") {
-        this.loading = true;
-      }
-    },
-
-    toggleModal(props) {
-      this.rowData = props;
-      this.advertdialog = true;
-      // console.log(props);
-    },
-  },
+let closeModalToggle = () => {
+  chatDialog.value = false;
 };
+let onRequest = (props) => {
+  loadingCol.value = true;
+  const url = `chat/index/all`;
+  curl = url;
+  authAxios
+    .get(url)
+    .then(({ data }) => {
+      console.log(data);
+      loadingCol.value = false;
+      rows.value = data.data;
+    })
+    .catch(({ response }) => {
+      loadingCol.value = false;
+      rows.value = [];
+    });
+};
+
+let getConversations = (id) => {
+  Loading.show();
+  authAxios
+    .get(`chat/${id}`)
+    .then((response) => {
+      Loading.hide();
+      conversationDetails.value = response.data.data;
+      chatDialog.value = true;
+    })
+    .catch(({ response }) => {
+      loadingBtn.value = false;
+      Loading.hide();
+      errors.value = response.data.errors || {};
+    });
+};
+
+let subscribeToChannel = (id) => {
+  // console.log(id);
+  const channel = window.Echo.join(`message.${id.id}`);
+
+  channel.listen("message", (event) => {
+    console.log("Received new message:", event.message);
+    conversationMessages.push(event.message);
+  });
+};
+
+let toggleModal = (props) => {
+  rowData = props;
+  advertdialog = true;
+  // console.log(props);
+};
+
+onMounted(() => {
+  onRequest();
+});
 </script>
 
 <style lang="scss" scoped>
@@ -318,8 +223,6 @@ export default {
 // }
 
 .title {
-  font-family: "Open Sans";
-  font-style: normal;
   font-weight: 600;
   font-size: 16px;
   line-height: 22px;
@@ -349,8 +252,6 @@ export default {
 }
 
 .sort_area .right .sort_by_date {
-  font-family: "Montserrat";
-  font-style: normal;
   font-weight: 400;
   font-size: 14px;
   line-height: 17px;
@@ -361,8 +262,6 @@ export default {
 }
 
 .sort_area .active {
-  font-family: "Open Sans";
-  font-style: normal;
   width: 107px;
   height: 34px;
   font-weight: 700;
@@ -376,8 +275,6 @@ export default {
   border-radius: 17px;
 }
 .sort_area .regular {
-  font-family: "Open Sans";
-  font-style: normal;
   font-weight: 600;
   font-size: 14px;
   line-height: 19px;
@@ -390,8 +287,6 @@ export default {
 }
 
 .sort_area .regular.boosted {
-  font-family: "Open Sans";
-  font-style: normal;
   font-weight: 600;
   font-size: 14px;
   line-height: 19px;
@@ -447,8 +342,7 @@ export default {
 }
 .input_area .inp_wra input {
   border: none;
-  font-family: "Inter";
-  font-style: normal;
+
   font-weight: 500;
   font-size: 12px;
   line-height: 15px;
@@ -471,8 +365,6 @@ export default {
 }
 
 .added {
-  font-family: "Open Sans";
-  font-style: normal;
   font-weight: 600;
   font-size: 12px;
   line-height: 16px;
@@ -480,20 +372,16 @@ export default {
 }
 
 .name_top {
-  font-family: "Open Sans";
-  font-style: normal;
   font-weight: 400;
   font-size: 16px;
   line-height: 22px;
   color: #000000;
 }
 .name_down {
-  font-family: "Inter";
-  font-style: normal;
   font-weight: 500;
   font-size: 14px;
   line-height: 17px;
-  text-transform: capitalize;
+  // text-transform: capitalize;
   color: #1f7bb5;
 }
 
@@ -501,8 +389,6 @@ export default {
   font-weight: 700;
 }
 .name_last {
-  font-family: "Inter";
-  font-style: normal;
   font-weight: 400;
   font-size: 13px;
   line-height: 16px;
@@ -551,8 +437,6 @@ export default {
   padding: 1.4rem 0.5rem;
 }
 p.today {
-  font-family: "Inter";
-  font-style: normal;
   font-weight: 400;
   font-size: 10px;
   line-height: 12px;
@@ -562,8 +446,7 @@ p.today {
 
 .dialog_content .boost .q-btn {
   width: 100%;
-  font-family: "Open Sans";
-  font-style: normal;
+
   font-weight: 600;
   font-size: 16px;
   line-height: 22px;
@@ -571,7 +454,7 @@ p.today {
   color: #ffffff;
   background: #1f7bb5;
   border-radius: 5px;
-  text-transform: capitalize;
+  // text-transform: capitalize;
 }
 
 .dialog_content .boost {
@@ -594,8 +477,6 @@ p.today {
 }
 
 p.advert {
-  font-family: "Open Sans";
-  font-style: normal;
   font-weight: 600;
   font-size: 20px;
   line-height: 27px;

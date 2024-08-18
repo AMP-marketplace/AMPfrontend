@@ -6,11 +6,18 @@
     </div>
     <div class="title">{{ plan.name }}</div>
     <div class="amount">
-      ₦{{ plan.price.replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
+      ₦{{
+        planDesc !== "yearly"
+          ? (parseInt(plan.price) - 200000).toLocaleString()
+          : parseInt(plan.price).toLocaleString()
+      }}
+      <!-- ₦{{ plan.price.replace(/\B(?=(\d{3})+(?!\d))/g, ",") }} -->
       <br />
-      <div class="small">Per year</div>
+      <div class="small">
+        {{ planDesc === "monthly" ? "Per month" : "Per year" }}
+      </div>
     </div>
-
+    <!-- {{  }} -->
     <div class="options">
       <ul v-if="plan.name === 'standard'">
         <li>
@@ -70,7 +77,8 @@
           </div>
           <div class="title">{{ plan.name }}</div>
           <div class="amount">
-            ₦{{ plan.price.replace(/\B(?=(\d{3})+(?!\d))/g, ",") }}
+            ₦{{ parseInt(plan.price).toLocaleString() }}
+            <!-- ₦{{ plan.price.replace(/\B(?=(\d{3})+(?!\d))/g, ",") }} -->
           </div>
 
           <div v-if="errors.name" class="input-box active-grey">
@@ -117,7 +125,7 @@ import { Notify } from "quasar";
 import { authAxios } from "src/boot/axios";
 import { ref } from "vue";
 
-let props = defineProps(["plan", "loadingsign"]);
+let props = defineProps(["plan", "loadingsign", "planDesc"]);
 
 let dialogCreate = ref(false);
 let loading = ref(false);

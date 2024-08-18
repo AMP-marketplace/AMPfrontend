@@ -3,7 +3,30 @@
     <div class="wrapper">
       <div class="main_title">Africa Medical Marketplace Plans</div>
       <div class="sub_title">Choose a plan that fits your need</div>
-
+      <div
+        style="gap: 1rem"
+        class="row justify-center q-mb-lg items-center no-wrap"
+      >
+        <!-- {{ planView }} -->
+        <q-btn
+          :class="
+            planView === 'monthly' ? 'bg-green-7 text-white' : 'bg-grey-4'
+          "
+          no-wrap
+          no-caps
+          @click="setView('monthly')"
+        >
+          Monthly
+        </q-btn>
+        <q-btn
+          :class="planView === 'yearly' ? 'bg-green-7 text-white' : 'bg-grey-4'"
+          no-wrap
+          @click="setView('yearly')"
+          no-caps
+        >
+          Yearly
+        </q-btn>
+      </div>
       <div class="load">
         <div v-if="loading" class="row justify-center">
           <q-card>
@@ -17,6 +40,7 @@
             v-for="(plan, index) in businessPlans"
             :key="index"
             :plan="plan"
+            :planDesc="planView"
             :loadingsign="loading"
           />
         </div>
@@ -36,6 +60,7 @@ import { onMounted, ref } from "vue";
 
 let businessPlans = ref([]);
 let loading = ref(true);
+let planView = ref("yearly");
 let errors = ref({});
 let plans = ref([
   {
@@ -50,18 +75,21 @@ let plans = ref([
   },
 ]);
 
-let cancelProcess = () => {
-  if ($router.currentRoute.value.query.getplan === "yes") {
-    $router.replace({
-      name: "business.dashboard",
-      query: { videotour: "yes" },
-    });
-  } else {
-    $router.replace({
-      name: "business.dashboard",
-    });
-  }
+let setView = (view) => {
+  planView.value = view;
 };
+// let cancelProcess = () => {
+//   if ($router.currentRoute.value.query.getplan === "yes") {
+//     $router.replace({
+//       name: "business.dashboard",
+//       query: { videotour: "yes" },
+//     });
+//   } else {
+//     $router.replace({
+//       name: "business.dashboard",
+//     });
+//   }
+// };
 let getPlans = () => {
   authAxios
     .get("subscription/plans")

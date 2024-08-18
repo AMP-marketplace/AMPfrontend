@@ -387,12 +387,13 @@
       </div>
     </q-dialog>
 
-    <q-dialog v-model="chatModal" class="chatDialog">
+    <q-dialog v-model="chatModal" persistent class="chatDialog">
       <div>
         <ChatPage
           :product="product"
           :conversationMessages="conversationMessages"
           :conversationDetails="conversationDetails"
+          @closeModal="closeModalToggle"
         />
       </div>
     </q-dialog>
@@ -435,6 +436,9 @@ watch(routeParams, (newParams, oldParams) => {
   // Handle the route parameter changes here
   // console.log("Route parameters changed:", newParams);
 });
+const closeModalToggle = () => {
+  chatModal.value = false;
+};
 const addtoCart = () => {
   let productValue = {
     ...product.value,

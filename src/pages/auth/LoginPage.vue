@@ -263,7 +263,7 @@ const submitForm = () => {
       console.log(response);
       loading.value = false;
       data.value = {};
-      if (response.data.data.roles[0].name === "merchant") {
+      if (response.data.data.user.roles[0].name === "merchant") {
         Notify.create({
           message: response.data.message,
           color: "green",

@@ -107,9 +107,19 @@ const routes = [
             name: "account.info",
           },
           {
+            path: "/merchant/messages",
+            component: () => import("pages/Dashboard/MessagesPage.vue"),
+            name: "merchant.messages",
+          },
+          {
             path: "/merchant/order-history",
             component: () => import("pages/Dashboard/HistoryPage.vue"),
             name: "history",
+          },
+          {
+            path: "/merchant/analytics",
+            component: () => import("pages/Dashboard/AnalyticsPage.vue"),
+            name: "merchant.analytics",
           },
           // {
           //   path: "/merchant/track-order",

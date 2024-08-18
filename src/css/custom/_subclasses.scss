@@ -464,6 +464,7 @@ hr {
 .q-dialog.chatDialog {
   .q-card {
     padding: 0;
+    min-width: 100% !important;
   }
 }
 .q-dialog__backdrop {

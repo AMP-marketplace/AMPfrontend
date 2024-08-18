@@ -6,12 +6,11 @@
           <div class="left_dialog">
             <img src="/images/usersvg.svg" alt="" />
           </div>
-
           <div class="det">
             <div class="title name_top">
               {{
                 store?.userdetails?.roles[0].name === "shopper"
-                  ? conversationDetails?.merchant?.name
+                  ? product?.merchant?.business_name
                   : conversationDetails?.customer?.name
               }}
             </div>
@@ -52,19 +51,32 @@
         </div> -->
         <div class="chatArea">
           <p class="text-center today">Today</p>
-          <div v-if="message.length" style="width: 100%; max-width: 400px">
+          <div
+            v-if="conversationDetails?.messages.length"
+            style="width: 100%; max-width: 400px"
+          >
             <div ref="myDiv" id="myDiv" class="message_wrap">
               <div
                 v-for="(chat, index) in conversationDetails?.messages"
                 :key="index"
               >
-                <div v-if="chat.bool === false" class="user chat">
+                <div
+                  :class="
+                    chat?.sender?.roles[0].name === 'shopper'
+                      ? 'user chat'
+                      : 'vendor chat'
+                  "
+                >
                   <div class="div">
                     <span>
-                      <img src="/images/usersvg.svg" alt="" />
+                      <img
+                        style="width: 13px; height: 13px"
+                        src="/images/usersvg.svg"
+                        alt=""
+                      />
                     </span>
                     <span>
-                      {{ chat.messages }}
+                      {{ chat.message }}
                     </span>
                   </div>
                   <span class="time">
@@ -77,9 +89,15 @@
                   </span>
                 </div>
 
-                <div v-else class="vendor chat">
+                <!-- <div
+                  v-if="
+                    chat.is_authenticated_user_author === false &&
+                    store?.userdetails?.roles[0].name !== 'shopper'
+                  "
+                  class="vendor chat"
+                >
                   <div class="div">
-                    <span>{{ chat.messages }} </span>
+                    <span>{{ chat.message }} </span>
                   </div>
                   <span class="time">
                     {{
@@ -89,7 +107,7 @@
                       })
                     }}
                   </span>
-                </div>
+                </div> -->
               </div>
             </div>
           </div>
@@ -99,6 +117,12 @@
           </div>
 
           <div class="input_area">
+            <p
+              v-if="!errorConnectingToChatServer"
+              class="text-red-7 text-center q-mb-sm text-weight-bold"
+            >
+              We could not connect you to our chat server at this time
+            </p>
             <div class="inp_wra">
               <q-btn
                 rounded
@@ -111,6 +135,7 @@
               >
                 <i class="fa-solid fa-face-smile"></i>
               </q-btn>
+
               <div class="emojs">
                 <EmojiPicker
                   v-if="toggleEmojiPicker"
@@ -122,6 +147,7 @@
               <input
                 v-model="newMessage"
                 type="text"
+                :disabled="!errorConnectingToChatServer"
                 ref="message_box"
                 placeholder="Type something...."
               />
@@ -134,8 +160,9 @@
                   :loading="sendingMessageLoading"
                   flat
                 >
+                  <i class="ri-send-plane-2-fill text-h5"></i>
                   <!-- <i class="fa-sharp fa-solid fa-paper-plane-top"></i> -->
-                  <img src="/images/mess.svg" alt="" />
+                  <!-- <img src="/images/mess.svg" alt="" /> -->
                 </q-btn>
                 <!-- <i class="fa-solid fa-microphone"></i> -->
               </div>
@@ -144,7 +171,7 @@
         </div>
 
         <q-btn @click="closeModal" class="close">
-          <i class="fa-solid fa-xmark"></i>
+          <i class="ri-close-line"></i>
         </q-btn>
       </div>
     </q-card>
@@ -154,7 +181,7 @@
 <script setup>
 import { Notify } from "quasar";
 import { authAxios } from "src/boot/axios";
-import { inject, nextTick, onMounted, ref } from "vue";
+import { inject, nextTick, onBeforeUnmount, onMounted, ref } from "vue";
 import EmojiPicker from "vue3-emoji-picker";
 import clickOutside from "vue3-clickoutside-component";
 import Pusher from "pusher-js";
@@ -170,10 +197,12 @@ const sendingMessageLoading = ref(false);
 let emojiDialogToggle = ref(false);
 let loadingChatBtn = ref(false);
 let toggleEmojiPicker = ref(false);
+let errorConnectingToChatServer = ref(false);
 let myDiv = ref();
 let errors = ref({});
 let message = ref([]);
 let newMessage = ref("");
+let channel = ref(null);
 let data = ref({
   message: "",
 });
@@ -186,24 +215,43 @@ let props = defineProps({
 });
 
 const emit = defineEmits(["closeModal"]);
-
+Pusher.logToConsole = true;
 // Access the globally available Pusher instance
 const pusher = new Pusher("f71ee69f460a2ede9930", {
   cluster: "eu",
-  encrypted: true,
+  authEndpoint: "https://agora.lyt24tech.com/api/broadcasting/auth",
+  auth: {
+    headers: {
+      Authorization: `Bearer ${store.token}`, // Replace with your auth token
+    },
+  },
 });
-const channel = pusher.subscribe("conversationSlug");
-// Listen for incoming messages
-channel.bind("message", (data) => {
-  console.log(data);
-  message.value.push(data);
-  // props.conversationMessages.push(data);
-  props.conversationDetails.messages.push(data);
+channel = pusher.subscribe(`private-${props.conversationDetails.slug}`);
+channel.bind("pusher:subscription_succeeded", () => {
+  errorConnectingToChatServer.value = true;
+  console.log("Successfully subscribed to the channel");
 });
+channel.bind("pusher:subscription_error", (status) => {
+  errorConnectingToChatServer.value = false;
+  console.error("Subscription error:", status);
+});
+// // Listen for incoming messages
+// channel.bind("message.delivered", (data) => {
+//   console.log(data);
+//   if (store.userdetails.id === data.sender_id) {
+//     let newData = {
+//       ...data,
+//       is_authenticated_user_author: true,
+//       message: data.content,
+//     };
 
+//     props.conversationDetails.messages.push(newData);
+//   }
+// });
+// Pusher.logToConsole = true;
 let scrollToBottom = () => {
   nextTick(() => {
-    const scrollDiv = myDiv.value;
+    const scrollDiv = document.getElementById("myDiv");
     scrollDiv.scrollTop = scrollDiv.scrollHeight;
   });
 };
@@ -227,6 +275,14 @@ let onSelectEmoji = (emoji) => {
 };
 
 let sendMessage = () => {
+  if (newMessage.value === "") {
+    Notify.create({
+      message: "Type in a message",
+      color: "red",
+      position: "top",
+    });
+    return;
+  }
   sendingMessageLoading.value = true;
   authAxios
     .post(`chat/${props.conversationDetails.slug}/message/send`, {
@@ -235,9 +291,7 @@ let sendMessage = () => {
           ? props.conversationDetails.customer.id
           : props.conversationDetails.merchant.id,
       sender_type:
-        props.conversationDetails.customer.roles[0].name === "shopper"
-          ? "user"
-          : "merchant",
+        store?.userdetails?.roles[0].name === "shopper" ? "user" : "merchant",
       message: newMessage.value,
       // sender_id: store.userdetails.id,
       // sender_type: store.userdetails.roles
@@ -245,22 +299,27 @@ let sendMessage = () => {
       //   : store.userdetails.role[0].name,
     })
     .then((response) => {
-      sendingMessageLoading = false;
-      Notify.create({
-        message: "Message sent",
-      });
-      newMessage.value = "";
+      sendingMessageLoading.value = false;
+      console.log(response);
+
+      // newMessage.value = "";
+      // props.conversationDetails.messages = response.data.data;
+      scrollToBottom();
       // emit("convo", conversationDetails);
-      if (props.conversationDetails.messages.length) {
-        scrollToBottom();
-      }
+      // if (props.conversationDetails.messages.length) {
+      //   scrollToBottom();
+      // }
     })
     .catch(({ response }) => {
       console.log(response);
+      if (props.conversationDetails.messages.length > 1) {
+        props.conversationDetails.messages.pop();
+      }
       sendingMessageLoading.value = false;
       Notify.create({
         message: response.data.message,
         position: "top",
+        color: "red",
       });
 
       errors.value = response.data.errors || {};
@@ -268,13 +327,73 @@ let sendMessage = () => {
 };
 
 onMounted(() => {
-  if (props.conversationMessages.length) {
+  if (props.conversationDetails.messages.length) {
     scrollToBottom();
-    const scrollDiv = myDiv.value;
+    const scrollDiv = document.getElementById("myDiv");
     scrollDiv.scrollTop = scrollDiv.scrollHeight;
     let lastChildDiv = scrollDiv.lastElementChild;
     console.log(lastChildDiv);
     lastChildDiv.scrollIntoView({ behavior: "smooth", block: "end" });
+  }
+  Pusher.logToConsole = true;
+  const pusher = new Pusher("f71ee69f460a2ede9930", {
+    cluster: "eu",
+    authEndpoint: "https://agora.lyt24tech.com/api/broadcasting/auth", // Adjust the endpoint as needed
+    auth: {
+      headers: {
+        Authorization: `Bearer ${store.token}`, // Replace with your auth token
+      },
+    },
+  });
+
+  channel = pusher.subscribe(`private-${props.conversationDetails.slug}`);
+  channel.bind("pusher:subscription_succeeded", () => {
+    errorConnectingToChatServer.value = true;
+    console.log("Successfully subscribed to the channel");
+  });
+  channel.bind("pusher:subscription_error", (status) => {
+    errorConnectingToChatServer.value = false;
+    console.error("Subscription error:", status);
+  });
+  channel.bind("message.delivered", (data) => {
+    console.log("Message received:", data);
+    sendingMessageLoading.value = false;
+    newMessage.value = "";
+    Notify.create({
+      message: "Message sent",
+      color: "green",
+      position: "top",
+    });
+    if (store.userdetails.id === data.sender_id) {
+      console.log(store.userdetails.id === data.sender_id);
+      let newData = {
+        ...data,
+        // is_authenticated_user_author: true,
+        // message: data.content,
+      };
+
+      props.conversationDetails.messages.push(newData);
+      scrollToBottom();
+    } else {
+      let newData = {
+        ...data,
+        // message: data.message,
+      };
+
+      props.conversationDetails.messages.push(newData);
+      scrollToBottom();
+    }
+    console.log(data);
+    console.log(props.conversationDetails.messages);
+  });
+
+  // Pusher.logToConsole = true;
+});
+
+onBeforeUnmount(() => {
+  if (channel) {
+    channel.unbind("message.delivered");
+    channel.unsubscribe();
   }
 });
 </script>
@@ -334,7 +453,8 @@ onMounted(() => {
 }
 
 .sendbtn {
-  padding: 0;
+  padding: 10px;
+  // font-size: 3rem !important;
 }
 
 .sendbtn img {
@@ -383,9 +503,9 @@ p.today {
 .dialog_content {
   .close {
     position: absolute;
-    top: -11%;
+    top: 2%;
     right: -1%;
-    color: #979797;
+    color: #000;
     font-size: 1rem;
   }
 }
@@ -421,7 +541,7 @@ p.advert {
   width: 100%;
   position: relative;
   height: 45px;
-  margin: 2rem 0rem 0;
+  margin: 0rem 0rem 0;
   justify-content: space-between;
 }
 

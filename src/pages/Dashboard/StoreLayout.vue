@@ -96,6 +96,28 @@
             >Add product</q-btn
           > -->
         </div>
+        <div
+          v-if="store.storedetails.subscription === null"
+          class="q-pa-md q-gutter-sm"
+        >
+          <q-banner inline-actions rounded class="bg-black text-white">
+            You currently are not on any subscription subscribe to get more
+            benefits like a verified badge etc...
+
+            <template v-slot:action>
+              <q-btn
+                flat
+                :to="{ name: 'plans.page' }"
+                class="bg-white"
+                no-caps
+                no-wrap
+                text-color="black"
+                label="Select plan"
+              />
+              <!-- <q-btn flat label="Dismiss" /> -->
+            </template>
+          </q-banner>
+        </div>
         <div class="grid_">
           <div class="q-mt-lg links_left">
             <!-- <h4 class="bigText q-pa-sm q-mb-md">My Dashbaord</h4> -->
@@ -152,7 +174,15 @@
                 <q-item-section> Account Information </q-item-section>
               </q-item>
               <q-item
-                :to="{ name: 'account.info' }"
+                :to="{ name: 'merchant.messages' }"
+                class="navLinks"
+                clickable
+                v-ripple
+              >
+                <q-item-section> Messages </q-item-section>
+              </q-item>
+              <q-item
+                :to="{ name: 'merchant.analytics' }"
                 class="navLinks"
                 clickable
                 v-ripple
