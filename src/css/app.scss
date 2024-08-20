@@ -329,6 +329,10 @@ header {
   header a {
     font-size: 10px;
   }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
   .top_nav .container .middle {
     gap: 0;
   }

@@ -116,12 +116,15 @@
             <div class="text">Start a convo</div>
           </div>
 
-          <div class="input_area">
+          <div class="input_area q-mt-lg">
             <p
               v-if="!errorConnectingToChatServer"
               class="text-red-7 text-center q-mb-sm text-weight-bold"
             >
-              We could not connect you to our chat server at this time
+              <small>
+                We could not connect you to our chat server at this time, please
+                wait...</small
+              >
             </p>
             <div class="inp_wra">
               <q-btn
@@ -168,6 +171,7 @@
               </div>
             </div>
           </div>
+          <p v-if="typingIndicator">{{ typingIndicator }}</p>
         </div>
 
         <q-btn @click="closeModal" class="close">
@@ -196,6 +200,7 @@ const showEmojiPicker = ref(false);
 const sendingMessageLoading = ref(false);
 let emojiDialogToggle = ref(false);
 let loadingChatBtn = ref(false);
+let typingIndicator = ref("");
 let toggleEmojiPicker = ref(false);
 let errorConnectingToChatServer = ref(false);
 let myDiv = ref();
@@ -302,13 +307,7 @@ let sendMessage = () => {
       sendingMessageLoading.value = false;
       console.log(response);
 
-      // newMessage.value = "";
-      // props.conversationDetails.messages = response.data.data;
       scrollToBottom();
-      // emit("convo", conversationDetails);
-      // if (props.conversationDetails.messages.length) {
-      //   scrollToBottom();
-      // }
     })
     .catch(({ response }) => {
       console.log(response);
@@ -354,6 +353,20 @@ onMounted(() => {
   channel.bind("pusher:subscription_error", (status) => {
     errorConnectingToChatServer.value = false;
     console.error("Subscription error:", status);
+  });
+  channel.bind("client-typing", (data) => {
+    if (store.userdetails.id === data.sender_id) {
+      // Don't show typing indicator for the current user
+      typingIndicator.value = `${
+        data.user_name ? data.user_name : ""
+      } is typing...`;
+    }
+  });
+
+  channel.bind("client-stopped-typing", (data) => {
+    if (store.userdetails.id === data.sender_id) {
+      typingIndicator.value = ""; // Clear the typing indicator
+    }
   });
   channel.bind("message.delivered", (data) => {
     console.log("Message received:", data);

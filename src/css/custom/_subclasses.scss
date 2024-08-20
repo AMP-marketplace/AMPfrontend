@@ -464,7 +464,6 @@ hr {
 .q-dialog.chatDialog {
   .q-card {
     padding: 0;
-    min-width: 100% !important;
   }
 }
 .q-dialog__backdrop {
@@ -1197,6 +1196,12 @@ hr {
   .search_wrap {
     flex-wrap: wrap;
     gap: 1rem;
+  }
+  .q-dialog.chatDialog {
+    .q-card {
+      padding: 0;
+      min-width: 100% !important;
+    }
   }
   .input.row.items-center.no-wrap.justify-between {
     flex-wrap: nowrap;

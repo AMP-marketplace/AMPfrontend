@@ -428,6 +428,7 @@ let loadingChatBtn = ref(false);
 let loadingReview = ref(false);
 let loadingRating = ref(false);
 let conversationDetails = ref({});
+let errors = ref({});
 let conversationMessages = ref([]);
 let rating_type = ref("");
 let slide = ref(1);
@@ -614,6 +615,35 @@ let chatSeller = () => {
     })
     .catch(({ response }) => {
       // console.log(response);
+      if (response.data.message === "The user id field is required.") {
+        Notify.create({
+          message: "You need to be logged in to start a conversation",
+          position: "top",
+          color: "red",
+        });
+
+        Dialog.create({
+          title: "Authenticate",
+          message: `Please login to start conversation with vendor`,
+          cancel: true,
+          persistent: true,
+        })
+          .onOk(() => {
+            route.replace({
+              name: "customer.login",
+              query: {
+                redirect: signleRouteData.name,
+              },
+            });
+          })
+          .onCancel(() => {
+            // console.log('>>>> Cancel')
+          })
+          .onDismiss(() => {
+            // console.log('I am triggered on both OK and Cancel')
+          });
+      }
+
       loadingChatBtn.value = false;
       errors = response.data.errors || {};
     });

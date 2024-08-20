@@ -1,8 +1,8 @@
 import { boot } from "quasar/wrappers";
 import axios from "axios";
 import loadStore from "stores/loader";
-import { Notify, Platform } from "quasar";
-
+import { Notify } from "quasar";
+import { setupCache } from "axios-cache-interceptor";
 // Be careful when using SSR for cross-request state pollution
 // due to creating a Singleton instance here;
 // If any client changes this (global) instance, it might be a
@@ -15,8 +15,18 @@ import { Notify, Platform } from "quasar";
 //   "application/json; charset=utf-8";
 // axios.defaults.headers.common["Accept"] = "application/json";
 // axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
+const cache = setupCache(axios, {
+  ttl: 15 * 60 * 1000, // Cache for 15 minutes
+  interpretHeader: false, // Ignore cache-control headers from the server
+  methods: ["get"], // Cache only GET requests
+  cachePredicate: { statusCheck: (status) => status === 200 }, // Only cache 200 status responses
+  generateCacheKey: (config) => config.url, // Customize the cache key
+});
+
 const authAxios = axios.create({
   baseURL: "https://agora.lyt24tech.com/api/v1/",
+  adapter: cache.adapter,
+  // timeout: 10000, // Optional: request timeout
   headers: {
     "X-Requested-With": "XMLHttpRequest",
     Accept: "application/json",
@@ -24,6 +34,16 @@ const authAxios = axios.create({
     "Access-Control-Allow-Credentials": "true",
   },
 });
+
+// const authAxios = axios.create({
+//   baseURL: "https://agora.lyt24tech.com/api/v1/",
+//   headers: {
+//     "X-Requested-With": "XMLHttpRequest",
+//     Accept: "application/json",
+//     "Content-Type": "application/json; charset=utf-8",
+//     "Access-Control-Allow-Credentials": "true",
+//   },
+// });
 
 export default boot(({ app, store, router }) => {
   // for use inside Vue files (Options API) through this.$axios and this.$api
@@ -39,6 +59,11 @@ export default boot(({ app, store, router }) => {
   // console.log(auth);
   authAxios.interceptors.response.use(
     function (response) {
+      if (response.cached) {
+        console.log("Cache hit for:", response.config.url);
+      } else {
+        console.log("Cache miss for:", response.config.url);
+      }
       return response;
     },
     (e) => {
@@ -67,8 +92,10 @@ export default boot(({ app, store, router }) => {
           });
 
           store.state.value.ampauth.previousRoute =
-            router.currentRoute.value.name;
-          console.log(router.currentRoute.value.name);
+            router.currentRoute.value.fullPath;
+          // console.log(router.currentRoute.value);
+          // console.log(router.currentRoute.value);
+
           return router.replace({
             name: "logout",
           });
@@ -154,6 +181,8 @@ export default boot(({ app, store, router }) => {
             },
           });
         } else {
+          console.log(to);
+          console.log(from);
           store.state.value.ampauth.token = "";
           store.state.value.ampauth.userdetails = {};
           store.state.value.ampauth.storedetails = {};
@@ -165,17 +194,17 @@ export default boot(({ app, store, router }) => {
             },
           });
         }
-
-        // store.ampauth.token = "";
-        // store.ampauth.userdetails = {};
-        // store.ampauth.storedetails = {};
-        // store.ampauth.userstores = [];
       } else {
+        // console.log(to);
+        // console.log(from);
         router.replace({
           name:
             store.state.value.ampauth.role === "merchant"
               ? "merchant.login"
               : "customer.login",
+          query: {
+            name: from.name,
+          },
         });
         store.state.value.ampauth.token = "";
         store.state.value.ampauth.userdetails = {};
@@ -188,8 +217,6 @@ export default boot(({ app, store, router }) => {
     }
 
     next();
-
-    //   // Continue with the navigation as is
   });
 
   // ^ ^ ^ this will allow you to use this.$api (for Vue Options API form)
