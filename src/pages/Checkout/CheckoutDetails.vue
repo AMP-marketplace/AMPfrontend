@@ -7,14 +7,15 @@ v
         <div class=""></div>
       </div>
 
-      <h6>Shipping Address</h6>
+      <!-- <h6>Shipping Address</h6> -->
 
       <!-- {{ route.name }} -->
       <div v-if="!authStore.token">
-        <q-separator class="q-my-sm" />
-        <p class="text-h6">
+        <q-separator class="q-my-xs" />
+        <p class="text-body1">
           Do you already have an account?
           <router-link
+            class="text-primary"
             :to="{
               name: 'customer.login',
               query: {
@@ -24,15 +25,126 @@ v
           >
             Login
           </router-link>
+          <br />
+          or continue to create a new acount to checkout. <br />
+          You can use a default shipping address when you are logged in.
         </p>
       </div>
       <div v-else>
         <q-separator class="q-my-sm" />
-        <p>Fill out your delivery details to checkout</p>
+        <p>
+          Your can select from a list of delivery addresses you have checkedout
+          <br />
+          with before or fill out delivery details to checkout
+        </p>
+
+        <p class="text-red-7 text-weight-bold">
+          Note: If you select an address from the previous addresses <br />
+          you no longer need to fill in the form.
+        </p>
       </div>
+      <!-- {{ addressData }} -->
       <div class="cart">
         <div class="">
           <div class="small_container left">
+            <q-list bordered separator>
+              <q-expansion-item
+                v-if="authStore.token"
+                default-opened
+                label="Select from a list of your previous checkout addresses"
+              >
+                <q-card>
+                  <q-card-section>
+                    <div>
+                      Your previous delivery addresses
+                      <q-skeleton v-if="!addressArr.length" height="150px" />
+                      <q-list v-else class="bg-white">
+                        <q-item
+                          class="q-my-sm bg-grey-2"
+                          v-for="(address, index) in addressArr"
+                          :key="index"
+                        >
+                          <q-item-section>
+                            <q-item-label
+                              >{{ address.first_name }}
+                              {{ address.last_name }}</q-item-label
+                            >
+                            <q-item-label caption lines="2">{{
+                              address.address_line_1
+                            }}</q-item-label>
+                            <q-item-label caption lines="2"
+                              >{{ address.city }}, {{ address.state }},
+                              {{ address.country }}.</q-item-label
+                            >
+                            <q-item-label caption lines="2">{{
+                              address.postal_code
+                            }}</q-item-label>
+                          </q-item-section>
+
+                          <q-item-section side top>
+                            <div
+                              style="gap: 1rem"
+                              class="row q-mt-md items-center no-wrap"
+                            >
+                              <q-btn
+                                @click="setDefault(address)"
+                                no-caps
+                                no-wrap
+                                color="primary"
+                              >
+                                Use this delivery address
+                              </q-btn>
+                            </div>
+                          </q-item-section>
+
+                          <q-badge
+                            v-if="
+                              address.address_line_1 ===
+                              addressData.address_line_1
+                            "
+                            color="green"
+                            floating
+                          >
+                            selected
+                          </q-badge>
+                        </q-item>
+                      </q-list>
+                      <div
+                        v-if="!addressArr.length"
+                        class="column items-center text-center justify-center"
+                      >
+                        <img
+                          style="width: 150px"
+                          src="/images/box.png"
+                          alt=""
+                        />
+                        <p class="q-mt-sm">
+                          You have not checked out with any addresses yet
+                        </p>
+                      </div>
+                    </div>
+                  </q-card-section>
+                  <div class="q-pa-md">
+                    <q-btn
+                      :disable="!addressData.address_line_1"
+                      @click="checkoutCurrencyModal = !checkoutCurrencyModal"
+                      color="primary"
+                      no-caps
+                      no-wrap
+                    >
+                      Continue
+                    </q-btn>
+                    <p class="q-mt-xs">
+                      Please make your have selected an address before clicking
+                      continue
+                    </p>
+                  </div>
+                </q-card>
+              </q-expansion-item>
+            </q-list>
+            <div class="text-h5 text-center q-my-sm" v-if="authStore.token">
+              OR
+            </div>
             <div style="margin-top: 0" class="auth">
               <form @submit.prevent="handleCheckout">
                 <div v-if="!authStore.token" class="input_wrap">
@@ -263,7 +375,7 @@ v
                 <p class="smallerText">
                   <!-- <span class="q-mx-sm"></span> -->
                   <span class="text-weight-bold"
-                    >₦{{
+                    >${{
                       parseInt(item.product.price.minimum_price) * item.quantity
                     }}</span
                   >
@@ -321,6 +433,96 @@ v
           >
             Continue to pay
           </q-btn>
+          <q-btn
+            class="apply bg-red-6 q-px-xl q-mt-md"
+            no-caps
+            flat
+            @click="orderSuccessModal = !orderSuccessModal"
+            rounded
+            text-color="white"
+          >
+            Close
+          </q-btn>
+        </div>
+      </q-card>
+    </div>
+  </q-dialog>
+  <q-dialog class="dialog" v-model="checkoutCurrencyModal" persistent>
+    <div class="auth">
+      <q-card class="billing">
+        <div class="text-center q-mb-lg">
+          <div class="bigMediumText">Dear customer</div>
+          <!-- <div class="smallText q-mt-md text-center">
+            Before creating your order can you select the currency <br />
+            you will be checking out with, it can be either Naira or Dollar...
+          </div> -->
+          <p class="q-mt-sm text-center">
+            Dear exteemed customer please note that all transactions are
+            <br />
+            currenctly in Naira though we are working to enable you check out
+            with <br />
+            Dollar and other currencies soon.
+          </p>
+          <p class="text-green text-weight-bold">
+            Please select naira to continue
+          </p>
+          <!-- {{ checkoutCurrency }} -->
+          <div class="row justify-center">
+            <div class="q-gutter-sm">
+              <q-radio v-model="checkoutCurrency" val="dollar" label="Dollar" />
+              <q-radio
+                @update:model-value="getTotalInCurrency"
+                v-model="checkoutCurrency"
+                val="naira"
+                label="Naira"
+              />
+            </div>
+          </div>
+          <p class="text-weight-bold">
+            Your order total: ${{ cartStore.totalPrice.toLocaleString() }}
+          </p>
+          <p v-if="currencyRatesData.rates" class="q-mt-xs">
+            Naira to Dollar rate at this time is
+            <span class="text-green text-weight-bold">
+              NGN
+              {{ currencyRatesData?.rates["NGN"] }}
+            </span>
+          </p>
+          <p v-if="currencyRatesData.rates" class="q-mt-xs">
+            This is your order total in Naira -
+            <strong
+              >NGN
+              {{
+                (
+                  cartStore.totalPrice * currencyRatesData?.rates["NGN"]
+                ).toLocaleString()
+              }}</strong
+            >
+          </p>
+        </div>
+
+        <div class="total no-wrap column justify-center q-mt-md items-center">
+          <q-btn
+            class="apply bg-primary q-px-xl q-mt-md"
+            no-caps
+            flat
+            :disable="checkoutCurrency !== 'naira'"
+            @click="createOrder(addressData.id)"
+            rounded
+            text-color="white"
+          >
+            Continue to create order
+          </q-btn>
+          <q-btn
+            class="apply bg-red-6 q-px-xl q-mt-md"
+            no-caps
+            flat
+            @click="checkoutCurrencyModal = !checkoutCurrencyModal"
+            rounded
+            text-color="white"
+          >
+            Close
+          </q-btn>
         </div>
       </q-card>
     </div>
@@ -335,6 +537,7 @@ import { Loading, Notify, QSpinnerRings } from "quasar";
 import { authAxios } from "src/boot/axios";
 import { useMyAuthStore } from "src/stores/auth";
 import { useRoute, useRouter } from "vue-router";
+import axios from "axios";
 import countries from "app/countries";
 let route = useRoute();
 let router = useRouter();
@@ -342,13 +545,19 @@ let cartStore = useCartStore();
 let authStore = useMyAuthStore();
 let data = ref({});
 let errors = ref({});
+let addressArr = ref({});
 let loading = ref(false);
+let checkoutCurrencyModal = ref(false);
+let loadingAddresses = ref(false);
+let addressData = ref({});
+let currencyRatesData = ref({});
 let loadBtn = ref(false);
 let orderSuccessModal = ref(false);
 let viewConfirmPassword = ref(false);
 let countriesArr = ref([]);
 let countriesBaseArr = [];
 let country_code = ref("+234");
+let checkoutCurrency = ref("dollar");
 
 watch(
   () => authStore.token,
@@ -407,6 +616,26 @@ const formatPhoneNumber = (phone) => {
     return phone.slice(1);
   }
 };
+const setDefault = (address) => {
+  addressData.value = address;
+};
+
+const getTotalInCurrency = async () => {
+  // console.log("first");
+  Loading.show({
+    spinner: QSpinnerRings,
+    spinnerColor: "yellow",
+    spinnerSize: 140,
+    message: "Fetching, please wait...",
+    messageColor: "white",
+  });
+  let response = await axios.get(
+    "https://openexchangerates.org/api/latest.json?app_id=928ab800ac8d4100ae7d72be1fbf3ca0"
+  );
+  console.log(response);
+  currencyRatesData.value = response.data;
+  Loading.hide();
+};
 
 const handleCheckout = () => {
   if (authStore.token) {
@@ -456,7 +685,7 @@ const updateShippingDetails = () => {
     spinner: QSpinnerRings,
     spinnerColor: "yellow",
     spinnerSize: 140,
-    message: "Hold on... We are creating your order",
+    message: "Hold on... ",
     messageColor: "white",
   });
   authAxios
@@ -479,10 +708,14 @@ const updateShippingDetails = () => {
       // loadBtn.value = false;
       // authStore.userdetails.address = response.data.street_address;
       // authStore.userdetails.postal_code = response.data.data.postal_code;
-      createOrder(response.data.data.id);
+      addressData.value = response.data.data;
+      checkoutCurrencyModal.value = true;
+      Loading.hide();
+      // createOrder(response.data.data.id);
     })
     .catch(({ response }) => {
       errors.value = response.data.data.errors;
+      Loading.hide();
       Notify.create({
         message: response.data.message,
         color: "red",
@@ -491,6 +724,7 @@ const updateShippingDetails = () => {
       });
     });
 };
+
 const createOrder = (shipping_id) => {
   if (!cartStore.cart.length) {
     Loading.hide();
@@ -515,7 +749,17 @@ const createOrder = (shipping_id) => {
       formData.append(`products[${index}][price]`, item.price);
     });
     formData.append("shipping_address_id", shipping_id);
-    formData.append("total_amount", cartStore.totalPrice);
+    formData.append(
+      "total_amount",
+      cartStore.totalPrice * currencyRatesData.value?.rates["NGN"]
+    );
+    Loading.show({
+      spinner: QSpinnerRings,
+      spinnerColor: "yellow",
+      spinnerSize: 140,
+      message: "Hold on... We are creating your order",
+      messageColor: "white",
+    });
     authAxios
       .post("order/create", formData, {
         headers: {
@@ -534,9 +778,11 @@ const createOrder = (shipping_id) => {
 
         cartStore.orderDetail = response.data.data;
         Loading.hide();
+        checkoutCurrencyModal.value = false;
         orderSuccessModal.value = true;
       })
       .catch(({ response }) => {
+        Loading.hide();
         errors.value = response.data.data.errors;
         Notify.create({
           message: response.data.message,
@@ -544,12 +790,24 @@ const createOrder = (shipping_id) => {
           position: "top",
           actions: [{ icon: "close", color: "white" }],
         });
-        Loading.hide();
       });
   }
 };
 const initPayment = () => {
   window.location.href = cartStore.orderDetail;
+};
+const getDeliveryAddresses = () => {
+  loadingAddresses.value = true;
+  authAxios
+    .get(`shipping/address/index`)
+    .then(({ data }) => {
+      console.log(data);
+      addressArr.value = data.data;
+      loading.value = false;
+    })
+    .catch(({ response }) => {
+      loading.value = false;
+    });
 };
 
 onMounted(async () => {
@@ -560,6 +818,9 @@ onMounted(async () => {
       label: country.name,
       value: country.code,
     }));
+    if (authStore.token) {
+      getDeliveryAddresses();
+    }
   } catch (error) {
     console.error(error);
   }

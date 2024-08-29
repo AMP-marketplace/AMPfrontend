@@ -15,17 +15,10 @@ import { setupCache } from "axios-cache-interceptor";
 //   "application/json; charset=utf-8";
 // axios.defaults.headers.common["Accept"] = "application/json";
 // axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
-const cache = setupCache(axios, {
-  ttl: 15 * 60 * 1000, // Cache for 15 minutes
-  interpretHeader: false, // Ignore cache-control headers from the server
-  methods: ["get"], // Cache only GET requests
-  cachePredicate: { statusCheck: (status) => status === 200 }, // Only cache 200 status responses
-  generateCacheKey: (config) => config.url, // Customize the cache key
-});
 
 const authAxios = axios.create({
   baseURL: "https://agora.lyt24tech.com/api/v1/",
-  adapter: cache.adapter,
+  // adapter: cache.adapter,
   // timeout: 10000, // Optional: request timeout
   headers: {
     "X-Requested-With": "XMLHttpRequest",
@@ -33,6 +26,15 @@ const authAxios = axios.create({
     "Content-Type": "application/json; charset=utf-8",
     "Access-Control-Allow-Credentials": "true",
   },
+});
+
+setupCache(authAxios, {
+  ttl: 15 * 60 * 1000, // Cache for 15 minutes
+  debug: true,
+  interpretHeader: false, // Ignore cache-control headers from the server
+  methods: ["get"], // Cache only GET requests
+  cachePredicate: { statusCheck: (status) => status === 200 }, // Only cache 200 status responses
+  generateCacheKey: (config) => config.url, // Customize the cache key
 });
 
 // const authAxios = axios.create({

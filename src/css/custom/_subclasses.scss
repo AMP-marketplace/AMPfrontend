@@ -521,10 +521,26 @@ hr {
 .explore_categories {
   padding: 1rem;
   background-color: rgb(245, 247, 255);
+  .text-h5 {
+    font-size: 1.2rem;
+  }
 
+  .input_wrap {
+    margin: 1rem 0;
+    label {
+      margin-bottom: 0.5rem;
+      display: block;
+    }
+    .input {
+      padding: 0.6rem;
+      border-radius: 10px;
+    }
+  }
   .q-item {
     min-height: auto;
     transition: all 0.5s ease-in-out;
+    font-size: 12px;
+    padding: 4px 16px;
     &:hover {
       padding: 0.5rem;
       background: #e4e4e4;
@@ -811,7 +827,7 @@ hr {
 
   .checkout_details {
     background: #f5f7ff;
-    padding: 0.3rem;
+    padding: 0.5rem;
     height: fit-content;
     position: sticky;
     top: 22%;

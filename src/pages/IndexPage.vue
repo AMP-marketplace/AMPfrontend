@@ -16,9 +16,21 @@
               <div class="input">
                 <input
                   type="text"
+                  v-model="searchTerm"
                   placeholder="Eg: defibrillators, apnea monitors, etc"
                 />
-                <q-btn color="secondary" rounded no-caps no-wrap>
+                <q-btn
+                  :to="{
+                    name: 'explore',
+                    query: {
+                      search: searchTerm,
+                    },
+                  }"
+                  color="secondary"
+                  rounded
+                  no-caps
+                  no-wrap
+                >
                   Search >>
                 </q-btn>
               </div>
@@ -32,14 +44,44 @@
               <q-btn :to="{ name: 'explore' }" color="white" outline rounded>
                 All
               </q-btn>
-              <q-btn color="white" outline rounded> Cardiology </q-btn>
-              <q-btn color="white" outline rounded> Dental </q-btn>
+              <q-skeleton
+                v-if="productStore.loadingProducts"
+                height="30px"
+                width="100px"
+                square
+              />
+              <q-btn
+                v-else
+                v-for="prod in productStore.products.slice(0, 4)"
+                :key="prod.id"
+                color="white"
+                outline
+                rounded
+                :to="{
+                  name: 'user.product.detail',
+
+                  query: {
+                    name: prod?.name,
+                    slug: prod?.slug,
+                    id: prod?.id,
+                  },
+                }"
+              >
+                {{ prod.name }}
+              </q-btn>
+              <!-- <q-btn color="white" outline rounded> Dental </q-btn>
               <q-btn color="white" outline rounded> Hermodialysis </q-btn>
-              <q-btn color="white" outline rounded> Laboratory </q-btn>
+              <q-btn color="white" outline rounded> Laboratory </q-btn> -->
             </div>
 
             <div class="row justify-end q-mt-xl">
-              <q-btn color="white" outline rounded class="q-py-sm q-px-xl">
+              <q-btn
+                @click="watchAStoreModal = !watchAStoreModal"
+                color="white"
+                outline
+                rounded
+                class="q-py-sm q-px-xl"
+              >
                 Watch a story
               </q-btn>
             </div>
@@ -58,7 +100,10 @@
             >
           </div>
         </div>
-        <div v-if="loadingProducts" class="responsive_grid q-mt-md">
+        <div
+          v-if="productStore.loadingProducts"
+          class="responsive_grid q-mt-md"
+        >
           <div v-for="n in 3" :key="n">
             <q-card flat style="max-width: 300px">
               <q-skeleton height="150px" square />
@@ -74,7 +119,7 @@
         <div class="responsive_grid q-mt-md">
           <ProductCompVue
             :product="product"
-            v-for="(product, index) in productsArr"
+            v-for="(product, index) in productStore.products"
             :key="index"
           />
         </div>
@@ -115,81 +160,34 @@
     </section>
 
     <FooterCompVue />
+
+    <q-dialog v-model="watchAStoreModal">
+      <q-card>
+        <q-video
+          style="height: 250px"
+          src="https://www.youtube.com/embed/k3_tw44QsZQ?rel=0"
+        />
+      </q-card>
+    </q-dialog>
   </q-page>
 </template>
 
 <script setup>
 import { authAxios } from "src/boot/axios";
+import { useProductStore } from "src/stores/productStore";
 import FooterCompVue from "src/components/FooterComp.vue";
 import ProductCompVue from "src/components/ProductComp.vue";
 import { onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
+import { useMyAuthStore } from "src/stores/auth";
 useI18n();
-
+let productStore = useProductStore();
+let store = useMyAuthStore();
 let loadingProducts = ref(true);
-const productsArr = ref([
-  // {
-  //   category: "Biochemistry Analyzer",
-  //   name: "Semi auto chemistry Analyzer",
-  //   location: "Nigeria",
-  //   posted: "2 weeks ago",
-  //   views: "240",
-  //   amount: "499",
-  //   img: "/images/ambulance.jpeg",
-  //   condition: "Used",
-  //   flag: "/images/nigeria.png",
-  // },
-  // {
-  //   category: "Biochemistry Analyzer",
-  //   name: "Semi auto chemistry Analyzer",
-  //   location: "Nigeria",
-  //   posted: "2 weeks ago",
-  //   views: "240",
-  //   amount: "499",
-  //   img: "/images/product1.webp",
-  //   condition: "Used",
-  //   flag: "/images/nigeria.png",
-  // },
-  // {
-  //   category: "Biochemistry Analyzer",
-  //   name: "Semi auto chemistry Analyzer",
-  //   location: "Nigeria",
-  //   posted: "2 weeks ago",
-  //   views: "240",
-  //   amount: "499",
-  //   img: "/images/product2.png",
-  //   condition: "Used",
-  //   flag: "/images/nigeria.png",
-  // },
-  // {
-  //   category: "Biochemistry Analyzer",
-  //   name: "Semi auto chemistry Analyzer",
-  //   location: "Nigeria",
-  //   posted: "2 weeks ago",
-  //   views: "240",
-  //   amount: "499",
-  //   img: "/images/product3.jpeg",
-  //   condition: "Used",
-  //   flag: "/images/nigeria.png",
-  // },
-  // {
-  //   category: "Biochemistry Analyzer",
-  //   name: "Semi auto chemistry Analyzer",
-  //   location: "Nigeria",
-  //   posted: "2 weeks ago",
-  //   views: "240",
-  //   amount: "499",
-  //   img: "/images/product4.jpeg",
-  //   condition: "Used",
-  //   flag: "/images/nigeria.png",
-  // },
-]);
+let watchAStoreModal = ref(false);
+const productsArr = ref([]);
+const searchTerm = ref("");
 
-// const { locale } = useI18n();
-
-// function changeLanguage(lang) {
-//   locale.value = lang;
-// }
 const getProducts = () => {
   authAxios
     .get("products/index/all")
@@ -210,7 +208,7 @@ const getProducts = () => {
     });
 };
 onMounted(() => {
-  getProducts();
-  // getCategories();
+  // getProducts();
+  productStore.fetchProducts();
 });
 </script>

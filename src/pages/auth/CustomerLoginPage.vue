@@ -284,11 +284,7 @@ const submitForm = () => {
     .post("login", newData)
     .then((response) => {
       console.log(response);
-      // Notify.create({
-      //   message: response.data.message,
-      //   color: "green",
-      //   position: "top",
-      // });
+      
 
       data.value = {};
       loading.value = false;

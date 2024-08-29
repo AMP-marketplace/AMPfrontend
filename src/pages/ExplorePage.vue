@@ -6,9 +6,10 @@ v
         <h4 class="bigText q-pa-sm q-mb-md"></h4>
         <div class="search_input">
           <input
-            v-model="searchQuery"
+            v-model="filters.searchTerm"
             type="text"
-            placeholder="Search stores"
+            @input="applyFilters"
+            placeholder="Search products"
           />
           <q-btn flat class="bg-primary text-white" rounded no-caps no-wrap
             ><i class="fa-solid fa-search"></i
@@ -24,7 +25,6 @@ v
             </div>
             <div class="explore_categories">
               <h6 class="text-h5 q-mb-md">Category</h6>
-              <!-- {{ categoryListArr }} -->
               <div>
                 <p class="text-weight-bold">MedSolutions</p>
                 <div class="q-mt-md" v-if="loading">
@@ -55,6 +55,74 @@ v
                   </q-item>
                 </q-list>
               </div>
+              <div>
+                <h6 class="text-h5 q-mt-md">Filters</h6>
+
+                <!-- Filters -->
+                <div class="input_wrap">
+                  <div class="input">
+                    <select v-model="filters.country" @change="applyFilters">
+                      <option value="">All Countries</option>
+                      <option
+                        v-for="(country, index) in countries"
+                        :key="index"
+                        :value="country.name"
+                      >
+                        {{ country.flag }} {{ country.name }}
+                      </option>
+                      <!-- Add more countries -->
+                    </select>
+                  </div>
+                </div>
+
+                <!-- Price Filter -->
+                <div class="input_wrap">
+                  <label for="min-price">Min Price:</label>
+                  <div class="input">
+                    <input
+                      type="text"
+                      v-model="minPrice"
+                      @input="applyFilter('minPrice', minPrice)"
+                      placeholder="Enter minimum price"
+                    />
+                  </div>
+                </div>
+                <div class="input_wrap">
+                  <label for="max-price">Max Price:</label>
+                  <div class="input">
+                    <input
+                      type="text"
+                      v-model="maxPrice"
+                      @input="applyFilter('maxPrice', maxPrice)"
+                      placeholder="Enter maximum price"
+                    />
+                  </div>
+                </div>
+                <!-- Date Range Filter -->
+                <div class="input_wrap">
+                  <label for="date-sort">Sort by Date:</label>
+                  <div class="input">
+                    <select v-model="dateSortOrder" @change="applyDateSort">
+                      <option value="newest">Newest to Oldest</option>
+                      <option value="oldest">Oldest to Newest</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div class="input_wrap">
+                  <!-- Sort Options -->
+                  <label>Other options</label>
+                  <div class="input">
+                    <select v-model="sortOption" @change="applySorting">
+                      <option value="relevance">Relevance</option>
+                      <option value="price-asc">Price: Low to High</option>
+                      <option value="price-desc">Price: High to Low</option>
+                      <option value="newest">Newest</option>
+                      <option value="rating">Customer Rating</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
           <div class="q-pb-lg">
@@ -68,7 +136,7 @@ v
                 icon="chevron_right"
                 @click="drawer = !drawer"
               />
-              <q-btn-dropdown outline label="Sort by">
+              <!-- <q-btn-dropdown outline label="Sort by">
                 <q-list>
                   <q-item
                     :class="
@@ -108,11 +176,15 @@ v
                     </q-item-section>
                   </q-item>
                 </q-list>
-              </q-btn-dropdown>
+              </q-btn-dropdown> -->
             </div>
             <div class="q-pa-md responsive_grid">
               <div v-for="n in 4" :key="n">
-                <q-card v-if="loadingProducts" flat style="max-width: 300px">
+                <q-card
+                  v-if="productStore.loadingProducts"
+                  flat
+                  style="max-width: 300px"
+                >
                   <q-skeleton height="150px" square />
 
                   <q-card-section>
@@ -128,15 +200,19 @@ v
               </div>
             </div>
             <div
-              v-if="!loadingProducts && filteredProducts.length !== 0"
+              v-if="
+                !productStore.loadingProducts && sortedProducts.length !== 0
+              "
               class="responsive_grid"
             >
-              <div v-for="product in filteredProducts" :key="product.id">
+              <div v-for="product in sortedProducts" :key="product.id">
                 <ProductComp :product="product" />
               </div>
             </div>
             <div
-              v-if="!loadingProducts && filteredProducts.length === 0"
+              v-if="
+                !productStore.loadingProducts && sortedProducts.length === 0
+              "
               class="column items-center text-center justify-center"
             >
               <img
@@ -180,6 +256,76 @@ v
             {{ cat.name }}
           </q-item>
         </q-list>
+
+        <div>
+          <div class="row items-center justify-between">
+            <h6 class="text-h5 q-mt-md">Filters</h6>
+            <q-btn @click="clearAllFilters" no-wrap no-caps>Clear filter</q-btn>
+          </div>
+          <!-- Filters -->
+          <div class="input_wrap">
+            <div class="input">
+              <select v-model="filters.country" @change="applyFilters">
+                <option value="">All Countries</option>
+                <option
+                  v-for="(country, index) in countries"
+                  :key="index"
+                  :value="country.name"
+                >
+                  {{ country.flag }} {{ country.name }}
+                </option>
+                <!-- Add more countries -->
+              </select>
+            </div>
+          </div>
+
+          <!-- Price Filter -->
+          <div class="input_wrap">
+            <label for="min-price">Min Price:</label>
+            <div class="input">
+              <input
+                type="text"
+                v-model="minPrice"
+                @input="applyFilter('minPrice', minPrice)"
+                placeholder="Enter minimum price"
+              />
+            </div>
+          </div>
+          <div class="input_wrap">
+            <label for="max-price">Max Price:</label>
+            <div class="input">
+              <input
+                type="text"
+                v-model="maxPrice"
+                @input="applyFilter('maxPrice', maxPrice)"
+                placeholder="Enter maximum price"
+              />
+            </div>
+          </div>
+          <!-- Date Range Filter -->
+          <div class="input_wrap">
+            <label for="date-sort">Sort by Date:</label>
+            <div class="input">
+              <select v-model="dateSortOrder" @change="applyDateSort">
+                <option value="newest">Newest to Oldest</option>
+                <option value="oldest">Oldest to Newest</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="input_wrap">
+            <!-- Sort Options -->
+            <label>Other options</label>
+            <div class="input">
+              <select v-model="sortOption" @change="applySorting">
+                <!-- <option value="relevance">Relevance</option> -->
+                <option value="price-asc">Price: Low to High</option>
+                <option value="price-desc">Price: High to Low</option>
+                <option value="rating">Customer Rating</option>
+              </select>
+            </div>
+          </div>
+        </div>
       </div>
     </q-scroll-area>
 
@@ -194,8 +340,15 @@ v
 <script setup>
 import { authAxios } from "src/boot/axios";
 import { computed, onMounted, ref } from "vue";
+
 import ProductComp from "../components/ProductComp.vue";
 import FooterCompVue from "src/components/FooterComp.vue";
+
+import { useProductStore } from "src/stores/productStore";
+import countries from "app/countries";
+import { useRoute } from "vue-router";
+let route = useRoute();
+let productStore = useProductStore();
 let loadingProducts = ref(true);
 let loading = ref(true);
 let prodListArr = ref([]);
@@ -205,32 +358,6 @@ const selectedSort = ref("name");
 const searchQuery = ref("");
 const drawer = ref(false);
 
-const filteredProducts = computed(() => {
-  let filtered = [...prodListArr.value];
-
-  // Sorting
-  if (selectedSort.value === "name") {
-    filtered.sort((a, b) => a.name.localeCompare(b.name));
-  } else if (selectedSort.value === "price") {
-    filtered.sort(
-      (a, b) => parseInt(a.price.minimum_price) - parseInt(b.minimum_price)
-    );
-  } else if (selectedSort.value === "date") {
-    filtered.sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-  }
-
-  // Searching
-  if (searchQuery.value.trim() !== "") {
-    filtered = filtered.filter((product) =>
-      product.name.toLowerCase().includes(searchQuery.value.toLowerCase())
-    );
-  }
-
-  return filtered;
-});
-const setSortParam = (sortParam) => {
-  selectedSort.value = sortParam;
-};
 const getProducts = async () => {
   try {
     loadingProducts.value = true;
@@ -248,23 +375,70 @@ const getCategories = async () => {
     let medsolutionsCatList = await authAxios.get(
       "data?fetch=subcategories&category=medsolutions"
     );
-    // let medEquipmentsCatList = await authAxios.get(
-    //   "data?fetch=subcategories&category=medequipment"
-    // );
-    // console.log(medsolutionsCatList);
-    // console.log(medEquipmentsCatList);
+
     medSolutionscategoryListArr.value = medsolutionsCatList.data.data;
     medEquipcategoryListArr.value = medsolutionsCatList.data.data;
-    // console.log(categoryListArr.value);
     loading.value = false;
   } catch (error) {
     console.error(error);
   }
 };
 
+const selectedCurrency = computed(() => productStore.selectedCurrency);
+const filters = computed(() => productStore.filters);
+// const sortOption = computed(() => productStore.sortOption);
+const sortedProducts = computed(() => productStore.sortedProducts);
+
+const changeCurrency = (event) => {
+  productStore.setCurrency(event.target.value);
+};
+// Bind filters and sorted products from the store
+const minPrice = ref("");
+const maxPrice = ref("");
+const dateSortOrder = ref(productStore.filters.dateSortOrder);
+const sortOption = ref(productStore.sortOption);
+
+// Function to apply filters
+const applyFilter = (filterType, value) => {
+  productStore.setFilter(filterType, value);
+};
+
+// Function to apply date sorting
+const applyDateSort = () => {
+  productStore.setFilter("dateSortOrder", dateSortOrder.value);
+};
+
+const applyFilters = () => {
+  productStore.setFilter("country", filters.value.country);
+  productStore.setFilter("category", filters.value.category);
+  productStore.setFilter("priceRange", filters.value.priceRange);
+  productStore.setFilter("searchTerm", filters.value.searchTerm);
+  productStore.setFilter("dateRange", filters.value.dateRange);
+  productStore.setFilter("nameFilter", filters.value.nameFilter);
+};
+
+const applySorting = () => {
+  productStore.setSortOption(sortOption.value);
+};
+
+const convertedPrice = (price) => {
+  return (price * productStore.exchangeRates[selectedCurrency.value]).toFixed(
+    2
+  );
+};
+const clearAllFilters = () => {
+  productStore.clearFilters();
+};
 onMounted(() => {
   getCategories();
-  getProducts();
+  if (productStore.products.length) {
+    return;
+  } else {
+    productStore.fetchProducts();
+  }
+  if (route.query.search) {
+    filters.value.searchTerm = route.query.search;
+  }
 });
 </script>
 

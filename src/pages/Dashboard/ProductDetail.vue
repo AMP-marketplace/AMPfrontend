@@ -63,6 +63,16 @@
           class="q-md-xl q-mr-sm q-py-xs"
           rounded
           no-wrap
+          @click="deletProduct"
+          no-caps
+        >
+          DELETE PRODUCT
+        </q-btn>
+        <q-btn
+          color="red-7"
+          class="q-md-xl q-mr-sm q-py-xs"
+          rounded
+          no-wrap
           @click="actionsModal = !actionsModal"
           no-caps
           type="submit"
@@ -224,13 +234,7 @@
           <div class="input">
             <select v-model="data.currency" required>
               <option disabled value="">Choose</option>
-              <option
-                v-for="currency in currencies"
-                :key="currency.name"
-                :value="currency.code"
-              >
-                {{ currency.name }} {{ currency.flag }}
-              </option>
+              <option value="USD">USD($) - 🇺🇸</option>
             </select>
           </div>
         </div>
@@ -293,7 +297,7 @@
       </div>
       <q-file
         @update:model-value="setProductImage"
-        accept=".png,.jpeg,.jpg"
+        accept=".png,.jpeg,.jpg,.webp"
         class="column profile_field justify-center items-center"
         v-model="AnotherproductImageFile"
         max-file-size="512000"
@@ -340,7 +344,7 @@
   <q-dialog v-model="actionsModal">
     <q-card>
       <q-list
-        v-if="data.media.length"
+        v-if="data?.media?.length"
         bordered
         separator
         padding
@@ -349,7 +353,7 @@
         <q-item-label header>Images</q-item-label>
 
         <q-item
-          v-for="(images, index) in data.media"
+          v-for="(images, index) in data?.media"
           :key="index"
           clickable
           v-ripple
@@ -483,7 +487,13 @@ const setProductImage = (props) => {
     )
     .then((response) => {
       console.log(response);
-
+      data.value = {
+        ...response.data.data,
+        subcategory_id: response.data.data.subcategory.id,
+        maximum_price: response.data.data.price.maximum_price,
+        minimum_price: response.data.data.price.minimum_price,
+      };
+      // getProducts();
       Notify.create({
         message: response.data.message + ", product successfully added.",
         color: "green",
@@ -492,7 +502,6 @@ const setProductImage = (props) => {
       Loading.hide();
       AnotherproductImageFile.value = null;
       AddProductImageModal.value = false;
-      getProducts();
     })
     .catch(({ response }) => {
       // console.log(response);
@@ -577,6 +586,12 @@ const deleteImageProps = (imageData) => {
         )
         .then((response) => {
           console.log(response);
+          data.value = {
+            ...response.data.data,
+            subcategory_id: response.data.data.subcategory.id,
+            maximum_price: response.data.data.price.maximum_price,
+            minimum_price: response.data.data.price.minimum_price,
+          };
           Notify.create({
             message:
               response.data.message ||
@@ -584,9 +599,57 @@ const deleteImageProps = (imageData) => {
             color: "green",
             position: "top",
           });
-          getProducts();
+          // getProducts();
           actionsModal.value = false;
           Loading.hide();
+        })
+        .catch(({ response }) => {
+          // console.log(response);
+          Loading.hide();
+          Notify.create({
+            message: response.data.message,
+            color: "red",
+            position: "top",
+            actions: [{ icon: "close", color: "white" }],
+          });
+        });
+    })
+
+    .onCancel(() => {
+      // console.log('>>>> Cancel')
+    })
+    .onDismiss(() => {
+      // console.log('I am triggered on both OK and Cancel')
+    });
+};
+const deletProduct = () => {
+  Dialog.create({
+    title: "Confirm",
+    message:
+      "Would you like to delete this product? This is remove this product from the database totally",
+    cancel: true,
+    persistent: true,
+  })
+    .onOk(() => {
+      Loading.show({
+        spinner: QSpinnerOval,
+        message: "Deleting...",
+      });
+      authAxios
+        .delete(`merchant/${store.storedetails.slug}/${data.value.slug}/delete`)
+        .then((response) => {
+          console.log(response);
+          Loading.hide();
+          Notify.create({
+            message:
+              response.data.message ||
+              "You have successfully deleted this product.",
+            color: "green",
+            position: "top",
+          });
+          router.replace({
+            name: "account.dashboard",
+          });
         })
         .catch(({ response }) => {
           // console.log(response);
@@ -692,6 +755,12 @@ const updateProductFunction = () => {
     })
     .then((response) => {
       console.log(response);
+      data.value = {
+        ...response.data.data,
+        subcategory_id: response.data.data.subcategory.id,
+        maximum_price: response.data.data.price.maximum_price,
+        minimum_price: response.data.data.price.minimum_price,
+      };
       Loading.hide();
       Notify.create({
         message: response.data.message,
@@ -719,6 +788,7 @@ const updateProductFunction = () => {
 const getProducts = async () => {
   try {
     let getProdDetail = await authAxios.get(`${route.query.slug}/show`);
+    console.log(getProdDetail);
     data.value = {
       ...getProdDetail.data.data,
       subcategory_id: getProdDetail.data.data.subcategory.id,

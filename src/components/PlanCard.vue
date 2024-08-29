@@ -6,7 +6,7 @@
     </div>
     <div class="title">{{ plan.name }}</div>
     <div class="amount">
-      ₦{{
+      ${{
         planDesc !== "yearly"
           ? (parseInt(plan.price) - 200000).toLocaleString()
           : parseInt(plan.price).toLocaleString()

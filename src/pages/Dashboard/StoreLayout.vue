@@ -455,6 +455,22 @@
       >
         <q-item-section> Account Information </q-item-section>
       </q-item>
+      <q-item
+        :to="{ name: 'merchant.messages' }"
+        class="navLinks"
+        clickable
+        v-ripple
+      >
+        <q-item-section> Messages </q-item-section>
+      </q-item>
+      <q-item
+        :to="{ name: 'merchant.analytics' }"
+        class="navLinks"
+        clickable
+        v-ripple
+      >
+        <q-item-section> Analytics </q-item-section>
+      </q-item>
     </q-list>
 
     <!--
@@ -489,6 +505,7 @@ let drawer = ref(false);
 let showAddProductImage = ref(false);
 let storeDetailsLoadBtn = ref(false);
 let basicStoreData = ref({});
+let errors = ref({});
 let addedProductData = ref({});
 let productCategoryListArr = ref([]);
 let currencyListArr = ref([]);
