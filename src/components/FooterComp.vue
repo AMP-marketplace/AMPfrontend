@@ -1,17 +1,31 @@
 <template>
   <footer class="footer">
     <div class="container">
-      <div class="flex items-center justify-between ">
+      <div class="flex items-center justify-between">
         <h4 class="text-h5 text-weight-bold text-white">
           Africa Medical Marketplace
         </h4>
 
         <div style="gap: 0.5rem" class="row items-center no-wrap">
-          <a href=""><img src="/images/ig.svg" alt="" /></a>
-          <a href=""><img src="/images/fb.svg" alt="" /></a>
-          <a href=""><img src="/images/linkedin.svg" alt="" /></a>
-          <a href=""><img src="/images/twitter.svg" alt="" /></a>
-          <a href=""><img src="/images/youtube.svg" alt="" /></a>
+          <a
+            target="_blank"
+            href="https://www.instagram.com/africa_medical_marketplace/"
+            ><img src="/images/ig.svg" alt=""
+          /></a>
+          <a
+            target="_blank"
+            href="https://web.facebook.com/africamedicalmarketplace/?_rdc=1&_rdr"
+            ><img src="/images/fb.svg" alt=""
+          /></a>
+          <a
+            target="_blank"
+            href="https://ng.linkedin.com/company/africa-medical-marketplace"
+            ><img src="/images/linkedin.svg" alt=""
+          /></a>
+          <a target="_blank" href=""
+            ><img src="/images/twitter.svg" alt=""
+          /></a>
+          <!-- <a href=""><img src="/images/youtube.svg" alt="" /></a> -->
         </div>
       </div>
 
@@ -89,9 +103,44 @@
         </p>
       </div>
     </div>
+    <div class="fixed_mvr">
+      <div class="vr_btn_hold">
+        <a
+          href="https://wa.me/+2349046251822"
+          target="_blank"
+          class="animated-button1"
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+
+          <i class="fa-brands fa-whatsapp"></i>
+        </a>
+      </div>
+    </div>
   </footer>
 </template>
 
 <script setup></script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.fixed_mvr {
+  position: fixed;
+  bottom: 12%;
+  z-index: 10000;
+  right: 3%;
+  background: #25d366;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  border-radius: 50%;
+  justify-content: center;
+  align-items: center;
+}
+
+.fixed_mvr i {
+  font-size: 2.5rem;
+  color: #fff;
+}
+</style>

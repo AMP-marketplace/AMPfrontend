@@ -16,14 +16,30 @@
               <p>
                 <span
                   >Call Us:
-                  <a href="tel:+2348119736227" target="_blank"
-                    >(+234) 8119736227</a
+                  <a href="tel:+23408173896002" target="_blank"
+                    >(+234) 8173896002</a
                   ></span
                 >
               </p>
               <div style="gap: 1rem" class="row items-center no-wrap">
-                <i class="fa-brands fa-facebook"></i>
-                <i class="fa-brands fa-instagram"></i>
+                <a
+                  target="_blank"
+                  href="https://web.facebook.com/africamedicalmarketplace/?_rdc=1&_rdr"
+                >
+                  <i class="fa-brands fa-facebook"></i
+                ></a>
+                <a
+                  target="_blank"
+                  href="https://www.instagram.com/africa_medical_marketplace/"
+                >
+                  <i class="fa-brands fa-instagram"></i
+                ></a>
+                <a
+                  target="_blank"
+                  href="https://ng.linkedin.com/company/africa-medical-marketplace"
+                >
+                  <i class="fa-brands fa-linkedin"></i
+                ></a>
               </div>
             </div>
           </div>
