@@ -56,7 +56,17 @@ v
                 </q-list>
               </div>
               <div>
-                <h6 class="text-h5 q-mt-md">Filters</h6>
+                <div class="row items-center q-mt-md justify-between">
+                  <h6 class="text-h5">Filters</h6>
+                  <q-btn
+                    color="white"
+                    text-color="black"
+                    @click="clearAllFilters"
+                    no-wrap
+                    no-caps
+                    >Clear filter</q-btn
+                  >
+                </div>
 
                 <!-- Filters -->
                 <div class="input_wrap">
@@ -235,7 +245,6 @@ v
   <FooterCompVue />
   <q-drawer
     v-model="drawer"
-    @click.capture="drawer = !drawer"
     :width="250"
     :breakpoint="800"
     bordered
@@ -258,9 +267,16 @@ v
         </q-list>
 
         <div>
-          <div class="row items-center justify-between">
-            <h6 class="text-h5 q-mt-md">Filters</h6>
-            <q-btn @click="clearAllFilters" no-wrap no-caps>Clear filter</q-btn>
+          <div class="row q-mt-md items-center justify-between">
+            <h6 class="text-h5">Filters</h6>
+            <q-btn
+              color="white"
+              text-color="black"
+              @click="clearAllFilters"
+              no-wrap
+              no-caps
+              >Clear filter</q-btn
+            >
           </div>
           <!-- Filters -->
           <div class="input_wrap">

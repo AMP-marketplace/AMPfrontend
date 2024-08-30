@@ -1,7 +1,7 @@
 <template>
   <div class="product_card">
     <div class="row items-center q-my-sm justify-between">
-      <div>
+      <div class="row items-center no-wrap">
         <q-badge class="q-mr-sm" color="orange" text-color="black"
           ><i class="ri-check-line text-white"></i
         ></q-badge>

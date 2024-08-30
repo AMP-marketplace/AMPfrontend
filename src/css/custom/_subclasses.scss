@@ -1252,8 +1252,17 @@ hr {
       // font-size: 15px;
       line-height: 16px;
     }
+    .content {
+      margin-top: 1rem;
+    }
+    .main {
+      margin-top: 0.6rem;
+    }
+    p.text-grey-7 {
+      font-size: 10px;
+    }
     div {
-      margin: 0.5rem 0;
+      margin: 0.1rem 0;
       .q-btn {
         font-size: 1.2rem;
         min-height: auto;

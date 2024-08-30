@@ -174,9 +174,12 @@
           <h6 class="text-h5 text-weight-bold q-mb-md">Navigation</h6>
 
           <q-list>
-            <q-item :to="{ name: 'stores' }" clickable> Stores </q-item>
-            <q-item clickable> Merchant </q-item>
-            <q-item :to="{ name: 'explore' }" clickable> Explore </q-item>
+            <q-item :to="{ name: 'stores' }" clickable> All Stores </q-item>
+            <q-item :to="{ name: 'explore' }" clickable> All Products </q-item>
+            <q-item :to="{ name: 'merchant.register' }" clickable>
+              Register
+            </q-item>
+            <!-- <q-item :to="{ name: 'explore' }" clickable> All Products </q-item> -->
           </q-list>
         </div>
       </q-scroll-area>
