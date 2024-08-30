@@ -263,6 +263,7 @@
                 <option value="refurbished">Refurbished</option>
                 <option value="pre-owned">Pre owned</option>
                 <option value="open box">Open Box</option>
+                <option value="lease_to_own">Lease to Own</option>
                 <!-- <option value="range">Range</option> -->
               </select>
             </div>

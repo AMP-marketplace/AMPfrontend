@@ -76,22 +76,27 @@ p {
   &.new {
     background: rgba(40, 167, 69, 0.2);
     color: #28a745;
+    font-weight: 700;
   }
   &.refurbished {
     background: rgba(0, 123, 255, 0.2);
     color: #007bff;
+    font-weight: 700;
   }
   &.used {
     background: rgba(253, 126, 20, 0.2);
     color: #fd7e14;
+    font-weight: 700;
   }
   &.open_box {
     background: rgba(111, 66, 193, 0.2);
     color: #6f42c1;
+    font-weight: 700;
   }
   &.damaged {
     background: rgba(220, 53, 69, 0.2);
     color: #dc3545;
+    font-weight: 700;
   }
 }
 .links_left {

@@ -253,6 +253,7 @@ v
     <q-scroll-area class="fit" :horizontal-thumb-style="{ opacity: 0 }">
       <div class="explore_categories">
         <h6 class="text-h5 text-weight-bold q-mb-md">Category</h6>
+        <p class="text-weight-bold">MedSolutions</p>
         <div class="q-mt-md" v-if="loading">
           <q-skeleton height="100px" />
         </div>
@@ -260,6 +261,19 @@ v
           <q-item
             clickable
             v-for="(cat, index) in medSolutionscategoryListArr"
+            :key="index"
+          >
+            {{ cat.name }}
+          </q-item>
+        </q-list>
+        <p class="text-weight-bold">MedComponents</p>
+        <div class="q-mt-md" v-if="loading">
+          <q-skeleton height="100px" />
+        </div>
+        <q-list v-else>
+          <q-item
+            clickable
+            v-for="(cat, index) in medEquipcategoryListArr"
             :key="index"
           >
             {{ cat.name }}
@@ -391,9 +405,12 @@ const getCategories = async () => {
     let medsolutionsCatList = await authAxios.get(
       "data?fetch=subcategories&category=medsolutions"
     );
+    let medComponentsCatList = await authAxios.get(
+      "data?fetch=subcategories&category=medcomponents"
+    );
 
     medSolutionscategoryListArr.value = medsolutionsCatList.data.data;
-    medEquipcategoryListArr.value = medsolutionsCatList.data.data;
+    medEquipcategoryListArr.value = medComponentsCatList.data.data;
     loading.value = false;
   } catch (error) {
     console.error(error);

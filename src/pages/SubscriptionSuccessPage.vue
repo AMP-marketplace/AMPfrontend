@@ -29,7 +29,7 @@
 
           <div class="row justify-center">
             <q-btn
-              :to="{ name: 'dashboard' }"
+              :to="{ name: 'account.dashboard' }"
               flat
               no-caps
               no-wrap
@@ -47,8 +47,10 @@
 <script setup>
 import { Loading, Notify } from "quasar";
 import { authAxios } from "src/boot/axios";
+import { useMyAuthStore } from "src/stores/auth";
 import { onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
+let store = useMyAuthStore();
 let route = useRoute();
 let loading = ref(true);
 
@@ -59,6 +61,7 @@ const confirmOrder = () => {
     )
     .then((response) => {
       console.log(response);
+      store.storedetails = response.data.data;
       loading.value = false;
     })
     .catch(({ response }) => {

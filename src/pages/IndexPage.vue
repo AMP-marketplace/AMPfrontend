@@ -165,7 +165,7 @@
       <q-card>
         <q-video
           style="height: 250px"
-          src="https://www.youtube.com/embed/k3_tw44QsZQ?rel=0"
+          src="https://res.cloudinary.com/dvs0cchst/video/upload/v1725036270/Emmy_slides_1_ekfp6n.mp4"
         />
       </q-card>
     </q-dialog>
