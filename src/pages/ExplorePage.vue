@@ -188,7 +188,10 @@ v
                 </q-list>
               </q-btn-dropdown> -->
             </div>
-            <div class="q-pa-md responsive_grid">
+            <div
+              v-if="productStore.loadingProducts"
+              class="q-pa-md responsive_grid"
+            >
               <div v-for="n in 4" :key="n">
                 <q-card
                   v-if="productStore.loadingProducts"
@@ -213,7 +216,7 @@ v
               v-if="
                 !productStore.loadingProducts && sortedProducts.length !== 0
               "
-              class="responsive_grid"
+              class="responsive_grid q-mt-lg"
             >
               <div v-for="product in sortedProducts" :key="product.id">
                 <ProductComp :product="product" />

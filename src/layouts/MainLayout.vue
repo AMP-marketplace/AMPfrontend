@@ -10,7 +10,11 @@
                 For advert placements & store features on Africa Medical
                 Marketplace
               </p>
-              <router-link to="">Contact Us</router-link>
+              <a
+                href="mailto:hello@africamedicalmarketplace.com"
+                target="_blank"
+                >Contact Us</a
+              >
             </div>
             <div class="right">
               <p>
