@@ -3,7 +3,7 @@
     <div class="container">
       <div class="flex items-center justify-between">
         <h4 class="text-h5 text-weight-bold text-white">
-          Africa Medical Marketplace
+          Africa Medical Marketplace(AMP)
         </h4>
 
         <div style="gap: 0.5rem" class="row items-center no-wrap">
@@ -82,30 +82,58 @@
             <p class="text-white q-my-md">
               <router-link to=""> Contact us </router-link>
             </p>
+            <p lass="text-white q-my-md">
+              <a
+                style="display: inline-block"
+                href="http://s11.flagcounter.com/more/HNcw"
+                ><img
+                  style="
+                    display: inline-block;
+                    width: 100px;
+                    height: 100px;
+                    object-fit: contain;
+                  "
+                  src="https://s11.flagcounter.com/count2/HNcw/bg_FFFFFF/txt_000000/border_CCCCCC/columns_2/maxflags_10/viewers_0/labels_0/pageviews_0/flags_0/percent_0/"
+                  alt="Flag Counter"
+                  border="0"
+              /></a>
+            </p>
           </div>
         </div>
       </div>
 
       <div class="row items-center q-mt-lg justify-between">
         <p class="text-white text-weight-medium">
-          © {{ new Date().getFullYear() }} Africa Medical Marketplace. All
+          © {{ new Date().getFullYear() }} Africa Medical Marketplace(AMP). All
           rights reserved.
         </p>
         <p class="text-white text_underline text-weight-medium">
           <router-link to="" class="text_underline"
-            >Terms & Condition</router-link
+            >Terms & Conditions</router-link
           >
         </p>
-        <p class="text-white text-weight-medium">
+        <!-- <p class="text-white text-weight-medium">
           <router-link class="text_underline" to=""
             >Terms & Condition</router-link
           >
-        </p>
+        </p> -->
       </div>
     </div>
     <div class="fixed_mvr">
       <div class="vr_btn_hold">
         <a
+          href="mailto:hello@africamedicalmarketplace.com"
+          target="_blank"
+          class="animated-button1"
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+          <span></span>
+
+          <i class="fa-solid fa-envelope"></i>
+        </a>
+        <!-- <a
           href="https://wa.me/+2349046251822"
           target="_blank"
           class="animated-button1"
@@ -116,7 +144,7 @@
           <span></span>
 
           <i class="fa-brands fa-whatsapp"></i>
-        </a>
+        </a> -->
       </div>
     </div>
   </footer>
@@ -130,7 +158,7 @@
   bottom: 12%;
   z-index: 10000;
   right: 3%;
-  background: #25d366;
+  background: #254594;
   width: 50px;
   height: 50px;
   display: flex;
@@ -140,7 +168,7 @@
 }
 
 .fixed_mvr i {
-  font-size: 2.5rem;
+  font-size: 2rem;
   color: #fff;
 }
 </style>

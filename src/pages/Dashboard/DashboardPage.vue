@@ -3,7 +3,27 @@
     <div>
       <p class="mediumText q-pb-sm">Account Information</p>
       <q-separator />
+      <div
+        v-if="store?.userdetails?.email_verified_at === null"
+        class="q-pa-md q-gutter-sm"
+      >
+        <q-banner inline-actions rounded class="bg-red-2 text-black">
+          You have not verified your email yet...
 
+          <template v-slot:action>
+            <q-btn
+              flat
+              :to="{ name: 'verify.email' }"
+              class="bg-white"
+              no-caps
+              no-wrap
+              text-color="black"
+              label="Verify email"
+            />
+            <!-- <q-btn flat label="Dismiss" /> -->
+          </template>
+        </q-banner>
+      </div>
       <div class="wrapp">
         <div class="grid">
           <div class="left">
@@ -22,6 +42,27 @@
               </p>
               <p>{{ store.userdetails.email }}</p>
               <p>{{ store.userdetails.phone }}</p>
+            </div>
+            <div
+              style="gap: 1rem"
+              class="row q-mt-sm items-center justify-start no-wrap"
+            >
+              <!-- <q-btn
+                  @click="toggleEditStoreData"
+                  no-caps
+                  no-wrap
+                  color="primary"
+                >
+                  <i class="fa-solid q-mr-sm fa-pen-to-square"></i> Edit Details
+                </q-btn> -->
+              <q-btn
+                :to="{ name: 'forgot.password' }"
+                no-caps
+                no-wrap
+                color="primary"
+              >
+                <i class="fa-solid q-mr-sm fa-lock"></i> Reset password
+              </q-btn>
             </div>
           </div>
         </div>

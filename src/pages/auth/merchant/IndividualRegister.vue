@@ -96,10 +96,6 @@
                   ></span>
                   {{ requirement.text }}
                 </p>
-                <!-- <p>Minimum of 8 characters</p>
-                <p>At least one numeric character is requried</p>
-                <p>A special character is required</p>
-                <p>An uppercase and lowercase character is required</p> -->
               </div>
               <div class="input row justify-between no-wrap">
                 <input

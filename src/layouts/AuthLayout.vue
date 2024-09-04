@@ -8,7 +8,7 @@
             <div style="gap: 0.5rem" class="middle row items-center no-wrap">
               <p>
                 For advert placements & store features on Africa Medical
-                Marketplace
+                Marketplace(AMP)
               </p>
               <a
                 href="mailto:hello@africamedicalmarketplace.com"
@@ -17,14 +17,16 @@
               >
             </div>
             <div class="right">
-              <p>
+              <!-- <p>
                 <span
                   >Call Us:
-                  <a href="tel:+23408173896002" target="_blank"
-                    >(+234) 8173896002</a
+                  <a
+                    href="mailto:hello@africamedicalmarketplace.com"
+                    target="_blank"
+                    >hello@africamedicalmarketplace.com</a
                   ></span
                 >
-              </p>
+              </p> -->
               <div style="gap: 1rem" class="row items-center no-wrap">
                 <a
                   target="_blank"
@@ -152,7 +154,9 @@
                       label="View Dashboard"
                       :to="{
                         name:
-                          store.role === 'merchant' ? 'all.set' : 'dashboard',
+                          store.role === 'merchant'
+                            ? 'account.dashboard'
+                            : 'dashboard',
                       }"
                       push
                       no-caps

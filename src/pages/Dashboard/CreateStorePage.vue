@@ -197,7 +197,10 @@
 
           <!-- <q-btn no-wrap no-caps flat> Upload Image </q-btn> -->
         </div>
-
+        <p class="q-mt-md text-weight-bold">
+          Note: For best result use a banner image with dimensions 1000 * 500px
+          and logo image with dimensions 200 by 200px
+        </p>
         <div class="q-my-lg">
           <div style="gap: 2rem" class="row items-center no-wrap">
             <!-- {{ profileFilePreview }} -->

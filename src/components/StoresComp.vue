@@ -24,6 +24,9 @@
           Visit store
         </router-link>
       </div>
+      <q-badge v-if="storeData.subscription !== null" color="green" floating
+        >Verified seller</q-badge
+      >
     </div>
   </div>
 </template>

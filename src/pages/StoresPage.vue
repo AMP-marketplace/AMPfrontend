@@ -16,8 +16,8 @@ v
 
       <div>
         <div class="stores_list q-mb-xl">
-          <q-item>Med Solutions </q-item>
-          <q-item>Med Equipments </q-item>
+          <q-item>MedSolutions </q-item>
+          <q-item>MedEquipments </q-item>
           <!-- <q-item v-for="(stores, index) in categoryListArr" :key="index"
             >{{ stores.name }}
           </q-item> -->

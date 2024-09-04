@@ -55,7 +55,14 @@
               </small>
             </div>
           </div>
-
+          <div class="row justify-end">
+            <router-link
+              class="text-weight-bold"
+              :to="{ name: 'forgot.password' }"
+            >
+              Forgot password
+            </router-link>
+          </div>
           <div class="row justify-end q-mt-lg">
             <q-btn
               style="width: 100%"

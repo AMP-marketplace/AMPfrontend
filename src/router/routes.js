@@ -40,15 +40,15 @@ const routes = [
         name: "cart",
       },
       {
-        path: "/order-payment/success",
+        path: "/subscription-payment/success",
         component: () => import("src/pages/SubscriptionSuccessPage.vue"),
         name: "subscription.success.page",
       },
-      // {
-      //   path: "/order-payment/success",
-      //   component: () => import("pages/Checkout/PaymentSuccess.vue"),
-      //   name: "payment.success",
-      // },
+      {
+        path: "/order-payment/success",
+        component: () => import("pages/Checkout/PaymentSuccess.vue"),
+        name: "payment.success",
+      },
 
       {
         path: "/checkout",
@@ -188,6 +188,16 @@ const routes = [
         name: "merchant.register",
       },
       {
+        path: "/reset/password",
+        component: () => import("pages/auth/ResetPassword.vue"),
+        name: "reset.password",
+      },
+      {
+        path: "/forgot-password",
+        component: () => import("pages/auth/ForgotPassword.vue"),
+        name: "forgot.password",
+      },
+      {
         path: "/individual/register",
         component: () => import("pages/auth/merchant/IndividualRegister.vue"),
         name: "individual.register",
@@ -206,6 +216,16 @@ const routes = [
         path: "/user/stores",
         component: () => import("pages/VisitStores.vue"),
         name: "user.stores",
+      },
+      {
+        path: "/verify/email",
+        component: () => import("pages/auth/VerifyEmail.vue"),
+        name: "verify.email",
+      },
+      {
+        path: "/email-verified/success",
+        component: () => import("pages/auth/EmailVerificationSuccess.vue"),
+        name: "email.verified",
       },
       {
         path: "/merchant/register",

@@ -6,9 +6,9 @@
     </div>
     <div class="title">{{ plan.name }}</div>
     <div class="amount">
-      ${{
+      ₦{{
         planDesc !== "yearly"
-          ? (parseInt(plan.price) - 200000).toLocaleString()
+          ? parseInt(plan.price).toLocaleString()
           : parseInt(plan.price).toLocaleString()
       }}
       <!-- ₦{{ plan.price.replace(/\B(?=(\d{3})+(?!\d))/g, ",") }} -->
@@ -97,7 +97,7 @@
           <div class="input-box q-mx-md active-grey">
             <label class="input-label">Duration</label>
             <select name="" id="">
-              <option value="+243">1 Year</option>
+              <option value="+243">1 {{ props.view }}</option>
             </select>
           </div>
 
@@ -125,7 +125,7 @@ import { Notify } from "quasar";
 import { authAxios } from "src/boot/axios";
 import { ref } from "vue";
 
-let props = defineProps(["plan", "loadingsign", "planDesc"]);
+let props = defineProps(["plan", "loadingsign", "planDesc", "view"]);
 
 let dialogCreate = ref(false);
 let loading = ref(false);
@@ -139,7 +139,9 @@ let proceed = () => {
 let purchasePlan = () => {
   loading.value = true;
   authAxios
-    .post(`subscription/plans/purchase/${props.plan.name}`)
+    .post(
+      `subscription/plans/purchase/${props.plan.slug}?duration=${props.view}`
+    )
     .then((response) => {
       console.log(response);
       loading.value = false;

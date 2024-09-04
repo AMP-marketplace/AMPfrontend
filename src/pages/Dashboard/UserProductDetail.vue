@@ -170,12 +170,12 @@
                   Country: <strong>{{ product.merchant?.country }}</strong>
                 </p>
               </div>
-              <div class="bg-grey-3 q-mt-sm q-pa-sm">
+              <!-- <div class="bg-grey-3 q-mt-sm q-pa-sm">
                 <p>
                   <i class="ri-phone-line q-mr-sm"></i>
                   {{ product.merchant?.user?.phone }}
                 </p>
-              </div>
+              </div> -->
               <div class="q-mt-sm">
                 <q-btn
                   @click="chatSeller"

@@ -9,19 +9,17 @@
       >
         <!-- {{ planView }} -->
         <q-btn
-          :class="
-            planView === 'monthly' ? 'bg-green-7 text-white' : 'bg-grey-4'
-          "
+          :class="planView === 'month' ? 'bg-green-7 text-white' : 'bg-grey-4'"
           no-wrap
           no-caps
-          @click="setView('monthly')"
+          @click="setView('month')"
         >
           Monthly
         </q-btn>
         <q-btn
-          :class="planView === 'yearly' ? 'bg-green-7 text-white' : 'bg-grey-4'"
+          :class="planView === 'year' ? 'bg-green-7 text-white' : 'bg-grey-4'"
           no-wrap
-          @click="setView('yearly')"
+          @click="setView('year')"
           no-caps
         >
           Yearly
@@ -40,6 +38,7 @@
             v-for="(plan, index) in businessPlans"
             :key="index"
             :plan="plan"
+            :view="planView"
             :planDesc="planView"
             :loadingsign="loading"
           />
@@ -60,7 +59,7 @@ import { onMounted, ref } from "vue";
 
 let businessPlans = ref([]);
 let loading = ref(true);
-let planView = ref("yearly");
+let planView = ref("year");
 let errors = ref({});
 let plans = ref([
   {
@@ -77,6 +76,18 @@ let plans = ref([
 
 let setView = (view) => {
   planView.value = view;
+  loading.value = true;
+  authAxios
+    .get(`subscription/plans?duration=${view}`)
+    .then((response) => {
+      console.log(response);
+      loading.value = false;
+      businessPlans.value = response.data.data;
+    })
+    .catch(({ response }) => {
+      loading = false;
+      errors.value = response.errors || {};
+    });
 };
 // let cancelProcess = () => {
 //   if ($router.currentRoute.value.query.getplan === "yes") {
@@ -92,7 +103,7 @@ let setView = (view) => {
 // };
 let getPlans = () => {
   authAxios
-    .get("subscription/plans")
+    .get("subscription/plans?duration=year")
     .then((response) => {
       console.log(response);
       loading.value = false;

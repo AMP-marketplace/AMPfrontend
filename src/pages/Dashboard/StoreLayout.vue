@@ -26,7 +26,10 @@
 
           <!-- <q-btn no-wrap no-caps flat> Upload Image </q-btn> -->
         </div>
-
+        <p class="q-mt-md text-weight-bold">
+          Note: For best result use a banner image with dimensions 1000 * 500px
+          and logo image with dimensions 200 by 200px
+        </p>
         <div class="q-mt-lg">
           <div style="gap: 2rem" class="row items-center no-wrap">
             <!-- {{ profileFilePreview }} -->
@@ -67,11 +70,38 @@
               <p class="smallText q-my-sm">
                 {{ store.storedetails.description }}
               </p>
+              <div v-if="store.storedetails.subscription !== null">
+                <q-badge class="text-body2" color="green-7">
+                  Your are now the subscribed to the
+                  {{ store.storedetails.subscription.name }} plan
+                </q-badge>
+              </div>
 
               <small class="text-primary"
                 ><i class="fa-solid fa-location-dot"></i>
                 {{ store.storedetails.address }}</small
               >
+              <div
+                style="gap: 1rem"
+                class="row q-mt-sm items-center justify-start no-wrap"
+              >
+                <q-btn
+                  @click="toggleEditStoreData"
+                  no-caps
+                  no-wrap
+                  color="primary"
+                >
+                  <i class="fa-solid q-mr-sm fa-pen-to-square"></i> Edit Details
+                </q-btn>
+                <q-btn
+                  :to="{ name: 'forgot.password' }"
+                  no-caps
+                  no-wrap
+                  color="primary"
+                >
+                  <i class="fa-solid q-mr-sm fa-lock"></i> Reset password
+                </q-btn>
+              </div>
             </div>
           </div>
         </div>
@@ -118,6 +148,28 @@
             </template>
           </q-banner>
         </div>
+        <div
+          v-if="store.userdetails.email_verified_at === null"
+          class="q-pa-md q-gutter-sm"
+        >
+          <q-banner inline-actions rounded class="bg-red-2 text-black">
+            You have not verified your email yet...
+
+            <template v-slot:action>
+              <q-btn
+                flat
+                :to="{ name: 'verify.email' }"
+                class="bg-white"
+                no-caps
+                no-wrap
+                text-color="black"
+                label="Verify email"
+              />
+              <!-- <q-btn flat label="Dismiss" /> -->
+            </template>
+          </q-banner>
+        </div>
+
         <div class="grid_">
           <div class="q-mt-lg links_left">
             <!-- <h4 class="bigText q-pa-sm q-mb-md">My Dashbaord</h4> -->
@@ -211,47 +263,25 @@
   </div>
   <!-- <FooterCompVue /> -->
 
-  <q-dialog v-model="addProductModal">
+  <q-dialog v-model="editStoreDetailsModal">
     <q-card>
       <div class="top_modal row items-center justify-between">
-        <h4 class="text1">Upload product</h4>
+        <h4 class="text1">Edit Store Details</h4>
 
-        <q-btn @click="addProductModal = false" flat rounded>
+        <q-btn @click="editStoreDetailsModal = false" flat rounded>
           <img src="../../assets/circle.svg" alt="" />
         </q-btn>
       </div>
 
       <q-separator class="q-mt-lg" />
       <div class="auth">
-        <div
-          v-if="showAddProductImage"
-          style="gap: 1rem"
-          class="input justify-between row items-center no-wrap"
-        >
-          <div class="smallText text-weight-bold">
-            Note that this will be your main/display product image
-          </div>
-          <q-file
-            @update:model-value="setProductImage"
-            accept=".png,.jpeg,.svg,.jpg"
-            class="column profile_field justify-center items-center"
-            v-model="productImageFile"
-            max-file-size="2097152"
-            @rejected="onRejected"
-          >
-            <div class="img q-mb-sm">
-              <img src="../../assets/upload.svg" alt="" />
-            </div>
-            <div class="smallText">Upload product image</div>
-          </q-file>
-        </div>
-        <form v-else @submit.prevent="addProductFCN">
+        <form @submit.prevent="editStore">
           <div class="input_wrap">
-            <label for="">Product Name <span>*</span></label>
+            <label for="">Store Name <span>*</span></label>
             <div class="input">
               <input
-                v-model="data.name"
-                placeholder="Enter product name"
+                v-model="data.business_name"
+                placeholder="Enter store name"
                 required
                 type="text"
               />
@@ -261,7 +291,7 @@
             <label for="">Description <span>*</span></label>
             <div class="input">
               <textarea
-                placeholder="product description"
+                placeholder="store description"
                 v-model="data.description"
                 name=""
                 id=""
@@ -272,119 +302,33 @@
           </div>
           <div class="auth_grid">
             <div class="input_wrap">
-              <label for="">Product Price <span>*</span></label>
+              <label for="">Country<span>*</span></label>
               <div class="input">
-                <input
-                  v-model="data.price"
-                  placeholder="N0.00"
-                  required
-                  type="text"
-                />
+                <select v-model="data.country" required>
+                  <option disabled value="">Choose</option>
+                  <option
+                    v-for="country in countries"
+                    :key="country.name"
+                    :value="country.name"
+                  >
+                    {{ country.name }} {{ country.flag }}
+                  </option>
+                </select>
               </div>
             </div>
-            <div class="input_wrap">
-              <label for="">Quantity in stock<span>*</span></label>
-              <div class="input">
-                <input
-                  v-model="data.quantity"
-                  placeholder="10"
-                  required
-                  type="text"
-                />
-              </div>
-            </div>
-          </div>
-          <!-- {{ productCategoryListArr }} -->
-          <div class="input_wrap">
-            <label for="">Product Category<span>*</span></label>
-            <div class="input">
-              <select required v-model="data.product_category_id">
-                <option disabled value="">Choose</option>
-                <option
-                  v-for="productCategory in productCategoryListArr"
-                  :key="productCategory.id"
-                  :value="productCategory.id"
-                >
-                  {{ productCategory.name }}
-                </option>
-              </select>
-            </div>
-          </div>
-          <div class="input_wrap">
-            <label for="">Product Unit<span>*</span></label>
-            <div class="input">
-              <select required v-model="data.product_unit_id">
-                <option disabled value="">Choose</option>
-                <option
-                  v-for="productUnit in productUnitListArr"
-                  :key="productUnit.id"
-                  :value="productUnit.id"
-                >
-                  {{ productUnit.name }}
-                </option>
-              </select>
-            </div>
-          </div>
-          <div class="input_wrap">
-            <label for="">Currency<span>*</span></label>
-            <div class="input">
-              <select required v-model="data.currency_id">
-                <option disabled value="">Choose</option>
-                <option
-                  v-for="currency in currencyListArr"
-                  :key="currency.id"
-                  :value="currency.id"
-                >
-                  {{ currency.name }}
-                </option>
-              </select>
-            </div>
-          </div>
-          <!-- <q-btn @click="addAttribute" flat no-caps no-wrap color="primary">
-            + Add attributes
-          </q-btn>
-          <div v-for="(attribute, counter) in data.attributes" :key="counter">
-            <div class="input_wrap">
-              <div
-                style="gap: 1rem"
-                class="row items-center justify-between no-wrap"
-              >
-                <label for=""
-                  >Attribute Name({{ counter + 1 }})<span>*</span></label
-                >
-                <q-btn
-                  color="red-7"
-                  size="10px"
-                  rounded
-                  @click="removeAttribute(counter)"
-                >
-                  <i class="fa-solid fa-xmark"></i>
-                </q-btn>
-              </div>
-              <div class="input">
-                <input
-                  v-model="attribute.name"
-                  placeholder="name"
-                  required
-                  type="text"
-                />
-              </div>
-            </div>
-            <div class="input_wrap">
-              <label for=""
-                >Attribute Value({{ counter + 1 }})<span>*</span></label
-              >
-              <div class="input">
-                <input
-                  v-model="attribute.value"
-                  placeholder="value"
-                  required
-                  type="text"
-                />
-              </div>
-            </div>
-          </div> -->
 
+            <div class="input_wrap">
+              <label for="">Address <span>*</span></label>
+              <div class="input">
+                <input
+                  v-model="data.address"
+                  placeholder=""
+                  required
+                  type="text"
+                />
+              </div>
+            </div>
+          </div>
           <div class="row justify-end q-mt-lg">
             <q-btn
               color="primary"
@@ -394,7 +338,7 @@
               no-caps
               type="submit"
             >
-              Upload Product
+              Edit
             </q-btn>
           </div>
         </form>
@@ -487,6 +431,7 @@ import { ref } from "vue";
 import { useMyAuthStore } from "src/stores/auth";
 import { authAxios } from "src/boot/axios";
 import FooterCompVue from "src/components/FooterComp.vue";
+import countries from "../../../countries";
 let store = useMyAuthStore();
 let data = ref({
   location: "",
@@ -504,6 +449,7 @@ let addProductModal = ref(false);
 let drawer = ref(false);
 let showAddProductImage = ref(false);
 let storeDetailsLoadBtn = ref(false);
+let editStoreDetailsModal = ref(false);
 let basicStoreData = ref({});
 let errors = ref({});
 let addedProductData = ref({});
@@ -511,6 +457,51 @@ let productCategoryListArr = ref([]);
 let currencyListArr = ref([]);
 let prodListArr = ref([]);
 let productUnitListArr = ref([]);
+
+const toggleEditStoreData = () => {
+  data.value = {
+    business_name: store.storedetails.business_name,
+    description: store.storedetails.description,
+    address: store.storedetails.address,
+    country: store.storedetails.country,
+  };
+
+  editStoreDetailsModal.value = !editStoreDetailsModal.value;
+};
+const editStore = () => {
+  Loading.show({
+    spinner: QSpinnerOval,
+    message: "Editing store data...",
+  });
+  authAxios
+    .post(`merchant/${store.userdetails.slug}/edit`, {
+      ...data.value,
+    })
+    .then((response) => {
+      console.log(response);
+      store.storedetails = response.data.data;
+      Notify.create({
+        message: response.data.message
+          ? response.data.message
+          : "Store data successfully edited",
+        color: "green",
+        position: "top",
+        actions: [{ icon: "close", color: "white" }],
+      });
+      editStoreDetailsModal.value = false;
+      Loading.hide();
+    })
+    .catch(({ response }) => {
+      Loading.hide();
+      errors.value = response.data.data.errors;
+      Notify.create({
+        message: response.data.message,
+        color: "red",
+        position: "top",
+        actions: [{ icon: "close", color: "white" }],
+      });
+    });
+};
 const setCoverFile = (props) => {
   coverFile.value = props;
   var reader = new FileReader();
@@ -525,7 +516,7 @@ const setCoverFile = (props) => {
   });
   authAxios
     .post(
-      `merchant/store/${store.storedetails.id}/upload-banner`,
+      `merchant/${store.storedetails.slug}/update-media`,
       {
         banner: coverFile.value,
       },
@@ -636,7 +627,7 @@ const setProfileFile = (props) => {
   });
   authAxios
     .post(
-      `merchant/store/${store.storedetails.id}/upload-logo`,
+      `merchant/${store.storedetails.slug}/update-media`,
       {
         logo: profileFile.value,
       },
