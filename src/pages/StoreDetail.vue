@@ -30,7 +30,7 @@
               <p class="smallText q-my-sm">
                 {{ storeDetails.description }}
               </p>
-              <p>
+              <!-- <p>
                 Email:
                 <a :href="`mailto:${storeDetails?.user.email}`">
                   {{ storeDetails?.user.email }}</a
@@ -41,7 +41,7 @@
                 <a :href="`tel:${storeDetails?.user.phone}`">
                   {{ storeDetails?.user.phone }}</a
                 >
-              </p>
+              </p> -->
               <small class="text-primary"
                 ><i class="fa-solid fa-location-dot"></i>
                 {{ storeDetails.address }}</small
@@ -59,29 +59,28 @@
             ></q-btn>
           </div>
         </div>
-        <div class="stores_list q-mb-xl">
+        <!-- <div class="stores_list q-mb-xl">
           <q-item>Med Solutions </q-item>
           <q-item>Med Equipments </q-item>
-          <!-- <q-item v-for="(cat, index) in productCategoryListArr" :key="index"
-            >{{ cat.name }}
-          </q-item> -->
+
+        </div> -->
+      </div>
+    </div>
+    <div class="q-mt-xl">
+      <div v-if="loadingProducts" class="q-pa-md responsive_grid">
+        <div v-for="n in 4" :key="n">
+          <q-card flat style="max-width: 300px">
+            <q-skeleton height="150px" square />
+
+            <q-card-section>
+              <q-skeleton type="text" class="text-subtitle1" />
+              <q-skeleton type="text" width="50%" class="text-subtitle1" />
+              <q-skeleton type="text" class="text-caption" />
+            </q-card-section>
+          </q-card>
         </div>
       </div>
     </div>
-    <div v-if="loadingProducts" class="q-pa-md responsive_grid">
-      <div v-for="n in 4" :key="n">
-        <q-card flat style="max-width: 300px">
-          <q-skeleton height="150px" square />
-
-          <q-card-section>
-            <q-skeleton type="text" class="text-subtitle1" />
-            <q-skeleton type="text" width="50%" class="text-subtitle1" />
-            <q-skeleton type="text" class="text-caption" />
-          </q-card-section>
-        </q-card>
-      </div>
-    </div>
-
     <div
       v-if="!loadingProducts && filteredProducts.length !== 0"
       class="responsive_grid"

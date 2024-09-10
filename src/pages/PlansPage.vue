@@ -1,6 +1,6 @@
 <template>
   <q-layout class="page_">
-    <div class="wrapper">
+    <div class="wrapper q-mb-xl">
       <div class="main_title">Africa Medical Marketplace Plans</div>
       <div class="sub_title">Choose a plan that fits your need</div>
       <div
@@ -49,11 +49,13 @@
         <i class="fa-solid fa-xmark"></i>
       </q-btn> -->
     </div>
+    <FooterCompVue />
   </q-layout>
 </template>
 
 <script setup>
 import { authAxios } from "src/boot/axios";
+import FooterCompVue from "src/components/FooterComp.vue";
 import PlanCardVue from "src/components/PlanCard.vue";
 import { onMounted, ref } from "vue";
 

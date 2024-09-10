@@ -170,6 +170,21 @@ header {
     margin-top: 3rem;
   }
 
+  .hero_btns {
+    .q-btn.btnsx {
+      width: 100px;
+      span {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        text-align: left;
+        align-items: flex-start;
+        width: 80px;
+        justify-content: flex-start;
+      }
+    }
+  }
+
   .input_wrap {
     max-width: 500px;
     .input {
@@ -409,7 +424,7 @@ header {
   .hero {
     background: url("/images/hero.png") no-repeat 80% center / cover;
     .q-mt-lg.row.nav_wrap.items-center.no-wrap {
-      margin-top: 0.5rem;
+      margin-top: 1rem;
     }
     .row.justify-end.q-mt-xl {
       margin-top: 0.5rem;

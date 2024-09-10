@@ -38,7 +38,7 @@
 
             <div
               style="gap: 1rem"
-              class="q-mt-lg row nav_wrap items-center no-wrap"
+              class="q-mt-lg hero_btns row nav_wrap items-center no-wrap"
             >
               <small class="text-white">Trending:</small>
               <q-btn :to="{ name: 'explore' }" color="white" outline rounded>
@@ -56,6 +56,7 @@
                 :key="prod.id"
                 color="white"
                 outline
+                class="btnsx"
                 rounded
                 :to="{
                   name: 'user.product.detail',

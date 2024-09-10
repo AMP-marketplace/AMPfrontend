@@ -26,7 +26,7 @@ v
             <div class="explore_categories">
               <h6 class="text-h5 q-mb-md">Category</h6>
               <div>
-                <p class="text-weight-bold">MedSolutions</p>
+                <p class="text-weight-bold">MedEquipments</p>
                 <div class="q-mt-md" v-if="loading">
                   <q-skeleton height="100px" />
                 </div>
@@ -256,7 +256,7 @@ v
     <q-scroll-area class="fit" :horizontal-thumb-style="{ opacity: 0 }">
       <div class="explore_categories">
         <h6 class="text-h5 text-weight-bold q-mb-md">Category</h6>
-        <p class="text-weight-bold">MedSolutions</p>
+        <p class="text-weight-bold">MedEquipments</p>
         <div class="q-mt-md" v-if="loading">
           <q-skeleton height="100px" />
         </div>
@@ -406,7 +406,7 @@ const getCategories = async () => {
   try {
     loading.value = true;
     let medsolutionsCatList = await authAxios.get(
-      "data?fetch=subcategories&category=medsolutions"
+      "data?fetch=subcategories&category=medequipment"
     );
     let medComponentsCatList = await authAxios.get(
       "data?fetch=subcategories&category=medcomponents"
