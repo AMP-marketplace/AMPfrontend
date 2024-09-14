@@ -17,7 +17,8 @@ import { setupCache } from "axios-cache-interceptor";
 // axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";
 
 const authAxios = axios.create({
-  baseURL: "https://agora.lyt24tech.com/api/v1/",
+  // baseURL: "https://agora.lyt24tech.com/api/v1/",
+  baseURL: process.env.BASE_URL,
   // adapter: cache.adapter,
   // timeout: 10000, // Optional: request timeout
   headers: {

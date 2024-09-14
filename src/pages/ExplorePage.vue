@@ -396,7 +396,7 @@ const getProducts = async () => {
     loadingProducts.value = true;
     let prodList = await authAxios.get("products/index/all");
     console.log(prodList);
-    prodListArr.value = prodList.data.data;
+    prodListArr.value = prodList.data.data.products;
     loadingProducts.value = false;
   } catch (error) {
     console.error(error);
@@ -406,7 +406,7 @@ const getCategories = async () => {
   try {
     loading.value = true;
     let medsolutionsCatList = await authAxios.get(
-      "data?fetch=subcategories&category=medequipment"
+      "data?fetch=subcategories&category=medequipments"
     );
     let medComponentsCatList = await authAxios.get(
       "data?fetch=subcategories&category=medcomponents"

@@ -794,7 +794,7 @@ const getProducts = async () => {
     let prodList = await authAxios.get(`${store.storedetails.slug}/products`);
     console.log(prodList);
     loadingProducts.value = false;
-    prodListArr.value = prodList.data.data;
+    prodListArr.value = prodList.data.data.products;
 
     // Loading.hide();
   } catch (error) {

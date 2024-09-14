@@ -56,7 +56,8 @@
 <script setup>
 import { authAxios } from "src/boot/axios";
 import FooterCompVue from "src/components/FooterComp.vue";
-import PlanCardVue from "src/components/PlanCard.vue";
+import PlanCardVue from "src/components/PlanCardtest.vue";
+// import PlanCardVue from "src/components/PlanCard.vue";
 import { onMounted, ref } from "vue";
 
 let businessPlans = ref([]);

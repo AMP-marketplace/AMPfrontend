@@ -140,7 +140,7 @@ export const useProductStore = defineStore("productStore", {
     async fetchProducts() {
       const response = await authAxios.get("products/index/all");
       console.log(response);
-      this.products = response.data.data;
+      this.products = response.data.data.products;
       this.loadingProducts = false;
     },
     async fetchExchangeRates() {

@@ -194,7 +194,7 @@ const getProducts = () => {
     .get("products/index/all")
     .then((response) => {
       console.log(response);
-      productsArr.value = response.data.data;
+      productsArr.value = response.data.data.products;
       loadingProducts.value = false;
     })
     .catch(({ response }) => {

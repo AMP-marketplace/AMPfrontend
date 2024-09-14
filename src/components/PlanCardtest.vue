@@ -106,7 +106,7 @@
               :loading="loading"
               class="q-pa-sm"
               color="green-7"
-              @click="purchasePlan"
+              @click="bringStripe"
               >Proceed</q-btn
             >
           </div>
@@ -117,31 +117,39 @@
         </div>
       </q-card>
     </q-dialog>
-    <q-dialog v-model="stripepaymentDialog">
+    <q-dialog v-model="showPaymentForm">
       <q-card>
-        <div ref="paymentRef"></div>
-
-        <div class="row justify-center">
-          <q-btn
-            class="bg-primary q-mt-md text-white"
-            type="button"
-            @click="submit"
-            no-caps
-            no-wrap
-            :loading="loadingBtn"
-            >Pay</q-btn
-          >
+        <div class="form-header">
+          <div>Enter Your Payment Details</div>
         </div>
+
+        <q-form @submit.prevent="handleSubmit" class="q-mt-md">
+          <div ref="cardElement" id="card-element" class="q-mb-md"></div>
+          <!-- <q-btn type="submit" label="Submit Payment" color="secondary" /> -->
+          <div v-if="errorMessage" class="q-mt-md text-negative">
+            {{ errorMessage }}
+          </div>
+          <div class="row justify-center">
+            <q-btn
+              class="bg-primary q-mt-md text-white"
+              type="submit"
+              no-caps
+              no-wrap
+              :loading="loadingBtn"
+              >Proceed</q-btn
+            >
+          </div>
+        </q-form>
       </q-card>
     </q-dialog>
   </div>
 </template>
 
 <script setup>
-import { Dialog, Loading, Notify } from "quasar";
+import { Dialog, Loading, Notify, useQuasar } from "quasar";
 import { authAxios } from "src/boot/axios";
 import { useMyAuthStore } from "src/stores/auth";
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { loadStripe } from "@stripe/stripe-js";
 let store = useMyAuthStore();
 let props = defineProps(["plan", "loadingsign", "planDesc", "view"]);
@@ -154,160 +162,100 @@ let errors = ref({});
 let vendordetails = ref({});
 let stripeLoaded = ref(false);
 let stripeMounted = ref(false);
-let elements = ref(null);
 let stripeIns = ref(null);
 let paymentDialog = ref(false);
 let plans = ref([]);
 let particularPlan = ref({});
 let paymentRef = ref();
+const $q = useQuasar();
+const appearance = {
+  theme: "stripe",
+};
+const stripePublishableKey = "your-publishable-key-here"; // Replace with your Stripe public key
+let stripe;
+let elements;
+let card;
+const cardElement = ref(null);
+const showPaymentForm = ref(false); // Initially, the payment form is hidden
+const errorMessage = ref("");
 let key = process.env.STRIPE_PUBLISHABLE_KEY;
 let stripeSecretKey = process.env.STRIPE_PUBLISHABLE_KEY_SECRET;
 
-let elementsOptions = ref({
-  appearance: {
-    theme: "stripe",
-    labels: "floating",
-  },
-  // https://stripe.com/docs/js/elements_object/create#stripe_elements-options
+watch(showPaymentForm, async (newValue) => {
+  if (newValue && !card) {
+    stripe = await loadStripe(key);
+    elements = stripe.elements({ appearance });
+    card = elements.create("card", {
+      style: {
+        base: {
+          fontSize: "16px",
+          color: "#32325d",
+          fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+          "::placeholder": {
+            color: "#aab7c4",
+          },
+          padding: "10px 12px",
+          border: "1px solid #ccc",
+          borderRadius: "4px",
+          backgroundColor: "#f8f9fa", // Light background for better contrast
+        },
+        invalid: {
+          color: "#fa755a", // Error color for invalid input
+        },
+        complete: {
+          color: "#4caf50", // Green color when the card input is valid
+        },
+      },
+    });
+    card.mount(cardElement.value);
+
+    // Handle validation errors from the card element
+    card.on("change", (event) => {
+      errorMessage.value = event.error ? event.error.message : "";
+    });
+  }
 });
+
+let bringStripe = () => {
+  dialogCreate.value = false;
+  showPaymentForm.value = !showPaymentForm.value;
+};
 let proceed = () => {
   dialogCreate.value = true;
 };
 
-async function submit() {
-  loadingBtn.value = true;
-  try {
-    const { paymentIntent, error } = await stripeIns.value.confirmPayment({
-      elements: elements.value,
-      redirect: "if_required",
-      confirmParams: {
-        return_url: window.location.origin + router.currentRoute.value.fullPath,
-      },
-    });
+const handleSubmit = async () => {
+  $q.loading.show();
 
-    if (error) {
-      Notify.create({
-        message: error.message || "Payment was unsuccessful",
-        color: "red",
-        position: "top",
-        actions: [{ icon: "close", color: "white" }],
-      });
-    } else {
-      Notify.create({
-        message: "Payment successful",
-        color: "green",
-        position: "top",
-        actions: [{ icon: "close", color: "white" }],
-      });
-      // Show success dialog here
-    }
-  } catch (error) {
-    console.error(error);
-    Notify.create({
-      message: "An error occurred during the payment process.",
-      color: "red",
-      position: "top",
-    });
-  } finally {
-    loadingBtn.value = false;
-  }
-  // stripeIns.value
-  //   .confirmPayment({
-  //     elements: elements.value,
-  //     redirect: "if_required",
-  //     confirmParams: {
-  //       // Make sure to change this to your payment completion page
-  //       return_url: window.location.origin + router.currentRoute.value.fullPath,
-  //     },
-  //   })
-  //   .then(({ paymentIntent, error }) => {
-  //     if (error) {
-  //       console.log(error);
-  //       loadingBtn.value = false;
-  //       Notify.create({
-  //         message: error.message || "Payment was unsuccessful",
-  //         color: "red",
-  //         position: "top",
-  //         actions: [{ icon: "close", color: "white" }],
-  //       });
+  const { token, error } = await stripe.createToken(card);
+  console.log(token);
+  $q.loading.hide();
+  // if (error) {
+  //   errorMessage.value = error.message;
+  //   $q.loading.hide();
+  // } else {
+  //   // Send token to the backend to process payment
+  //   try {
+  //     const response = await fetch("/process-payment", {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({ token: token.id }),
+  //     });
+
+  //     const result = await response.json();
+
+  //     if (result.status === "success") {
+  //       $q.notify({ type: "positive", message: "Payment successful!" });
   //     } else {
-  //       console.log(paymentIntent);
-  //       loadingBtn.value = false;
-  //       paymentDialog.value = false;
-  //       Notify.create({
-  //         message: "Payment successful",
-  //         color: "green",
-  //         position: "top",
-  //         actions: [{ icon: "close", color: "white" }],
-  //       });
-  //       Dialog.create({
-  //         title: `Your $${props.plan.price / 100} payment was successful`,
-  //         message: `Your payment was successful and you are now subscribed to '${props.plan.name}' plan and now have access to our premium features.`,
-  //         ok: {
-  //           push: true,
-  //           label: "Proceed",
-  //           color: "green",
-  //         },
-  //         cancel: {
-  //           push: true,
-  //           color: "grey",
-  //         },
-  //         persistent: true,
-  //       })
-  //         .onOk(() => {
-  //           Loading.show();
-  //           authAxios
-  //             .get(`merchant/${store.storedetails.slug}`)
-  //             .then((response) => {
-  //               Loading.hide();
-  //               console.log(response);
-  //               store.storedetails(response.data.data);
-  //               router.replace({
-  //                 name: "account.dashboard",
-  //               });
-  //             })
-  //             .catch(({ response }) => {
-  //               Loading.hide();
-
-  //               loading.value = false;
-  //               Notify.create({
-  //                 message: response.data.message,
-  //                 color: "red",
-  //                 position: "bottom",
-  //                 actions: [{ icon: "close", color: "white" }],
-  //               });
-  //             });
-  //         })
-  //         .onCancel(() => {
-  //           // console.log('>>>> Cancel')
-  //         })
-  //         .onDismiss(() => {
-  //           // console.log('I am triggered on both OK and Cancel')
-  //         });
-
-  //       // Handle success
+  //       $q.notify({ type: "negative", message: result.message });
   //     }
-  //   });
-}
-
-let initStripe = () => {
-  elementsOptions.value.clientSecret = stripeSecretKey;
-  // console.log(elementsOptions.value);
-  paymentDialog.value = true;
-
-  const stripePromise = loadStripe(key);
-  // console.log(stripePromise);
-  stripePromise.then((stripe) => {
-    stripeLoaded.value = true;
-    stripeIns.value = stripe;
-    elements.value = stripe.elements(elementsOptions.value);
-    const paymentElement = elements.value.create("payment", {});
-    paymentElement.mount(paymentRef.value);
-    paymentElement.on("ready", (e) => {
-      stripeMounted.value = true;
-      // this.loading[plan.id] = false;
-    });
-  });
+  //   } catch (err) {
+  //     console.error(err);
+  //     $q.notify({ type: "negative", message: "Payment failed!" });
+  //   } finally {
+  //     $q.loading.hide();
+  //   }
+  // }
 };
 let purchasePlan = () => {
   loading.value = true;
@@ -351,7 +299,24 @@ let purchasePlan = () => {
   line-height: 49px;
   text-align: center;
 }
+#card-element {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
 
+.card-input.StripeElement--focus {
+  border-color: #80bdff;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.card-input.StripeElement--invalid {
+  border-color: #fa755a;
+}
+
+.card-input.StripeElement--complete {
+  border-color: #4caf50;
+}
 .sub_title {
   font-style: normal;
   font-weight: 400;
