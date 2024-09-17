@@ -106,7 +106,19 @@
             OUR PROUD SPONSORS
           </h4>
         </div>
-        <div class="responsive_grid">
+        <div class="responsive_grid sponsors">
+          <div>
+            <img src="/images/mtn.png" alt="" />
+          </div>
+          <div>
+            <img src="/images/fate.png" alt="" />
+          </div>
+          <div>
+            <img src="/images/flourish.png" alt="" />
+          </div>
+          <div>
+            <img src="/images/vertebra.png" alt="" />
+          </div>
           <div>
             <img src="/images/rocat.svg" alt="" />
           </div>
@@ -279,7 +291,7 @@ import DonationsComp from "src/components/DonationsComp.vue";
 import { onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useMyAuthStore } from "src/stores/auth";
-import { Loading, Notify } from "quasar";
+import { Loading, Notify, QSpinnerOval } from "quasar";
 import countries from "app/countries";
 useI18n();
 let productStore = useProductStore();
@@ -387,7 +399,7 @@ const setDonateImage = (props) => {
       });
       Loading.hide();
       donateImageFile.value = null;
-
+      addDonationModal.value = false;
       getDonations();
     })
     .catch(({ response }) => {

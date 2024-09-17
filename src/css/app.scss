@@ -68,6 +68,11 @@ p {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 2rem;
+
+  &.sponsors {
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)) !important;
+    place-items: center;
+  }
 }
 
 .q-btn {
