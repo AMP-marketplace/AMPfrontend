@@ -149,11 +149,13 @@ header {
   flex-direction: column;
   justify-content: center;
   background: url("/images/hero.png") no-repeat center top/cover;
+  background-attachment: fixed;
   padding-top: 3rem;
   position: relative;
 
   &.donate {
     background: url("/images/donatebg.jpg") no-repeat center top/cover;
+    background-attachment: fixed;
   }
   &::before {
     content: "";

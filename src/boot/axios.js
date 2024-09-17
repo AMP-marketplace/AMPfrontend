@@ -165,6 +165,7 @@ export default boot(({ app, store, router }) => {
           store.state.value.ampauth.token = "";
           store.state.value.ampauth.userdetails = {};
           store.state.value.ampauth.storedetails = {};
+          store.state.value.ampauth.role = "";
           store.state.value.ampauth.userstores = [];
           router.replace({
             name: "merchant.login",
@@ -177,6 +178,7 @@ export default boot(({ app, store, router }) => {
           store.state.value.ampauth.userdetails = {};
           store.state.value.ampauth.storedetails = {};
           store.state.value.ampauth.userstores = [];
+          store.state.value.ampauth.role = "";
           router.replace({
             name: "customer.login",
             query: {
@@ -190,6 +192,7 @@ export default boot(({ app, store, router }) => {
           store.state.value.ampauth.userdetails = {};
           store.state.value.ampauth.storedetails = {};
           store.state.value.ampauth.userstores = [];
+          store.state.value.ampauth.role = "";
           router.replace({
             name: to.query.redirect,
             query: {
@@ -213,6 +216,7 @@ export default boot(({ app, store, router }) => {
         store.state.value.ampauth.userdetails = {};
         store.state.value.ampauth.storedetails = {};
         store.state.value.ampauth.userstores = [];
+        store.state.value.ampauth.role = "";
       }
 
       // console.log(store.buildadom.userdetails.type);

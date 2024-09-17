@@ -4,7 +4,9 @@
       <div style="gap: 1rem" class="row items-center no-wrap">
         <!-- <img src="" alt="" /> -->
         <div>
-          <p style="margin-bottom: 0" class="text-weight-bold">Jane Doe</p>
+          <p style="margin-bottom: 0" class="text-weight-bold">
+            {{ donatePost?.owner?.name }}
+          </p>
           <!-- <small class="text-grey-7"> 8hrs Ago </small> -->
         </div>
       </div>
@@ -27,8 +29,8 @@
           >
             <img
               style="max-width: 250px; border-radius: 5px"
-              src="/images/ambulance.jpeg"
-              alt=""
+              :src="donatePost?.media?.length ? donatePost?.media[0]?.url : ''"
+              :alt="donatePost?.name"
             />
           </router-link>
         </div>

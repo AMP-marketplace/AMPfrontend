@@ -306,7 +306,7 @@ const handleSubmit = async () => {
               console.log(response);
               store.storedetails = response.data.data;
               router.replace({
-                name: "account.dashboard",
+                name: "subscription.success.page",
               });
             })
             .catch(({ response }) => {

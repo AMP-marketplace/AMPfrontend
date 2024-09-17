@@ -56,59 +56,62 @@ v
                 <q-card>
                   <q-card-section>
                     <div>
-                      Your previous delivery addresses
-                      <q-skeleton v-if="!addressArr.length" height="150px" />
-                      <q-list v-else class="bg-white">
-                        <q-item
-                          class="q-my-sm bg-grey-2"
-                          v-for="(address, index) in addressArr"
-                          :key="index"
-                        >
-                          <q-item-section>
-                            <q-item-label
-                              >{{ address.first_name }}
-                              {{ address.last_name }}</q-item-label
-                            >
-                            <q-item-label caption lines="2">{{
-                              address.address_line_1
-                            }}</q-item-label>
-                            <q-item-label caption lines="2"
-                              >{{ address.city }}, {{ address.state }},
-                              {{ address.country }}.</q-item-label
-                            >
-                            <q-item-label caption lines="2">{{
-                              address.postal_code
-                            }}</q-item-label>
-                          </q-item-section>
-
-                          <q-item-section side top>
-                            <div
-                              style="gap: 1rem"
-                              class="row q-mt-md items-center no-wrap"
-                            >
-                              <q-btn
-                                @click="setDefault(address)"
-                                no-caps
-                                no-wrap
-                                color="primary"
-                              >
-                                Use this delivery address
-                              </q-btn>
-                            </div>
-                          </q-item-section>
-
-                          <q-badge
-                            v-if="
-                              address.address_line_1 ===
-                              addressData.address_line_1
-                            "
-                            color="green"
-                            floating
+                      <q-skeleton v-if="loadingAddresses" height="150px" />
+                      <div v-if="addressArr.length">
+                        <p>Your previous delivery addresses</p>
+                        <q-list class="bg-white">
+                          <q-item
+                            class="q-my-sm bg-grey-2"
+                            v-for="(address, index) in addressArr"
+                            :key="index"
                           >
-                            selected
-                          </q-badge>
-                        </q-item>
-                      </q-list>
+                            <q-item-section>
+                              <q-item-label
+                                >{{ address.first_name }}
+                                {{ address.last_name }}</q-item-label
+                              >
+                              <q-item-label caption lines="2">{{
+                                address.address_line_1
+                              }}</q-item-label>
+                              <q-item-label caption lines="2"
+                                >{{ address.city }}, {{ address.state }},
+                                {{ address.country }}.</q-item-label
+                              >
+                              <q-item-label caption lines="2">{{
+                                address.postal_code
+                              }}</q-item-label>
+                            </q-item-section>
+
+                            <q-item-section side top>
+                              <div
+                                style="gap: 1rem"
+                                class="row q-mt-md items-center no-wrap"
+                              >
+                                <q-btn
+                                  @click="setDefault(address)"
+                                  no-caps
+                                  no-wrap
+                                  color="primary"
+                                >
+                                  Use this delivery address
+                                </q-btn>
+                              </div>
+                            </q-item-section>
+
+                            <q-badge
+                              v-if="
+                                address.address_line_1 ===
+                                addressData.address_line_1
+                              "
+                              color="green"
+                              floating
+                            >
+                              selected
+                            </q-badge>
+                          </q-item>
+                        </q-list>
+                      </div>
+
                       <div
                         v-if="!addressArr.length"
                         class="column items-center text-center justify-center"
@@ -119,7 +122,8 @@ v
                           alt=""
                         />
                         <p class="q-mt-sm">
-                          You have not checked out with any addresses yet
+                          You have not checked out with any addresses yet, you
+                          don't have any previous address.
                         </p>
                       </div>
                     </div>
@@ -130,11 +134,12 @@ v
                       @click="checkoutCurrencyModal = !checkoutCurrencyModal"
                       color="primary"
                       no-caps
+                      v-if="addressArr.length"
                       no-wrap
                     >
                       Continue
                     </q-btn>
-                    <p class="q-mt-xs">
+                    <p v-if="addressArr.length" class="q-mt-xs">
                       Please make your have selected an address before clicking
                       continue
                     </p>
@@ -459,13 +464,13 @@ v
           <p class="q-mt-sm text-center">
             Dear exteemed customer please note that all transactions are
             <br />
-            currenctly in Naira though we are working to enable you check out
+            currenctly in Dollar though we are working to enable you check out
             with <br />
-            Dollar and other currencies soon.
+            other currencies soon.
           </p>
-          <p class="text-green text-weight-bold">
+          <!-- <p class="text-green text-weight-bold">
             Please select naira to continue
-          </p>
+          </p> -->
           <!-- {{ checkoutCurrency }} -->
           <div class="row justify-center">
             <div class="q-gutter-sm">
@@ -481,14 +486,20 @@ v
           <p class="text-weight-bold">
             Your order total: ${{ cartStore.totalPrice.toLocaleString() }}
           </p>
-          <p v-if="currencyRatesData.rates" class="q-mt-xs">
+          <p
+            v-if="currencyRatesData.rates && checkoutCurrency === 'naira'"
+            class="q-mt-xs"
+          >
             Naira to Dollar rate at this time is
             <span class="text-green text-weight-bold">
               NGN
               {{ currencyRatesData?.rates["NGN"] }}
             </span>
           </p>
-          <p v-if="currencyRatesData.rates" class="q-mt-xs">
+          <p
+            v-if="currencyRatesData.rates && checkoutCurrency === 'naira'"
+            class="q-mt-xs"
+          >
             This is your order total in Naira -
             <strong
               >NGN
@@ -503,10 +514,10 @@ v
 
         <div class="total no-wrap column justify-center q-mt-md items-center">
           <q-btn
-            class="apply bg-primary q-px-xl q-mt-md"
+            class="apply bg-primary q-px-xl q-mx-sm q-mt-md"
             no-caps
             flat
-            :disable="checkoutCurrency !== 'naira'"
+            :disable="checkoutCurrency === 'naira'"
             @click="createOrder(addressData.id)"
             rounded
             text-color="white"
@@ -559,7 +570,7 @@ v
 import { onMounted, ref, watch } from "vue";
 import { useCartStore } from "src/stores/cart";
 import FooterCompVue from "src/components/FooterComp.vue";
-import { Loading, Notify, QSpinnerRings, useQuasar } from "quasar";
+import { Dialog, Loading, Notify, QSpinnerRings, useQuasar } from "quasar";
 import { authAxios } from "src/boot/axios";
 import { useMyAuthStore } from "src/stores/auth";
 import { useRoute, useRouter } from "vue-router";
@@ -572,7 +583,7 @@ let cartStore = useCartStore();
 let authStore = useMyAuthStore();
 let data = ref({});
 let errors = ref({});
-let addressArr = ref({});
+let addressArr = ref([]);
 let loading = ref(false);
 let checkoutCurrencyModal = ref(false);
 let loadingAddresses = ref(false);
@@ -588,6 +599,7 @@ let country_code = ref("+234");
 let checkoutCurrency = ref("dollar");
 let stripeLoaded = ref(false);
 let stripeMounted = ref(false);
+let loadingBtn = ref(false);
 let stripeIns = ref(null);
 let refValue = ref("");
 const $q = useQuasar();
@@ -726,8 +738,9 @@ const handleSubmit = async () => {
       })
         .onOk(() => {
           // Loading.show();
+          cartStore.cart = [];
           router.replace({
-            name: "dashboard",
+            name: "payment.success",
           });
         })
         .onCancel(() => {
@@ -882,10 +895,11 @@ const createOrder = (shipping_id) => {
       formData.append(`products[${index}][price]`, item.price);
     });
     formData.append("shipping_address_id", shipping_id);
-    formData.append(
-      "total_amount",
-      cartStore.totalPrice * currencyRatesData.value?.rates["NGN"]
-    );
+    // formData.append(
+    //   "total_amount",
+    //   cartStore.totalPrice * currencyRatesData.value?.rates["NGN"]
+    // );
+    formData.append("total_amount", cartStore.totalPrice);
     Loading.show({
       spinner: QSpinnerRings,
       spinnerColor: "yellow",
@@ -941,10 +955,10 @@ const getDeliveryAddresses = () => {
     .then(({ data }) => {
       console.log(data);
       addressArr.value = data.data;
-      loading.value = false;
+      loadingAddresses.value = false;
     })
     .catch(({ response }) => {
-      loading.value = false;
+      loadingAddresses.value = false;
     });
 };
 

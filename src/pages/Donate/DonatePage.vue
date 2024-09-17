@@ -23,7 +23,7 @@
 
             <div class="q-mt-md">
               <q-btn
-                @click="addDonationModal = !addDonationModal"
+                @click="toggleDonationModal"
                 color="white"
                 text-color="black"
                 no-caps
@@ -80,18 +80,20 @@
             </q-card>
           </div>
         </div>
-        <div v-if="!loadingDonations" class="q-mt-md grid">
+        <div v-if="!loadingDonations" class="q-mt-md">
           <q-infinite-scroll
             @load="loadMore"
             :offset="100"
             :disable="disableInfiniteScroll"
           >
-            <DonationsComp
-              class="q-mt-lg"
-              :donatePost="donation"
-              v-for="(donation, index) in donationsArr"
-              :key="index"
-            />
+            <div class="grid">
+              <DonationsComp
+                class="q-mt-lg"
+                :donatePost="donation"
+                v-for="(donation, index) in donationsArr"
+                :key="index"
+              />
+            </div>
           </q-infinite-scroll>
         </div>
       </div>
@@ -141,7 +143,33 @@
       </q-card>
     </q-dialog>
     <q-dialog v-model="addDonationModal">
-      <q-card>
+      <q-card v-if="!store.token">
+        <div class="column items-center justify-center text-center">
+          <p>You have to be signed in to create a donation</p>
+
+          <div style="gap: 1rem" class="row q-mt-md items-center no-wrap">
+            <q-btn
+              :to="{ name: 'customer.login' }"
+              no-wrap
+              no-caps
+              color="primary"
+            >
+              Sign in as a customer
+            </q-btn>
+
+            <q-btn
+              :to="{ name: 'merchant.login' }"
+              btn
+              no-wrap
+              no-caps
+              color="primary"
+            >
+              Sign in as a merchant
+            </q-btn>
+          </div>
+        </div>
+      </q-card>
+      <q-card v-if="store.token">
         <div class="top_modal row items-center justify-between">
           <h4 class="text1">
             {{ editState ? "Edit donation" : "Upload donation" }}
@@ -283,6 +311,9 @@ const onRejected = () => {
   });
 };
 
+const toggleDonationModal = () => {
+  addDonationModal.value = !addDonationModal.value;
+};
 const addDonationFcn = () => {
   let dataToSend = {
     ...data.value,
@@ -342,15 +373,11 @@ const setDonateImage = (props) => {
   });
 
   authAxios
-    .post(
-      `merchant/${store.storedetails.slug}/${addedDonationObj.value.slug}/upload/media`,
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }
-    )
+    .post(`donation/media/upload/${addedDonationObj.value.slug}`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    })
     .then((response) => {
       console.log(response);
 

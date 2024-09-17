@@ -18,7 +18,13 @@
           {{ postData.status }}
         </q-badge>
       </p>
-      <q-btn-dropdown no-caps no-wrap color="primary" label=" Set status">
+      <q-btn-dropdown
+        v-if="store.userdetails.email === postData.owner.email"
+        no-caps
+        no-wrap
+        color="primary"
+        label=" Set status"
+      >
         <q-list>
           <q-item
             :disable="postData.status === 'available'"
@@ -55,6 +61,24 @@
     </div>
 
     <div class="bg-white main_area q-py-md q-py-lg">
+      <div v-if="postData?.media.length">
+        <q-carousel
+          :autoplay="true"
+          swipeable
+          animated
+          v-model="slide"
+          thumbnails
+          infinite
+        >
+          <q-carousel-slide
+            style="background-size: contain; background-repeat: no-repeat"
+            :name="index + 1"
+            v-for="(images, index) in postData?.media"
+            :key="index"
+            :img-src="images.url"
+          />
+        </q-carousel>
+      </div>
       <div class="grid">
         <div class="right">
           <div class="row items-center">
@@ -82,12 +106,6 @@
                 class="div"
               >
                 <div class="img">
-                  <!-- <img
-                    v-if="comment.author.avatar"
-                    style="width: 60px; height: 60px; border-radius: 100%"
-                    :src="comment.author.avatar"
-                    alt=""
-                  /> -->
                   <img
                     style="width: 40px; height: 40px; border-radius: 100%"
                     src="/images/usersvg.svg"
@@ -100,79 +118,32 @@
                     alt=""
                   />
                 </div>
-                <div class="details">
-                  <div class="text4">
-                    {{
-                      comment.author.name
-                        ? `${comment.author.name}`
-                        : `${comment.author.email}`
-                    }}
-                  </div>
-                  <div class="text2 q-mb-sm">
-                    {{
-                      formatDistanceToNow(parseISO(comment.created_at), {
-                        addSuffix: true,
-                      })
-                    }}
-                  </div>
-
-                  <div class="comments">
-                    <!-- Hey there 👋
-                    <br /> -->
-
-                    {{ comment.remark }}
-                  </div>
-
-                  <div class="q-pa-md row justify-end no-wrap q-gutter-md">
-                    <!-- <div class="row items-center">
-                      <q-btn
-                        @click="likePost('comment', comment._id)"
-                        round
-                        size="15px"
-                        color="primary"
-                        :icon="
-                          comment.likes.includes(store.userdetails._id)
-                            ? 'fa-solid fa-thumbs-up'
-                            : 'fa-regular fa-thumbs-up'
-                        "
-                      />
-                      <span class="q-ml-sm">
-                        {{ comment.length }}
-                      </span>
+                <div
+                  style="width: 80%"
+                  class="details row items-center justify-between"
+                >
+                  <div>
+                    <div class="text4">
+                      {{
+                        comment.author.name
+                          ? `${comment.author.name}`
+                          : `${comment.author.email}`
+                      }}
                     </div>
-                    <div class="row items-center">
-                      <q-btn
-                        @click="dislikePost('comment', comment._id)"
-                        round
-                        size="8px"
-                        color="primary"
-                        :icon="
-                          comment.dislikes.includes(store.userdetails._id)
-                            ? 'fa-solid fa-thumbs-down'
-                            : 'fa-regular fa-thumbs-down'
-                        "
-                      />
-                      <span class="q-ml-sm">
-                        {{ comment.dislikes.length }}
-                      </span>
-                    </div> -->
-                    <q-btn
-                      @click="editComment('comment', comment)"
-                      round
-                      v-if="store.userdetails.email === comment.author.email"
-                      color="primary"
-                      ><i
-                        style="
-                          width: 40px;
-                          height: 40px;
-                          display: flex;
-                          justify-content: center;
-                          align-items: center;
-                          font-size: 15px;
-                        "
-                        class="fa-regular text-weight-bold text-h6 fa-pen-to-square"
-                      ></i
-                    ></q-btn>
+                    <div class="text2">
+                      {{
+                        formatDistanceToNow(parseISO(comment.created_at), {
+                          addSuffix: true,
+                        })
+                      }}
+                    </div>
+
+                    <div class="comments">
+                      {{ comment.remark }}
+                    </div>
+                  </div>
+
+                  <div class="">
                     <q-btn
                       @click="deleteReview(comment)"
                       round
@@ -180,8 +151,8 @@
                       color="secondary"
                       ><i
                         style="
-                          width: 40px;
-                          height: 40px;
+                          width: 30px;
+                          height: 35px;
                           display: flex;
                           justify-content: center;
                           align-items: center;
@@ -234,40 +205,10 @@
               </div>
             </div>
             <div
+              v-if="store.userdetails.email === postData.owner.email"
               style="gap: 0.5rem"
-              class="q-pa-md q-mt-md row no-wrap items-center justify-center"
+              class="q-pa-md q-mt-md row items-center justify-center"
             >
-              <!-- <div class="row items-center">
-                <q-btn
-                  @click="likePost('post', postData._id)"
-                  round
-                  size="10px"
-                  color="primary"
-                  :icon="
-                    postData.likes.includes(store.userdetails._id)
-                      ? 'fa-solid fa-thumbs-up'
-                      : 'fa-regular fa-thumbs-up'
-                  "
-                />
-                <span class="q-ml-sm">
-                  {{ postData.likes.length }}
-                </span>
-              </div> -->
-              <!-- <div class="row items-center">
-                <q-btn
-                  @click="dislikePost('post', postData._id)"
-                  round
-                  size="10px"
-                  color="primary"
-                  :icon="
-                    postData.dislikes.includes(store.userdetails._id)
-                      ? 'fa-solid fa-thumbs-down'
-                      : 'fa-regular fa-thumbs-down'
-                  "
-                /><span class="q-ml-sm">
-                  {{ postData.dislikes.length }}
-                </span>
-              </div> -->
               <q-btn @click="editPost(postData)" no-wrap no-caps color="primary"
                 >Edit Donation<i
                   style="
@@ -296,6 +237,27 @@
                   class="fa-solid fa-trash"
                 ></i
               ></q-btn>
+              <q-btn
+                color="red-7"
+                class="q-md-xl q-mr-sm q-py-xs"
+                no-wrap
+                @click="actionsModal = !actionsModal"
+                no-caps
+              >
+                Actions
+              </q-btn>
+              <q-btn
+                color="primary"
+                class="q-md-xl q-py-xs"
+                no-wrap
+                @click="AddProductImageModal = !AddProductImageModal"
+                no-caps
+                type="submit"
+              >
+                {{
+                  postData?.media?.length ? "Add another image" : "Upload image"
+                }}
+              </q-btn>
               <!-- <q-btn
                 @click="editPost('post', postData.id)"
                 round
@@ -353,11 +315,73 @@
         </div>
       </div>
     </div>
+    <q-dialog v-model="AddProductImageModal">
+      <q-card>
+        <div>
+          <h6 class="text-h6 text-center">Do you want to add another image?</h6>
+        </div>
+        <q-file
+          @update:model-value="setProductImage"
+          accept=".png,.jpeg,.jpg,.webp"
+          class="column profile_field justify-center items-center"
+          v-model="AnotherproductImageFile"
+          max-file-size="512000"
+          @rejected="onRejected"
+        >
+          <div class="img q-mb-sm">
+            <img src="../../assets/upload.svg" alt="" />
+          </div>
+          <div class="smallText">Upload another image</div>
+        </q-file>
+      </q-card>
+    </q-dialog>
+    <q-dialog v-model="actionsModal">
+      <q-card>
+        <q-list
+          v-if="postData?.media?.length"
+          bordered
+          separator
+          padding
+          class="rounded-borders"
+        >
+          <q-item-label header>Images</q-item-label>
+
+          <q-item
+            v-for="(images, index) in postData?.media"
+            :key="index"
+            clickable
+            v-ripple
+          >
+            <q-item-section avatar top>
+              <q-avatar>
+                <img :src="images.url" />
+              </q-avatar>
+            </q-item-section>
+
+            <q-item-section>
+              <q-item-label lines="1">Image {{ index + 1 }}</q-item-label>
+              <q-item-label caption>{{ images.size }}</q-item-label>
+            </q-item-section>
+
+            <q-item-section side>
+              <div style="gap: 1rem" class="row items-center no-wrap">
+                <q-btn @click="deleteImageProps(images)" color="red-7"
+                  ><i class="fa-solid fa-trash"></i
+                ></q-btn>
+              </div>
+            </q-item-section>
+          </q-item>
+        </q-list>
+        <div v-else>
+          <p>You have not uploaded any images</p>
+        </div>
+      </q-card>
+    </q-dialog>
     <q-dialog v-model="editDonationModal">
       <q-card>
         <div class="top_modal row items-center justify-between">
           <h4 class="text1">
-            {{ editState ? "Edit donation" : "Upload donation" }}
+            {{ "Edit donation" }}
           </h4>
 
           <q-btn @click="editDonationModal = !editDonationModal" flat rounded>
@@ -479,12 +503,16 @@ let comment = ref("");
 let commentsArr = ref([]);
 let spin = ref(true);
 let seamless = ref(false);
+let actionsModal = ref(false);
 let loading = ref(false);
 let editMode = ref(false);
 let editPostMode = ref(false);
 let donateImageFile = ref(null);
+let AnotherproductImageFile = ref(null);
 let donateImagePreview = ref("");
 let showAddDonateImage = ref(false);
+let AddProductImageModal = ref(false);
+let slide = ref(1);
 let editDonationModal = ref(false);
 let commentToEdit = ref({});
 let addedDonationObj = ref({});
@@ -513,6 +541,95 @@ const onRejected = () => {
     message: `Your upload size should be less than 500kb `,
   });
 };
+
+const setProductImage = (props) => {
+  AnotherproductImageFile.value = props;
+
+  Loading.show({
+    spinner: QSpinnerOval,
+    message: "Uploading product image...",
+  });
+  const formData = new FormData();
+  formData.append("media[]", AnotherproductImageFile.value);
+  authAxios
+    .post(`donation/media/upload/${postData.value.slug}`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    })
+    .then((response) => {
+      console.log(response);
+      postData.value = response.data.data;
+      // getProducts();
+      Notify.create({
+        message: response.data.message + ", successfully added.",
+        color: "green",
+        position: "top",
+      });
+      Loading.hide();
+      AnotherproductImageFile.value = null;
+      AddProductImageModal.value = false;
+    })
+    .catch(({ response }) => {
+      // console.log(response);
+      Loading.hide();
+      Notify.create({
+        message: response.data.message,
+        color: "red",
+        position: "top",
+        actions: [{ icon: "close", color: "white" }],
+      });
+    });
+};
+const deleteImageProps = (imageData) => {
+  Dialog.create({
+    title: "Confirm",
+    message: "Would you like to delete this image?",
+    cancel: true,
+    persistent: true,
+  })
+    .onOk(() => {
+      Loading.show({
+        spinner: QSpinnerOval,
+        message: "Deleting...",
+      });
+      authAxios
+        .post(
+          `donation/media/remove/${postData.value.slug}?key=${imageData.key}`
+        )
+        .then((response) => {
+          console.log(response);
+
+          Notify.create({
+            message:
+              response.data.message ||
+              "You have successfully deleted this image.",
+            color: "green",
+            position: "top",
+          });
+          // getProducts();
+          actionsModal.value = false;
+          Loading.hide();
+        })
+        .catch(({ response }) => {
+          // console.log(response);
+          Loading.hide();
+          Notify.create({
+            message: response.data.message,
+            color: "red",
+            position: "top",
+            actions: [{ icon: "close", color: "white" }],
+          });
+        });
+    })
+
+    .onCancel(() => {
+      // console.log('>>>> Cancel')
+    })
+    .onDismiss(() => {
+      // console.log('I am triggered on both OK and Cancel')
+    });
+};
 const setDonateImage = (props) => {
   donateImageFile.value = props;
   var reader = new FileReader();
@@ -528,18 +645,14 @@ const setDonateImage = (props) => {
   });
 
   authAxios
-    .post(
-      `merchant/${store.storedetails.slug}/${addedDonationObj.value.slug}/upload/media`,
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }
-    )
+    .post(`donation/media/upload/${addedDonationObj.value.slug}`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    })
     .then((response) => {
       console.log(response);
-
+      postData.value = response.data.data;
       Notify.create({
         message: response.data.message + ", donate successfully added.",
         color: "green",
@@ -613,17 +726,7 @@ const getPostDetail = () => {
     })
     .catch(({ response }) => {});
 };
-const getPostComments = () => {
-  const slug = route.query.slug;
 
-  authAxios
-    .get(`forum-comments/${slug}?populate=author`)
-    .then(({ data }) => {
-      // console.log(data);
-      commentsArr.value = data.payload;
-    })
-    .catch(({ response }) => {});
-};
 const setPostStatus = (value) => {
   const slug = route.query.slug;
 
@@ -641,7 +744,7 @@ const setPostStatus = (value) => {
     });
 };
 const createPost = () => {
-  if (editPostMode) {
+  if (editPostMode.value) {
     loading.value = true;
     authAxios
       .put(`forums/${postData.value._id}`, {
@@ -696,58 +799,7 @@ const createPost = () => {
       });
   }
 };
-const likePost = (type, id) => {
-  // loading.value = true;
-  const slug = router.currentRoute.value.params.slug;
 
-  if (type === "post") {
-    authAxios
-      .put(`forums/${slug}/like`)
-      .then((response) => {
-        loading.value = false;
-        Notify.create({
-          message: response.data.message,
-          color: "green",
-          position: "top",
-        });
-        // console.log(response);
-        getPostDetail();
-      })
-      .catch(({ response }) => {
-        loading.value = false;
-        Notify.create({
-          message: response.data.message,
-          color: "red",
-          position: "bottom",
-          actions: [{ icon: "close", color: "white" }],
-        });
-        // console.log(response);
-      });
-  } else {
-    authAxios
-      .put(`forum-comments/${slug}/${id}/like`)
-      .then((response) => {
-        loading.value = false;
-        Notify.create({
-          message: response.data.message,
-          color: "green",
-          position: "top",
-        });
-        // console.log(response);
-        getPostComments();
-      })
-      .catch(({ response }) => {
-        loading.value = false;
-        Notify.create({
-          message: response.data.message,
-          color: "red",
-          position: "bottom",
-          actions: [{ icon: "close", color: "white" }],
-        });
-        // console.log(response);
-      });
-  }
-};
 const deleteReview = (review) => {
   Dialog.create({
     title: "Note",
@@ -786,7 +838,7 @@ const deleteReview = (review) => {
 };
 const deletePost = (id) => {
   // loading.value = true;
-  const slug = router.currentRoute.value.params.slug;
+  const slug = route.query.slug;
 
   if (type === "post") {
     Dialog.create({
@@ -795,7 +847,7 @@ const deletePost = (id) => {
     })
       .onOk(() => {
         authAxios
-          .delete(`forums/${slug}`)
+          .delete(`donation/delete/${slug}`)
           .then((response) => {
             loading.value = false;
             Notify.create({
@@ -857,60 +909,7 @@ const deletePost = (id) => {
       });
   }
 };
-const dislikePost = (type, id) => {
-  // loading.value = true;
-  const slug = router.currentRoute.value.params.slug;
 
-  if (type === "post") {
-    authAxios
-      .put(`forums/${slug}/dislike`)
-      .then((response) => {
-        loading.value = false;
-        Notify.create({
-          message: response.data.message,
-          color: "green",
-          position: "top",
-        });
-        getPostDetail();
-
-        // console.log(response);
-      })
-      .catch(({ response }) => {
-        loading.value = false;
-        Notify.create({
-          message: response.data.message,
-          color: "red",
-          position: "bottom",
-          actions: [{ icon: "close", color: "white" }],
-        });
-        // console.log(response);
-      });
-  } else {
-    authAxios
-      .put(`forum-comments/${slug}/${id}/dislike`)
-      .then((response) => {
-        loading.value = false;
-        Notify.create({
-          message: response.data.message,
-          color: "green",
-          position: "top",
-        });
-        getPostComments();
-
-        // console.log(response);
-      })
-      .catch(({ response }) => {
-        loading.value = false;
-        Notify.create({
-          message: response.data.message,
-          color: "red",
-          position: "bottom",
-          actions: [{ icon: "close", color: "white" }],
-        });
-        // console.log(response);
-      });
-  }
-};
 const createComments = () => {
   if (comment.value === "") {
     Notify.create({
@@ -935,7 +934,8 @@ const createComments = () => {
           });
           comment.value = "";
           editMode.value = false;
-          getPostDetail();
+          postData.value = response.data.data;
+          // getPostDetail();
         })
         .catch(({ response }) => {
           loading.value = false;
@@ -1009,6 +1009,7 @@ onMounted(() => {
 
 .text2 {
   color: #637083;
+  line-height: 1.5;
 }
 .text2.comments {
   color: #344051;
@@ -1025,6 +1026,9 @@ onMounted(() => {
   display: flex;
   align-items: flex-start;
   gap: 1rem;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  padding: 0.7rem;
+  border-radius: 8px;
 }
 
 .div .text4 {
@@ -1155,6 +1159,9 @@ onMounted(() => {
 
   .left {
     max-width: 250px;
+  }
+  .right {
+    margin-left: -2%;
   }
 }
 </style>
