@@ -61,7 +61,7 @@
     </div>
 
     <div class="bg-white main_area q-py-md q-py-lg">
-      <div v-if="postData?.media.length">
+      <div v-if="postData?.media?.length">
         <q-carousel
           :autoplay="true"
           swipeable
@@ -99,7 +99,7 @@
           <q-separator />
           <div class="q-mt-xl comments">Comments:</div>
           <div class="container">
-            <div v-if="postData.comments.length">
+            <div v-if="postData?.comments?.length">
               <div
                 v-for="(comment, index) in postData.comments"
                 :key="index"
@@ -299,6 +299,12 @@
                   year: "numeric",
                 })
               }}
+            </div>
+          </div>
+          <div class="row items-center justify-between q-mb-md">
+            <div class="text4">Owner</div>
+            <div class="text2">
+              {{ postData.owner.name }}
             </div>
           </div>
           <!-- <div class="text4 q-mb-sm">Author</div>
@@ -660,8 +666,6 @@ const setDonateImage = (props) => {
       });
       Loading.hide();
       donateImageFile.value = null;
-
-      getPostDetail();
     })
     .catch(({ response }) => {
       Loading.hide();
@@ -822,7 +826,6 @@ const deleteReview = (review) => {
             position: "top",
           });
           console.log(data);
-          getPostDetail();
         })
         .catch(({ response }) => {
           Loading.hide();
@@ -935,7 +938,6 @@ const createComments = () => {
           comment.value = "";
           editMode.value = false;
           postData.value = response.data.data;
-          // getPostDetail();
         })
         .catch(({ response }) => {
           loading.value = false;
@@ -961,7 +963,6 @@ const createComments = () => {
             color: "green",
             position: "top",
           });
-          getPostDetail();
         })
         .catch(({ response }) => {
           loading.value = false;
