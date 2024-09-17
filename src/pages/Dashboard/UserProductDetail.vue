@@ -603,8 +603,15 @@ let chatSeller = () => {
   loadingChatBtn.value = true;
   authAxios
     .post(`chat/create-or-get`, {
-      user_id: authStore.userdetails.id,
-      merchant_id: product.value.merchant.id,
+      participant_one_id:
+        authStore.userdetails.roles[0].name === "merchant"
+          ? authStore.storedetails.id
+          : authStore.userdetails.id,
+      participant_one_type: authStore.userdetails.roles[0].name,
+      participant_two_id: product.value.merchant.id,
+      participant_two_type: product.value.merchant.user.roles[0].name,
+      // user_id: authStore.userdetails.id,
+      // merchant_id: product.value.merchant.id,
     })
     .then((response) => {
       loadingChatBtn.value = false;

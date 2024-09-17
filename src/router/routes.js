@@ -186,6 +186,11 @@ const routes = [
         component: () => import("pages/Dashboard/CustomerPaymentList.vue"),
         name: "user.payment.list",
       },
+      {
+        path: "/user/messages",
+        component: () => import("pages/Dashboard/UsersMessagesPage.vue"),
+        name: "user.messages",
+      },
     ],
   },
   {

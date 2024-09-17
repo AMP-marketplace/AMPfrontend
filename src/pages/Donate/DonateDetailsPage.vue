@@ -105,7 +105,7 @@
                 :key="index"
                 class="div"
               >
-                <div class="img">
+                <div @click="showPersonDetailsFCN(comment.author)" class="img">
                   <img
                     style="width: 40px; height: 40px; border-radius: 100%"
                     src="/images/usersvg.svg"
@@ -123,7 +123,10 @@
                   class="details row items-center justify-between"
                 >
                   <div>
-                    <div class="text4">
+                    <div
+                      @click="showPersonDetailsFCN(comment.author)"
+                      class="text4"
+                    >
                       {{
                         comment.author.name
                           ? `${comment.author.name}`
@@ -136,6 +139,12 @@
                           addSuffix: true,
                         })
                       }}
+                      <br />
+                      <small
+                        v-if="store.userdetails.email === comment.author.email"
+                        class="text-italic text-secondary"
+                        >You made this comment</small
+                      >
                     </div>
 
                     <div class="comments">
@@ -143,7 +152,21 @@
                     </div>
                   </div>
 
-                  <div class="">
+                  <div style="gap: 1rem" class="row items-center no-wrap">
+                    <q-btn
+                      @click="chatPerson(comment.author)"
+                      flat
+                      v-if="
+                        store.userdetails.email === postData.owner.email &&
+                        store.userdetails.email !== comment.author.email
+                      "
+                      :loading="loadingChatBtn"
+                      no-caps
+                      no-wrap
+                      class="bg-green-7 text-white"
+                    >
+                      <i class="ri-chat-2-line q-mr-sm"></i> Chat person
+                    </q-btn>
                     <q-btn
                       @click="deleteReview(comment)"
                       round
@@ -321,6 +344,45 @@
         </div>
       </div>
     </div>
+    <q-dialog v-model="showPersonDetailsModal">
+      <q-card>
+        <div class="column items-center justify-center text-center">
+          <div>
+            <img
+              style="width: 60px; height: 60px; border-radius: 100%"
+              src="/images/usersvg.svg"
+              alt=""
+            />
+          </div>
+          <p><strong>Name:</strong> {{ showPersonDetails.name }}</p>
+          <p>
+            <strong>Email:</strong> {{ showPersonDetails.email }}
+            <span
+              v-if="showPersonDetails.email_verified_at"
+              class="text-green text-weight-bold"
+              >Verified</span
+            >
+          </p>
+          <p>
+            <strong>Phone:</strong>
+            <a target="_blank" :href="showPersonDetails.phone">{{
+              showPersonDetails.phone
+            }}</a>
+          </p>
+
+          <div style="gap: 1rem" class="row q-mt-md items-center no-wrap">
+            <q-btn
+              @click="chatPerson(showPersonDetails)"
+              no-wrap
+              no-caps
+              color="primary"
+            >
+              Chat person
+            </q-btn>
+          </div>
+        </div>
+      </q-card>
+    </q-dialog>
     <q-dialog v-model="AddProductImageModal">
       <q-card>
         <div>
@@ -486,12 +548,22 @@
         </div>
       </q-card>
     </q-dialog>
+    <q-dialog v-model="chatModal" persistent class="chatDialog">
+      <div>
+        <ChatPage
+          :product="product"
+          :conversationMessages="conversationMessages"
+          :conversationDetails="conversationDetails"
+          @closeModal="closeModalToggle"
+        />
+      </div>
+    </q-dialog>
   </q-layout>
 </template>
 
 <script setup>
 import { formatDistanceToNow, parseISO } from "date-fns";
-
+import ChatPage from "src/components/ChatPage.vue";
 import { Dialog, Loading, Notify, QSpinnerOval } from "quasar";
 import { authAxios, axios } from "src/boot/axios";
 import { onMounted, ref } from "vue";
@@ -504,11 +576,15 @@ let store = useMyAuthStore();
 let postDialog = ref(false);
 let post = ref({});
 let data = ref({});
+let product = ref({ rating: 0 });
 let postData = ref({});
 let comment = ref("");
 let commentsArr = ref([]);
 let spin = ref(true);
 let seamless = ref(false);
+let conversationDetails = ref({});
+let errors = ref({});
+let conversationMessages = ref([]);
 let actionsModal = ref(false);
 let loading = ref(false);
 let editMode = ref(false);
@@ -517,12 +593,20 @@ let donateImageFile = ref(null);
 let AnotherproductImageFile = ref(null);
 let donateImagePreview = ref("");
 let showAddDonateImage = ref(false);
+let loadingChatBtn = ref(false);
 let AddProductImageModal = ref(false);
 let slide = ref(1);
 let editDonationModal = ref(false);
+let chatModal = ref(false);
 let commentToEdit = ref({});
 let addedDonationObj = ref({});
+let showPersonDetails = ref({});
+let showPersonDetailsModal = ref(false);
 
+const showPersonDetailsFCN = (details) => {
+  showPersonDetails.value = details;
+  showPersonDetailsModal.value = true;
+};
 const editPost = () => {
   data.value = { ...postData.value };
   editPostMode.value = true;
@@ -533,7 +617,69 @@ const editComment = (type, data) => {
   comment.value = data.remark;
   editMode.value = true;
 };
+let chatPerson = (author) => {
+  Loading.show();
+  authAxios
+    .post(`chat/create-or-get`, {
+      participant_one_id:
+        store.userdetails.roles[0].name === "merchant"
+          ? store.storedetails.id
+          : store.userdetails.id,
+      participant_one_type:
+        store.userdetails.roles[0].name === "shopper"
+          ? "user"
+          : store.userdetails.roles[0].name,
+      participant_two_id: author.id,
+      participant_two_type:
+        author.roles[0].name === "shopper"
+          ? "user"
+          : store.userdetails.roles[0].name,
+    })
+    .then((response) => {
+      loadingChatBtn.value = false;
+      console.log(response);
+      conversationDetails.value = response.data.data;
+      chatModal.value = true;
+      Loading.hide();
+      // getConversations(response.data.conversation.id);
+    })
+    .catch(({ response }) => {
+      // console.log(response);
+      Loading.hide();
+      if (response.data.message === "The user id field is required.") {
+        Notify.create({
+          message: "You need to be logged in to start a conversation",
+          position: "top",
+          color: "red",
+        });
 
+        Dialog.create({
+          title: "Authenticate",
+          message: `Please login to start conversation with vendor`,
+          cancel: true,
+          persistent: true,
+        })
+          .onOk(() => {
+            route.replace({
+              name: "customer.login",
+              query: {
+                redirect: signleRouteData.name,
+              },
+            });
+          })
+          .onCancel(() => {
+            // console.log('>>>> Cancel')
+          })
+          .onDismiss(() => {
+            // console.log('I am triggered on both OK and Cancel')
+          });
+      }
+
+      loadingChatBtn.value = false;
+      errors = response.data.errors || {};
+    });
+  // chat = true;
+};
 function getCountryFlag(countryName) {
   const country = countries.find(
     (c) => c.name.toLowerCase() === countryName?.toLowerCase()
@@ -547,7 +693,9 @@ const onRejected = () => {
     message: `Your upload size should be less than 500kb `,
   });
 };
-
+const closeModalToggle = () => {
+  chatModal.value = false;
+};
 const setProductImage = (props) => {
   AnotherproductImageFile.value = props;
 

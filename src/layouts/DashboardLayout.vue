@@ -185,6 +185,14 @@
           >
             <q-item-section> Payments </q-item-section>
           </q-item>
+          <q-item
+            :to="{ name: 'user.messages' }"
+            class="navLinks"
+            clickable
+            v-ripple
+          >
+            <q-item-section> Messages </q-item-section>
+          </q-item>
           <!-- <q-item class="navLinks" clickable v-ripple>
             <q-item-section> My Wishlist </q-item-section>
           </q-item> -->

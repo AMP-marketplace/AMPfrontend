@@ -7,11 +7,12 @@
             <img src="/images/usersvg.svg" alt="" />
           </div>
           <div class="det">
+            <!-- {{ conversationDetails.participants[1] }} -->
             <div class="title name_top">
               {{
-                store?.userdetails?.roles[0].name === "shopper"
-                  ? product?.merchant?.business_name
-                  : conversationDetails?.customer?.name
+                conversationDetails?.participants[1]?.data?.business_name
+                  ? conversationDetails?.participants[1]?.data?.business_name
+                  : conversationDetails?.participants[1]?.data?.name
               }}
             </div>
             <div class="name_down act text-weight-bold">Active</div>

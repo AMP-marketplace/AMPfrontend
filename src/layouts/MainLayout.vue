@@ -185,9 +185,24 @@
           <q-list>
             <q-item :to="{ name: 'stores' }" clickable> All Stores </q-item>
             <q-item :to="{ name: 'explore' }" clickable> All Products </q-item>
-            <q-item :to="{ name: 'merchant.register' }" clickable>
+            <q-item :to="{ name: 'donate' }" clickable
+              >Donate Medical Equipments</q-item
+            >
+            <q-item
+              v-if="!store.token"
+              :to="{ name: 'merchant.register' }"
+              clickable
+            >
               Register
             </q-item>
+            <q-item
+              v-if="!store.token"
+              :to="{ name: 'merchant.login' }"
+              clickable
+            >
+              Login
+            </q-item>
+
             <!-- <q-item :to="{ name: 'explore' }" clickable> All Products </q-item> -->
           </q-list>
         </div>

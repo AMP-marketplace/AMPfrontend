@@ -431,3 +431,11 @@ onMounted(() => {
   getDonations();
 });
 </script>
+
+<style scoped>
+@media (max-width: 790px) {
+  .grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
