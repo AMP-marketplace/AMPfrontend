@@ -488,7 +488,7 @@ const deleteReview = (review) => {
         message: "Deleting review...",
       });
       authAxios
-        .delete(`review/delete/`)
+        .delete(`review/delete/${review.id}`)
         .then(({ data }) => {
           Loading.hide();
           console.log(data);
@@ -662,7 +662,7 @@ let getConversations = (id) => {
     .catch(({ response }) => {
       // $q.loading.hide();
 
-      errors = error.errors || {};
+      errors.value = response.data.errors || {};
     });
 };
 const getRecommendedProducts = () => {

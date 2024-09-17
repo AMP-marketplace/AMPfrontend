@@ -18,9 +18,40 @@
           {{ postData.status }}
         </q-badge>
       </p>
-      <q-btn color="secondary" no-wrap no-caps @click="setPostStatus">
-        Set status
-      </q-btn>
+      <q-btn-dropdown no-caps no-wrap color="primary" label=" Set status">
+        <q-list>
+          <q-item
+            :disable="postData.status === 'available'"
+            clickable
+            v-close-popup
+            @click="setPostStatus('available')"
+          >
+            <q-item-section>
+              <q-item-label>Available</q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item
+            :disable="postData.status === 'unavailable'"
+            clickable
+            v-close-popup
+            @click="setPostStatus('unavailable')"
+          >
+            <q-item-section>
+              <q-item-label>Unavailable</q-item-label>
+            </q-item-section>
+          </q-item>
+          <q-item
+            :disable="postData.status === 'donated'"
+            clickable
+            v-close-popup
+            @click="setPostStatus('donated')"
+          >
+            <q-item-section>
+              <q-item-label>Donated</q-item-label>
+            </q-item-section>
+          </q-item>
+        </q-list>
+      </q-btn-dropdown>
     </div>
 
     <div class="bg-white main_area q-py-md q-py-lg">
@@ -143,7 +174,7 @@
                       ></i
                     ></q-btn>
                     <q-btn
-                      @click="deletePost('comment', comment.slug)"
+                      @click="deleteReview(comment)"
                       round
                       v-if="store.userdetails.email === comment.author.email"
                       color="secondary"
@@ -202,7 +233,10 @@
                 </form>
               </div>
             </div>
-            <div class="q-pa-md q-mt-md row no-wrap items-center q-gutter-md">
+            <div
+              style="gap: 0.5rem"
+              class="q-pa-md q-mt-md row no-wrap items-center justify-center"
+            >
               <!-- <div class="row items-center">
                 <q-btn
                   @click="likePost('post', postData._id)"
@@ -234,29 +268,27 @@
                   {{ postData.dislikes.length }}
                 </span>
               </div> -->
-              <q-btn
-                @click="editPost('post', postData.id)"
-                round
-                color="primary"
-                ><i
+              <q-btn @click="editPost(postData)" no-wrap no-caps color="primary"
+                >Edit Donation<i
                   style="
-                    width: 40px;
-                    height: 40px;
+                    width: 30px;
+                    height: 30px;
                     display: flex;
                     justify-content: center;
                     align-items: center;
                   "
-                  class="fa-regular text-weight-bold text-h5 fa-pen-to-square"
+                  class="fa-regular text-weight-bold text-h6 fa-pen-to-square"
                 ></i
               ></q-btn>
               <q-btn
-                @click="deletePost('post', postData.id)"
-                round
-                color="primary"
-                ><i
+                @click="deletePost(postData.id)"
+                no-caps
+                no-wrap
+                color="secondary"
+                >Delete Donation<i
                   style="
-                    width: 40px;
-                    height: 40px;
+                    width: 30px;
+                    height: 30px;
                     display: flex;
                     justify-content: center;
                     align-items: center;
@@ -321,13 +353,116 @@
         </div>
       </div>
     </div>
+    <q-dialog v-model="editDonationModal">
+      <q-card>
+        <div class="top_modal row items-center justify-between">
+          <h4 class="text1">
+            {{ editState ? "Edit donation" : "Upload donation" }}
+          </h4>
+
+          <q-btn @click="editDonationModal = !editDonationModal" flat rounded>
+            <img src="../../assets/circle.svg" alt="" />
+          </q-btn>
+        </div>
+
+        <q-separator class="q-mt-lg" />
+        <div class="auth">
+          <div
+            v-if="showAddDonateImage"
+            style="gap: 1rem"
+            class="input justify-between column items-center no-wrap"
+          >
+            <div class="smallText text-weight-bold">
+              Note that this will be your main/display product image
+            </div>
+            <!-- {{ addedDonationObj }} -->
+            <q-file
+              @update:model-value="setDonateImage"
+              accept=".png,.jpeg,.jpg"
+              class="column profile_field justify-center items-center"
+              v-model="donateImageFile"
+              max-file-size="512000"
+              @rejected="onRejected"
+            >
+              <div class="img q-mb-sm">
+                <img src="../../assets/upload.svg" alt="" />
+              </div>
+              <div class="smallText">Upload image</div>
+            </q-file>
+          </div>
+          <form v-else @submit.prevent="editDonationFCN">
+            <div class="input_wrap">
+              <label for=""> Name <span>*</span></label>
+              <div class="input">
+                <input
+                  v-model="data.name"
+                  placeholder="Enter product name"
+                  required
+                  type="text"
+                />
+              </div>
+            </div>
+            <div class="input_wrap">
+              <label for="">Description <span>*</span></label>
+              <div class="input editor">
+                <q-editor v-model="data.description" min-height="5rem" />
+              </div>
+            </div>
+
+            <div class="auth_grid">
+              <div class="input_wrap">
+                <label for="">Country<span>*</span></label>
+                <div class="input">
+                  <select v-model="data.country" required>
+                    <option disabled value="">Choose</option>
+                    <option
+                      v-for="country in countries"
+                      :key="country.name"
+                      :value="country.name"
+                    >
+                      {{ country.name }} {{ country.flag }}
+                    </option>
+                  </select>
+                </div>
+              </div>
+              <div class="input_wrap">
+                <label for="">Condition <span>*</span></label>
+                <div class="input">
+                  <select v-model="data.condition">
+                    <option value="new">New</option>
+                    <option value="used">Used</option>
+                    <option value="refurbished">Refurbished</option>
+                    <option value="pre-owned">Pre owned</option>
+                    <option value="open_box">Open Box</option>
+                    <option value="lease_to_own">Lease to Own</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <div class="row justify-end q-mt-lg">
+              <q-btn
+                color="primary"
+                class="q-px-xl q-py-sm"
+                rounded
+                no-wrap
+                no-caps
+                type="submit"
+              >
+                Edit donation
+              </q-btn>
+            </div>
+          </form>
+        </div>
+      </q-card>
+    </q-dialog>
   </q-layout>
 </template>
 
 <script setup>
 import { formatDistanceToNow, parseISO } from "date-fns";
 
-import { Dialog, Loading, Notify } from "quasar";
+import { Dialog, Loading, Notify, QSpinnerOval } from "quasar";
 import { authAxios, axios } from "src/boot/axios";
 import { onMounted, ref } from "vue";
 import { useRoute, useRouter } from "vue-router";
@@ -338,6 +473,7 @@ import countries from "app/countries";
 let store = useMyAuthStore();
 let postDialog = ref(false);
 let post = ref({});
+let data = ref({});
 let postData = ref({});
 let comment = ref("");
 let commentsArr = ref([]);
@@ -346,12 +482,17 @@ let seamless = ref(false);
 let loading = ref(false);
 let editMode = ref(false);
 let editPostMode = ref(false);
+let donateImageFile = ref(null);
+let donateImagePreview = ref("");
+let showAddDonateImage = ref(false);
+let editDonationModal = ref(false);
 let commentToEdit = ref({});
+let addedDonationObj = ref({});
 
 const editPost = () => {
-  post.value = { ...postData.value };
+  data.value = { ...postData.value };
   editPostMode.value = true;
-  seamless.value = true;
+  editDonationModal.value = true;
 };
 const editComment = (type, data) => {
   commentToEdit.value = data;
@@ -365,6 +506,95 @@ function getCountryFlag(countryName) {
   );
   return country ? country.flag : "🏳️"; // Return white flag if country not found
 }
+const onRejected = () => {
+  Notify.create({
+    type: "negative",
+    position: "top",
+    message: `Your upload size should be less than 500kb `,
+  });
+};
+const setDonateImage = (props) => {
+  donateImageFile.value = props;
+  var reader = new FileReader();
+  reader.onload = (e) => {
+    donateImagePreview.value = e.target.result;
+  };
+  reader.readAsDataURL(props);
+  const formData = new FormData();
+  formData.append("media[]", donateImageFile.value);
+  Loading.show({
+    spinner: QSpinnerOval,
+    message: "Uploading image...",
+  });
+
+  authAxios
+    .post(
+      `merchant/${store.storedetails.slug}/${addedDonationObj.value.slug}/upload/media`,
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    )
+    .then((response) => {
+      console.log(response);
+
+      Notify.create({
+        message: response.data.message + ", donate successfully added.",
+        color: "green",
+        position: "top",
+      });
+      Loading.hide();
+      donateImageFile.value = null;
+
+      getPostDetail();
+    })
+    .catch(({ response }) => {
+      Loading.hide();
+      Notify.create({
+        message: response.data.message,
+        color: "red",
+        position: "top",
+        actions: [{ icon: "close", color: "white" }],
+      });
+    });
+};
+const editDonationFCN = () => {
+  let dataToSend = {
+    ...data.value,
+  };
+  Loading.show();
+  authAxios
+    .post(`donation/create`, {
+      ...dataToSend,
+    })
+    .then((response) => {
+      console.log(response);
+      Loading.hide();
+      Notify.create({
+        message: response.data.message,
+        color: "green",
+        position: "top",
+      });
+      data.value = { description: "" };
+      addedDonationObj.value = response.data.data;
+      showAddDonateImage.value = true;
+    })
+    .catch(({ response }) => {
+      // console.log(response);
+      Loading.hide();
+      Notify.create({
+        message: response.data.message
+          ? response.data.message
+          : Object.values(response.data.errors) + ",",
+        color: "red",
+        position: "top",
+        actions: [{ icon: "close", color: "white" }],
+      });
+    });
+};
+
 const getPostDetail = () => {
   const slug = route.query.slug;
   authAxios
@@ -394,35 +624,21 @@ const getPostComments = () => {
     })
     .catch(({ response }) => {});
 };
-const setPostStatus = () => {
+const setPostStatus = (value) => {
   const slug = route.query.slug;
-  if (postData.status === "available") {
-    Loading.show();
-    authAxios
-      .post(`donation/update/status/${slug}?status=available`)
-      .then(({ data }) => {
-        console.log(data);
-        postData.value = data.data;
-        Loading.hide();
-        // commentsArr.value = data.payload;
-      })
-      .catch(({ response }) => {
-        Loading.hide();
-      });
-  } else {
-    Loading.show();
-    authAxios
-      .post(`donation/update/status/${slug}?status=unavailable`)
-      .then(({ data }) => {
-        console.log(data);
-        postData.value = data.data;
-        Loading.hide();
-        // commentsArr.value = data.payload;
-      })
-      .catch(({ response }) => {
-        Loading.hide();
-      });
-  }
+
+  Loading.show();
+  authAxios
+    .post(`donation/update/status/${slug}?status=${value}`)
+    .then(({ data }) => {
+      console.log(data);
+      postData.value = data.data;
+      Loading.hide();
+      // commentsArr.value = data.payload;
+    })
+    .catch(({ response }) => {
+      Loading.hide();
+    });
 };
 const createPost = () => {
   if (editPostMode) {
@@ -532,14 +748,50 @@ const likePost = (type, id) => {
       });
   }
 };
-const deletePost = (type, id) => {
+const deleteReview = (review) => {
+  Dialog.create({
+    title: "Note",
+    message: `Are you sure you want to delete this comment?`,
+    cancel: true,
+    persistent: true,
+  })
+    .onOk(() => {
+      Loading.show({
+        spinner: QSpinnerOval,
+        message: "Deleting comment...",
+      });
+      authAxios
+        .delete(`review/delete/${review.id}`)
+        .then(({ data }) => {
+          Loading.hide();
+          Notify.create({
+            message: data.message,
+            color: "green",
+            position: "top",
+          });
+          console.log(data);
+          getPostDetail();
+        })
+        .catch(({ response }) => {
+          Loading.hide();
+          loading.value = false;
+        });
+    })
+    .onCancel(() => {
+      // console.log('>>>> Cancel')
+    })
+    .onDismiss(() => {
+      // console.log('I am triggered on both OK and Cancel')
+    });
+};
+const deletePost = (id) => {
   // loading.value = true;
   const slug = router.currentRoute.value.params.slug;
 
   if (type === "post") {
     Dialog.create({
-      title: "Delete post",
-      message: "Are you sure you want to delete this post?",
+      title: "Delete donation",
+      message: "Are you sure you want to delete this donation?",
     })
       .onOk(() => {
         authAxios
@@ -551,7 +803,6 @@ const deletePost = (type, id) => {
               color: "green",
               position: "top",
             });
-            // console.log(response);
           })
           .catch(({ response }) => {
             loading.value = false;
@@ -899,7 +1150,7 @@ onMounted(() => {
 }
 @media (max-width: 600px) {
   .grid {
-    grid-template-columns: 2fr 1fr;
+    grid-template-columns: 1fr;
   }
 
   .left {

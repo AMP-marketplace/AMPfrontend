@@ -325,7 +325,7 @@ const deleteReview = (review) => {
         message: "Deleting review...",
       });
       authAxios
-        .delete(`review/delete/`)
+        .delete(`review/delete/${review.id}`)
         .then(({ data }) => {
           Loading.hide();
           console.log(data);

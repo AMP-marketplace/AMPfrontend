@@ -159,9 +159,7 @@
             style="gap: 1rem"
             class="input justify-between column items-center no-wrap"
           >
-            <div class="smallText text-weight-bold">
-              Note that this will be your main/display product image
-            </div>
+            <div class="smallText text-weight-bold">Donations image</div>
             <!-- {{ addedDonationObj }} -->
             <q-file
               @update:model-value="setDonateImage"
