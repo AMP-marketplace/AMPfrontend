@@ -40,7 +40,7 @@ v
 
         <p class="text-red-7 text-weight-bold">
           Note: If you select an address from the previous addresses <br />
-          you no longer need to fill in the form.
+          you no longer need to fill in the form just click continue
         </p>
       </div>
       <!-- {{ addressData }} -->
@@ -129,17 +129,19 @@ v
                     </div>
                   </q-card-section>
                   <div class="q-pa-md">
-                    <q-btn
-                      :disable="!addressData.address_line_1"
-                      @click="checkoutCurrencyModal = !checkoutCurrencyModal"
-                      color="primary"
-                      no-caps
-                      v-if="addressArr.length"
-                      no-wrap
-                    >
-                      Continue
-                    </q-btn>
-                    <p v-if="addressArr.length" class="q-mt-xs">
+                    <div class="row items-center justify-center">
+                      <q-btn
+                        :disable="!addressData.address_line_1"
+                        @click="checkoutCurrencyModal = !checkoutCurrencyModal"
+                        color="primary"
+                        no-caps
+                        v-if="addressArr.length"
+                        no-wrap
+                      >
+                        Continue
+                      </q-btn>
+                    </div>
+                    <p v-if="addressArr.length" class="q-mt-xs text-center">
                       Please make your have selected an address before clicking
                       continue
                     </p>
@@ -475,37 +477,60 @@ v
           <div class="row justify-center">
             <div class="q-gutter-sm">
               <q-radio v-model="checkoutCurrency" val="dollar" label="Dollar" />
-              <q-radio
+              <!-- <q-radio
                 @update:model-value="getTotalInCurrency"
                 v-model="checkoutCurrency"
                 val="naira"
                 label="Naira"
-              />
+              /> -->
             </div>
           </div>
-          <p class="text-weight-bold">
+          <div>
+            <div class="input_wrap">
+              <label for="">See total in your currency</label>
+              <div class="input">
+                <select
+                  @change="getTotalInCurrency"
+                  v-model="showEquivInCurrency"
+                  required
+                >
+                  <option disabled value="">Choose</option>
+                  <option
+                    v-for="currency in currencies"
+                    :key="currency.name"
+                    :value="currency.code"
+                  >
+                    {{ currency.name }} {{ currency.flag }}
+                  </option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <p class="text-weight-bold text-h5">
             Your order total: ${{ cartStore.totalPrice.toLocaleString() }}
           </p>
+          {{ showEquivInCurrency }}
           <p
-            v-if="currencyRatesData.rates && checkoutCurrency === 'naira'"
+            v-if="currencyRatesData.rates && showEquivInCurrency"
             class="q-mt-xs"
           >
-            Naira to Dollar rate at this time is
+            {{ showEquivInCurrency }} to Dollar rate at this time is
             <span class="text-green text-weight-bold">
-              NGN
-              {{ currencyRatesData?.rates["NGN"] }}
+              {{ showEquivInCurrency }}
+              {{ currencyRatesData?.rates[showEquivInCurrency] }}
             </span>
           </p>
           <p
-            v-if="currencyRatesData.rates && checkoutCurrency === 'naira'"
+            v-if="currencyRatesData.rates && showEquivInCurrency"
             class="q-mt-xs"
           >
-            This is your order total in Naira -
-            <strong
-              >NGN
+            This is your order total in {{ showEquivInCurrency }} is
+            <strong>
+              {{ showEquivInCurrency }}
               {{
                 (
-                  cartStore.totalPrice * currencyRatesData?.rates["NGN"]
+                  cartStore.totalPrice *
+                  currencyRatesData?.rates[showEquivInCurrency]
                 ).toLocaleString()
               }}</strong
             >
@@ -574,9 +599,11 @@ import { Dialog, Loading, Notify, QSpinnerRings, useQuasar } from "quasar";
 import { authAxios } from "src/boot/axios";
 import { useMyAuthStore } from "src/stores/auth";
 import { useRoute, useRouter } from "vue-router";
+
 import axios from "axios";
 import { loadStripe } from "@stripe/stripe-js";
 import countries from "app/countries";
+import currencies from "app/currencies";
 let route = useRoute();
 let router = useRouter();
 let cartStore = useCartStore();
@@ -593,6 +620,7 @@ let currencyRatesData = ref({});
 let loadBtn = ref(false);
 let orderSuccessModal = ref(false);
 let viewConfirmPassword = ref(false);
+let showEquivInCurrency = ref("");
 let countriesArr = ref([]);
 let countriesBaseArr = [];
 let country_code = ref("+234");

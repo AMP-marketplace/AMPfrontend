@@ -353,7 +353,7 @@ const columns = [
     required: true,
     label: "Amount",
     align: "left",
-    field: (row) => `NGN ${row.amount}`,
+    field: (row) => `$ ${row.amount}`,
     sortable: true,
   },
   {

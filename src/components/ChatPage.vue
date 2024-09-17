@@ -338,7 +338,7 @@ onMounted(() => {
   Pusher.logToConsole = true;
   const pusher = new Pusher("f71ee69f460a2ede9930", {
     cluster: "eu",
-    authEndpoint: "https://agora.lyt24tech.com/api/broadcasting/auth", // Adjust the endpoint as needed
+    authEndpoint: "https://agora.lyt24tech.com/api/v1/broadcasting/auth", // Adjust the endpoint as needed
     auth: {
       headers: {
         Authorization: `Bearer ${store.token}`, // Replace with your auth token

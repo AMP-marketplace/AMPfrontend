@@ -13,10 +13,22 @@
         Status :
         <q-badge
           class="q-pa-md text-weight-bold"
-          :color="postData.status === 'available' ? 'green' : 'red'"
+          :color="
+            postData.status === 'available'
+              ? 'green'
+              : postData.status === 'donated'
+              ? 'teal'
+              : 'red'
+          "
         >
           {{ postData.status }}
         </q-badge>
+        <!-- <q-badge
+          class="q-pa-md text-weight-bold"
+          :color="postData.status === 'available' ? 'green' : 'red'"
+        >
+          {{ postData.status }}
+        </q-badge> -->
       </p>
       <q-btn-dropdown
         v-if="store.userdetails.email === postData.owner.email"
@@ -119,7 +131,7 @@
                   />
                 </div>
                 <div
-                  style="width: 80%"
+                  style="width: 100%"
                   class="details row items-center justify-between"
                 >
                   <div>
@@ -1104,6 +1116,7 @@ const createComments = () => {
         })
         .then((response) => {
           console.log(response);
+          postData.value = response.data.data;
           comment.value = "";
           loading.value = false;
           Notify.create({
@@ -1178,6 +1191,7 @@ onMounted(() => {
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
   padding: 0.7rem;
   border-radius: 8px;
+  max-width: 600px;
 }
 
 .div .text4 {

@@ -49,12 +49,13 @@ v
               <q-td :props="props">
                 <p class="smallerText q-mt-sm">
                   <!-- ₦{{ props.row.product.price.minimum_price.toLocaleString() }} -->
-                  {{
+                  <!-- {{
                     getCountryCurrencySymbol(
                       props.row.product?.country,
                       props.row.product
                     )
-                  }}
+                  }} -->
+                  $
                   {{
                     props.row.product?.price?.minimum_price.replace(
                       /\B(?=(\d{3})+(?!\d))/g,
@@ -65,12 +66,14 @@ v
                     -</span
                   >
                   <span v-if="props.row.product.price?.maximum_price !== '1'">
-                    {{
+                    <!-- {{
                       getCountryCurrencySymbol(
                         props.row.product?.country,
                         props.row.product
                       )
-                    }}{{
+                    }} -->
+                    $
+                    {{
                       props.row.product.price?.maximum_price.replace(
                         /\B(?=(\d{3})+(?!\d))/g,
                         ","
@@ -177,7 +180,7 @@ v
           <div class="row justify-between items-center">
             <p style="opacity: 1" class="smallerText">Subtotal</p>
             <p style="opacity: 1" class="smallerText">
-              ₦{{ cartStore.totalPrice.toLocaleString() }}
+              ${{ cartStore.totalPrice.toLocaleString() }}
             </p>
           </div>
           <div class="row q-mt-sm justify-between items-center">
@@ -204,7 +207,7 @@ v
           <div class="row q-mt-sm justify-between items-center">
             <p style="opacity: 1" class="smallerText">Order Total</p>
             <p style="opacity: 1" class="smallText">
-              ₦{{ cartStore.totalPrice.toLocaleString() }}
+              ${{ cartStore.totalPrice.toLocaleString() }}
             </p>
           </div>
           <!-- <div class="row q-mt-sm justify-between items-center">

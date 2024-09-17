@@ -60,7 +60,7 @@ const columns = [
     required: true,
     label: "Order amount",
     align: "left",
-    field: (row) => `NGN ${row.order.amount}`,
+    field: (row) => `$${row.order.amount}`,
     sortable: true,
   },
   {
@@ -68,7 +68,7 @@ const columns = [
     required: true,
     label: "Order tracking number",
     align: "left",
-    field: (row) => `NGN ${row.order.tracking_number}`,
+    field: (row) => `$${row.order.tracking_number}`,
     sortable: true,
   },
 
