@@ -19,7 +19,7 @@
     </div>
     <!-- {{  }} -->
     <div class="options">
-      <ul v-if="plan.name === 'standard'">
+      <ul v-if="plan.name === 'free'">
         <li>
           <i class="fa-solid q-mr-sm text-green fa-check"></i>
           Verified Badge
@@ -29,14 +29,41 @@
           Users Chat
         </li>
         <li>
-          <i class="fa-solid q-mr-sm text-green fa-check"></i> Analytics 50
+          <i class="fa-solid q-mr-sm text-green fa-check"></i> 50 Products
+          uploads
+        </li>
+      </ul>
+      <ul v-else-if="plan.name === 'standard'">
+        <li>
+          <i class="fa-solid q-mr-sm text-green fa-check"></i>
+          Verified Badge
+        </li>
+        <li>
+          <i class="fa-solid q-mr-sm text-green fa-check"></i>
+          Users Chat
+        </li>
+        <li>
+          <i class="fa-solid q-mr-sm text-green fa-check"></i> Analytics
+          Dashboard
+        </li>
+        <li>
+          <i class="fa-solid q-mr-sm text-green fa-check"></i> Unlimited
           Products uploads
         </li>
-
-        <!-- <li v-for="(option, index) in plan.description" :key="index">
+      </ul>
+      <ul v-else-if="plan.name === 'basic'">
+        <li>
           <i class="fa-solid q-mr-sm text-green fa-check"></i>
-          {{ option }}
-        </li> -->
+          Verified Badge
+        </li>
+        <li>
+          <i class="fa-solid q-mr-sm text-green fa-check"></i>
+          Users Chat
+        </li>
+        <li>
+          <i class="fa-solid q-mr-sm text-green fa-check"></i> Unlimited
+          Products uploads
+        </li>
       </ul>
       <ul v-else>
         <li>
@@ -55,6 +82,9 @@
           <i class="fa-solid q-mr-sm text-green fa-check"></i> Analytics
           Dashboard
         </li>
+        <li>
+          <i class="fa-solid q-mr-sm text-green fa-check"></i> Dedicated page
+        </li>
         <!-- <li v-for="(option, index) in plan.description" :key="index">
           <i class="fa-solid q-mr-sm text-green fa-check"></i>
           {{ option }}
@@ -63,7 +93,9 @@
     </div>
 
     <div class="btn">
-      <q-btn @click="proceed" color="primary"> Start Plan </q-btn>
+      <q-btn @click="purchasePlan" :loading="loading" color="primary">
+        Start Plan
+      </q-btn>
     </div>
 
     <q-dialog v-model="dialogCreate" persistent>
@@ -166,12 +198,12 @@ let stripeIns = ref(null);
 let paymentDialog = ref(false);
 let plans = ref([]);
 let particularPlan = ref({});
+let refValue = ref("");
 let paymentRef = ref();
 const $q = useQuasar();
 const appearance = {
   theme: "stripe",
 };
-const stripePublishableKey = "your-publishable-key-here"; // Replace with your Stripe public key
 let stripe;
 let elements;
 let card;
@@ -217,8 +249,10 @@ watch(showPaymentForm, async (newValue) => {
 });
 
 let bringStripe = () => {
+  Loading.show();
   dialogCreate.value = false;
   showPaymentForm.value = !showPaymentForm.value;
+  Loading.hide();
 };
 let proceed = () => {
   dialogCreate.value = true;
@@ -229,56 +263,98 @@ const handleSubmit = async () => {
 
   const { token, error } = await stripe.createToken(card);
   console.log(token);
-  $q.loading.hide();
-  // if (error) {
-  //   errorMessage.value = error.message;
-  //   $q.loading.hide();
-  // } else {
-  //   // Send token to the backend to process payment
-  //   try {
-  //     const response = await fetch("/process-payment", {
-  //       method: "POST",
-  //       headers: { "Content-Type": "application/json" },
-  //       body: JSON.stringify({ token: token.id }),
-  //     });
+  if (error) {
+    errorMessage.value = error.message;
+    $q.loading.hide();
+  } else {
+    // Send token to the backend to process payment
+    try {
+      const response = await authAxios.post(
+        `payment/charge?reference=${refValue.value}`,
+        {
+          stripeToken: token.id,
+        }
+      );
+      dialogCreate.value = false;
+      console.log(response);
+      Notify.create({
+        message: "Payment Successful...",
+        color: "green",
+        position: "top",
+      });
 
-  //     const result = await response.json();
+      Dialog.create({
+        title: `Your $${props.plan.price} payment was successful`,
+        message: `Your payment was successful and you are now subscribed to '${props.plan.name}' plan and now have access to our premium features.`,
+        ok: {
+          push: true,
+          label: "Proceed",
+          color: "green",
+        },
+        cancel: {
+          push: true,
+          color: "grey",
+        },
+        persistent: true,
+      })
+        .onOk(() => {
+          Loading.show();
+          authAxios
+            .get(`merchant/${store.storedetails.slug}`)
+            .then((response) => {
+              Loading.hide();
+              console.log(response);
+              store.storedetails = response.data.data;
+              router.replace({
+                name: "account.dashboard",
+              });
+            })
+            .catch(({ response }) => {
+              Loading.hide();
 
-  //     if (result.status === "success") {
-  //       $q.notify({ type: "positive", message: "Payment successful!" });
-  //     } else {
-  //       $q.notify({ type: "negative", message: result.message });
-  //     }
-  //   } catch (err) {
-  //     console.error(err);
-  //     $q.notify({ type: "negative", message: "Payment failed!" });
-  //   } finally {
-  //     $q.loading.hide();
-  //   }
-  // }
+              loading.value = false;
+              Notify.create({
+                message: response.data.message,
+                color: "red",
+                position: "bottom",
+                actions: [{ icon: "close", color: "white" }],
+              });
+            });
+        })
+        .onCancel(() => {
+          // console.log('>>>> Cancel')
+        })
+        .onDismiss(() => {
+          // console.log('I am triggered on both OK and Cancel')
+        });
+
+      // if (result.status === "success") {
+      //   $q.notify({ type: "positive", message: "Payment successful!" });
+      // } else {
+      //   $q.notify({ type: "negative", message: result.message });
+      // }
+    } catch (err) {
+      console.error(err);
+      $q.notify({ type: "negative", message: "Payment failed!" });
+    } finally {
+      $q.loading.hide();
+    }
+  }
 };
 let purchasePlan = () => {
   loading.value = true;
   authAxios
-    .post(
-      `subscription/plans/purchase/${props.plan.slug}?duration=${props.view}`
-    )
+    .post(`subscription/purchase/${props.plan.slug}?duration=${props.view}`)
     .then((response) => {
       console.log(response);
       loading.value = false;
       Notify.create({
-        message: "Successful, redirecting to gateway...",
+        message: "Initiated...",
         color: "green",
         position: "top",
       });
-      // Notify.create({
-      //   message: response.data.message
-      //     ? response.data.message + ", " + "redirecting to gateway"
-      //     : "Successful, redirecting to gateway",
-      //   color: "green",
-      //   position: "top",
-      // });
-      window.location.href = response.data.data;
+      refValue.value = response.data.data.reference;
+      dialogCreate.value = true;
     })
     .catch(({ response }) => {
       // console.log(response);

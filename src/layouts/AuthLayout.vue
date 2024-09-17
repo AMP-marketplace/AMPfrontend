@@ -74,7 +74,9 @@
                   >
                 </li>
                 <li class="navLinks">
-                  <router-link to="">Donate Medical Equipments</router-link>
+                  <router-link :to="{ name: 'donate' }"
+                    >Donate Medical Equipments</router-link
+                  >
                 </li>
                 <!-- <li class="navLinks">
                   <router-link to="">Services</router-link>

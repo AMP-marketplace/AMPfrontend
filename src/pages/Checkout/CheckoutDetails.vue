@@ -527,17 +527,44 @@ v
       </q-card>
     </div>
   </q-dialog>
+
+  <q-dialog v-model="showPaymentForm">
+    <q-card>
+      <div class="form-header">
+        <div>Enter Your Payment Details</div>
+      </div>
+
+      <q-form @submit.prevent="handleSubmit" class="q-mt-md">
+        <div ref="cardElement" id="card-element" class="q-mb-md"></div>
+        <!-- <q-btn type="submit" label="Submit Payment" color="secondary" /> -->
+        <div v-if="errorMessage" class="q-mt-md text-negative">
+          {{ errorMessage }}
+        </div>
+        <div class="row justify-center">
+          <q-btn
+            class="bg-primary q-mt-md text-white"
+            type="submit"
+            no-caps
+            no-wrap
+            :loading="loadingBtn"
+            >Proceed</q-btn
+          >
+        </div>
+      </q-form>
+    </q-card>
+  </q-dialog>
 </template>
 
 <script setup>
 import { onMounted, ref, watch } from "vue";
 import { useCartStore } from "src/stores/cart";
 import FooterCompVue from "src/components/FooterComp.vue";
-import { Loading, Notify, QSpinnerRings } from "quasar";
+import { Loading, Notify, QSpinnerRings, useQuasar } from "quasar";
 import { authAxios } from "src/boot/axios";
 import { useMyAuthStore } from "src/stores/auth";
 import { useRoute, useRouter } from "vue-router";
 import axios from "axios";
+import { loadStripe } from "@stripe/stripe-js";
 import countries from "app/countries";
 let route = useRoute();
 let router = useRouter();
@@ -549,6 +576,7 @@ let addressArr = ref({});
 let loading = ref(false);
 let checkoutCurrencyModal = ref(false);
 let loadingAddresses = ref(false);
+let showPaymentForm = ref(false);
 let addressData = ref({});
 let currencyRatesData = ref({});
 let loadBtn = ref(false);
@@ -558,7 +586,21 @@ let countriesArr = ref([]);
 let countriesBaseArr = [];
 let country_code = ref("+234");
 let checkoutCurrency = ref("dollar");
-
+let stripeLoaded = ref(false);
+let stripeMounted = ref(false);
+let stripeIns = ref(null);
+let refValue = ref("");
+const $q = useQuasar();
+const appearance = {
+  theme: "stripe",
+};
+let stripe;
+let elements;
+let card;
+const cardElement = ref(null);
+const errorMessage = ref("");
+let key = process.env.STRIPE_PUBLISHABLE_KEY;
+let stripeSecretKey = process.env.STRIPE_PUBLISHABLE_KEY_SECRET;
 watch(
   () => authStore.token,
   (newValue, oldValue) => {
@@ -568,7 +610,40 @@ watch(
   },
   { deep: true }
 );
+watch(showPaymentForm, async (newValue) => {
+  if (newValue && !card) {
+    stripe = await loadStripe(key);
+    elements = stripe.elements({ appearance });
+    card = elements.create("card", {
+      style: {
+        base: {
+          fontSize: "16px",
+          color: "#32325d",
+          fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+          "::placeholder": {
+            color: "#aab7c4",
+          },
+          padding: "10px 12px",
+          border: "1px solid #ccc",
+          borderRadius: "4px",
+          backgroundColor: "#f8f9fa", // Light background for better contrast
+        },
+        invalid: {
+          color: "#fa755a", // Error color for invalid input
+        },
+        complete: {
+          color: "#4caf50", // Green color when the card input is valid
+        },
+      },
+    });
+    card.mount(cardElement.value);
 
+    // Handle validation errors from the card element
+    card.on("change", (event) => {
+      errorMessage.value = event.error ? event.error.message : "";
+    });
+  }
+});
 const filterFn = (val, update, abort) => {
   if (val === "") {
     update(() => {
@@ -610,7 +685,65 @@ const onRequest = (props) => {
     };
   }
 };
+const handleSubmit = async () => {
+  $q.loading.show();
 
+  const { token, error } = await stripe.createToken(card);
+  console.log(token);
+  if (error) {
+    errorMessage.value = error.message;
+    $q.loading.hide();
+  } else {
+    // Send token to the backend to process payment
+    try {
+      const response = await authAxios.post(
+        `payment/charge?reference=${refValue.value}`,
+        {
+          stripeToken: token.id,
+        }
+      );
+
+      console.log(response);
+      Notify.create({
+        message: "Payment Successful...",
+        color: "green",
+        position: "top",
+      });
+
+      Dialog.create({
+        title: `Your order payment was successful`,
+        message: `Your payment was successful and you are now placed your order. The details of your order will be sent to you via mail.`,
+        ok: {
+          push: true,
+          label: "Proceed",
+          color: "green",
+        },
+        cancel: {
+          push: true,
+          color: "grey",
+        },
+        persistent: true,
+      })
+        .onOk(() => {
+          // Loading.show();
+          router.replace({
+            name: "dashboard",
+          });
+        })
+        .onCancel(() => {
+          // console.log('>>>> Cancel')
+        })
+        .onDismiss(() => {
+          // console.log('I am triggered on both OK and Cancel')
+        });
+    } catch (err) {
+      console.error(err);
+      $q.notify({ type: "negative", message: "Payment failed!" });
+    } finally {
+      $q.loading.hide();
+    }
+  }
+};
 const formatPhoneNumber = (phone) => {
   if (phone.startsWith("0")) {
     return phone.slice(1);
@@ -777,6 +910,7 @@ const createOrder = (shipping_id) => {
         // cartStore.cart = [];
 
         cartStore.orderDetail = response.data.data;
+        refValue.value = response.data.data.reference;
         Loading.hide();
         checkoutCurrencyModal.value = false;
         orderSuccessModal.value = true;
@@ -794,7 +928,11 @@ const createOrder = (shipping_id) => {
   }
 };
 const initPayment = () => {
-  window.location.href = cartStore.orderDetail;
+  Loading.show();
+  orderSuccessModal.value = false;
+  showPaymentForm.value = true;
+  Loading.hide();
+  // window.location.href = cartStore.orderDetail;
 };
 const getDeliveryAddresses = () => {
   loadingAddresses.value = true;

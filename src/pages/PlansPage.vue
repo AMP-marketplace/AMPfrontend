@@ -62,7 +62,7 @@ import { onMounted, ref } from "vue";
 
 let businessPlans = ref([]);
 let loading = ref(true);
-let planView = ref("year");
+let planView = ref("month");
 let errors = ref({});
 let plans = ref([
   {

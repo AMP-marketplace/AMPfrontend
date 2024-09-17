@@ -58,6 +58,12 @@ p {
     }
   }
 }
+.spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 80vh;
+}
 .responsive_grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -145,6 +151,10 @@ header {
   background: url("/images/hero.png") no-repeat center top/cover;
   padding-top: 3rem;
   position: relative;
+
+  &.donate {
+    background: url("/images/donatebg.jpg") no-repeat center top/cover;
+  }
   &::before {
     content: "";
     position: absolute;
@@ -436,6 +446,22 @@ header {
       input {
         font-size: 10px;
       }
+    }
+  }
+
+  .donate_card {
+    .text-h5 {
+      font-size: 14px;
+      line-height: 1.3;
+    }
+
+    img {
+      max-width: 80px !important;
+    }
+  }
+  .hero.donate {
+    p {
+      margin-top: 0;
     }
   }
 }
