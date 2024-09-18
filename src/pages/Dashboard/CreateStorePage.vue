@@ -305,13 +305,13 @@
           <div class="smallText text-weight-bold">
             Note that this will be your main/display product image
           </div>
+          <!-- max-file-size="512000"
+            @rejected="onRejected" -->
           <q-file
             @update:model-value="setProductImage"
             accept=".png,.jpeg,.svg,.jpg"
             class="column profile_field justify-center items-center"
             v-model="productImageFile"
-            max-file-size="512000"
-            @rejected="onRejected"
           >
             <div class="img q-mb-sm">
               <img src="../../assets/upload.svg" alt="" />

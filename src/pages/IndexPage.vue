@@ -145,6 +145,12 @@
             <img src="/images/flourish.png" alt="" />
           </div>
           <div>
+            <img src="/images/ahk.png" alt="" />
+          </div>
+          <div>
+            <img src="/images/ihk.png" alt="" />
+          </div>
+          <div>
             <img src="/images/vertebra.png" alt="" />
           </div>
           <div>

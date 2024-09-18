@@ -395,6 +395,8 @@
         </div>
       </q-card>
     </q-dialog>
+    <!-- max-file-size="512000"
+          @rejected="onRejected" -->
     <q-dialog v-model="AddProductImageModal">
       <q-card>
         <div>
@@ -405,8 +407,6 @@
           accept=".png,.jpeg,.jpg,.webp"
           class="column profile_field justify-center items-center"
           v-model="AnotherproductImageFile"
-          max-file-size="512000"
-          @rejected="onRejected"
         >
           <div class="img q-mb-sm">
             <img src="../../assets/upload.svg" alt="" />
@@ -480,13 +480,13 @@
               Note that this will be your main/display product image
             </div>
             <!-- {{ addedDonationObj }} -->
+            <!-- max-file-size="512000"
+              @rejected="onRejected" -->
             <q-file
               @update:model-value="setDonateImage"
               accept=".png,.jpeg,.jpg"
               class="column profile_field justify-center items-center"
               v-model="donateImageFile"
-              max-file-size="512000"
-              @rejected="onRejected"
             >
               <div class="img q-mb-sm">
                 <img src="../../assets/upload.svg" alt="" />

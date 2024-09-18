@@ -120,6 +120,12 @@
             <img src="/images/vertebra.png" alt="" />
           </div>
           <div>
+            <img src="/images/ahk.png" alt="" />
+          </div>
+          <div>
+            <img src="/images/ihk.png" alt="" />
+          </div>
+          <div>
             <img src="/images/rocat.svg" alt="" />
           </div>
           <div>
@@ -201,13 +207,12 @@
           >
             <div class="smallText text-weight-bold">Donations image</div>
             <!-- {{ addedDonationObj }} -->
+            <!-- @rejected="onRejected"  max-file-size="512000"-->
             <q-file
               @update:model-value="setDonateImage"
               accept=".png,.jpeg,.jpg"
               class="column profile_field justify-center items-center"
               v-model="donateImageFile"
-              max-file-size="512000"
-              @rejected="onRejected"
             >
               <div class="img q-mb-sm">
                 <img src="../../assets/upload.svg" alt="" />

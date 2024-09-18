@@ -296,13 +296,13 @@
           <q-select v-model="imageRole" :options="options" label="Select" />
         </div> -->
       </div>
+      <!-- max-file-size="512000"
+        @rejected="onRejected" -->
       <q-file
         @update:model-value="setProductImage"
         accept=".png,.jpeg,.jpg,.webp"
         class="column profile_field justify-center items-center"
         v-model="AnotherproductImageFile"
-        max-file-size="512000"
-        @rejected="onRejected"
       >
         <div class="img q-mb-sm">
           <img src="../../assets/upload.svg" alt="" />
@@ -325,6 +325,8 @@
       </q-file> -->
     </q-card>
   </q-dialog>
+  <!-- max-file-size="512000"
+        @rejected="onRejected" -->
   <q-dialog v-model="editImageModal">
     <q-card>
       <q-file
@@ -332,8 +334,6 @@
         accept=".png,.jpeg,.jpg"
         class="column profile_field justify-center items-center"
         v-model="editproductImageFile"
-        max-file-size="512000"
-        @rejected="onRejected"
       >
         <div class="img q-mb-sm">
           <img src="../../assets/upload.svg" alt="" />
