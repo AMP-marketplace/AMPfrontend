@@ -152,7 +152,7 @@
                 <select @change="togglePriceType" v-model="typeOfPrice">
                   <option value="fixed">Fixed</option>
                   <option value="negotiable">Negotiable</option>
-                  <option value="range">Range</option>
+                  <!-- <option value="range">Range</option> -->
                 </select>
               </div>
             </div>
@@ -178,8 +178,8 @@
                 <input
                   v-model="data.minimum_price"
                   placeholder="N0.00"
-                  required
                   type="text"
+                  required
                 />
               </div>
             </div>
@@ -201,7 +201,6 @@
               <input
                 v-model="data.minimum_price"
                 placeholder="N0.00"
-                required
                 type="text"
               />
             </div>
@@ -212,7 +211,6 @@
               <input
                 v-model="data.minimum_price"
                 placeholder="N0.00"
-                required
                 type="text"
               />
             </div>
