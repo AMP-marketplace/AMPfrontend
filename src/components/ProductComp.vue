@@ -150,18 +150,30 @@
         </p>
       </div>
 
-      <p class="text-blue-10 q-mt-md text-h6 text-weight-bold">
+      <p
+        v-if="product?.price?.minimum_price"
+        class="text-blue-10 q-mt-md text-h6 text-weight-bold"
+      >
         {{ getCountryCurrencySymbol(product?.country) }}
         {{
-          product?.price?.minimum_price.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+          product?.price?.minimum_price?.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
         }}
         <span v-if="product?.price?.maximum_price !== '1'"> -</span>
         <span v-if="product?.price?.maximum_price !== '1'">
           {{ getCountryCurrencySymbol(product?.country)
           }}{{
-            product?.price?.maximum_price.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+            product?.price?.maximum_price?.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
           }}</span
         >
+      </p>
+      <p
+        style="line-height: 1.1"
+        v-if="
+          !product?.price?.minimum_price && route.name !== 'account.dashboard'
+        "
+        class="text-blue-10 text-italic q-mt-md text-h6 text-weight-bold"
+      >
+        <small>Contact seller for price details</small>
       </p>
     </div>
   </div>

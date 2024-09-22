@@ -185,7 +185,7 @@
                   no-wrap
                   class="bg-green-7 text-white"
                 >
-                  <i class="ri-chat-2-line q-mr-sm"></i> Chat seller
+                  <i class="ri-chat-2-line q-mr-sm"></i> Contact seller
                 </q-btn>
               </div>
             </div>

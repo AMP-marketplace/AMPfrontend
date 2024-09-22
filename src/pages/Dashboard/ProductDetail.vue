@@ -741,7 +741,7 @@ const updateProductFunction = () => {
     name: data.value.name,
     currency: data.value.currency,
     minimum_price: data.value.minimum_price,
-    maximum_price: data.value.maximum_price ? data.value.maximum_price : "1",
+    maximum_price: data.value.maximum_price ? data.value.maximum_price : "",
     description: data.value.description,
     country: data.value.country,
     condition: data.value.condition,

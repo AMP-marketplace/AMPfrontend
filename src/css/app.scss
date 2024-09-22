@@ -471,4 +471,14 @@ header {
       margin-top: 0;
     }
   }
+
+  .sponsors {
+    .responsive_grid {
+      margin-top: 2rem;
+      grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)) !important;
+      img {
+        max-width: 100px;
+      }
+    }
+  }
 }
