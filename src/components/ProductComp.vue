@@ -9,6 +9,7 @@
           {{ product?.subcategory?.name }}
         </span>
       </div>
+      <!-- {{ product?.merchant?.user.email }} -->
       <div>
         <q-badge
           rounded
@@ -173,7 +174,9 @@
         "
         class="text-blue-10 text-italic q-mt-md text-h6 text-weight-bold"
       >
-        <small>Contact seller for price details</small>
+        <a target="_blank" :href="`mailto:${product?.merchant?.user?.email}`"
+          ><small>Contact seller for price details</small></a
+        >
       </p>
     </div>
   </div>

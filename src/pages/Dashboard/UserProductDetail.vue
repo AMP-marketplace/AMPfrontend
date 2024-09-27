@@ -69,11 +69,11 @@
                 >
               </p> -->
             </div>
-            <div class="wrapper">
+            <div v-if="product?.price?.minimum_price" class="wrapper">
               <span class="price" data-total-price
                 >{{ getCountryCurrencySymbol(product?.country) }}
                 {{
-                  product?.price?.minimum_price.replace(
+                  product?.price?.minimum_price?.replace(
                     /\B(?=(\d{3})+(?!\d))/g,
                     ","
                   )
@@ -82,7 +82,7 @@
                 <span v-if="product?.price?.maximum_price !== '1'"
                   >{{ getCountryCurrencySymbol(product?.country)
                   }}{{
-                    product?.price?.maximum_price.replace(
+                    product?.price?.maximum_price?.replace(
                       /\B(?=(\d{3})+(?!\d))/g,
                       ","
                     )
@@ -94,7 +94,20 @@
                 >₦{{ (parseInt(product.price) + 500).toLocaleString() }}</del
               > -->
             </div>
-
+            <p
+              style="line-height: 1.1"
+              v-if="
+                !product?.price?.minimum_price &&
+                route.name !== 'account.dashboard'
+              "
+              class="text-blue-10 q-pb-md text-italic q-mt-md text-h6 text-weight-bold"
+            >
+              <a
+                target="_blank"
+                :href="`mailto:${product?.merchant?.user?.email}`"
+                ><small>Contact seller for price details</small></a
+              >
+            </p>
             <div class="btn-group">
               <div class="counter-wrapper">
                 <button
