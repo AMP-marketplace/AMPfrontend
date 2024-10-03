@@ -178,6 +178,26 @@
           ><small>Contact seller for price details</small></a
         >
       </p>
+
+      <p class="view_details q-mt-md">
+        <router-link
+          style="text-decoration: underline"
+          :to="{
+            name:
+              store.role === 'merchant' && route.name === 'account.dashboard'
+                ? 'product.detail'
+                : 'user.product.detail',
+
+            query: {
+              name: product?.name,
+              slug: product?.slug,
+              id: product?.id,
+            },
+          }"
+        >
+          View Details
+        </router-link>
+      </p>
     </div>
   </div>
 </template>

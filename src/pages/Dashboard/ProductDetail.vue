@@ -823,7 +823,7 @@ onMounted(async () => {
     console.log(prodCatList);
     productCategoryListArr.value = prodCatList.data.data;
 
-    if (getProdDetail.data.data.price.maximum_price) {
+    if (getProdDetail.data.data.price.maximum_price > 1) {
       typeOfPrice.value = "range";
     } else {
       typeOfPrice.value = "fixed";

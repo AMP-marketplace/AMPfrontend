@@ -295,7 +295,15 @@ onMounted(() => {
   border-radius: 10px;
   margin: 3rem auto;
 }
+.icon-check::before {
+  content: "✔"; /* You can replace this with an actual icon */
+  color: green;
+}
 
+.icon-cancel::before {
+  content: "✖"; /* You can replace this with an actual icon */
+  color: red;
+}
 @media (max-width: 700px) {
   .small_container {
     padding: 1rem;
