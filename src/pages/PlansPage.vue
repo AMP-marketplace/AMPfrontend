@@ -106,7 +106,7 @@ let setView = (view) => {
 // };
 let getPlans = () => {
   authAxios
-    .get("subscription/plans?duration=year")
+    .get("subscription/plans?duration=month")
     .then((response) => {
       console.log(response);
       loading.value = false;

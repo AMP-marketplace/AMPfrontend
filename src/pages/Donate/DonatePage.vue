@@ -165,17 +165,20 @@
         <div class="column items-center justify-center text-center">
           <p>You have to be signed in to create a donation</p>
 
-          <div style="gap: 1rem" class="row q-mt-md items-center no-wrap">
+          <div
+            style="gap: 1rem"
+            class="row q-mt-md justify-center items-center no-wrap"
+          >
             <q-btn
               :to="{ name: 'customer.login' }"
               no-wrap
               no-caps
               color="primary"
             >
-              Sign in as a customer
+              Sign in as a Donor
             </q-btn>
 
-            <q-btn
+            <!-- <q-btn
               :to="{ name: 'merchant.login' }"
               btn
               no-wrap
@@ -183,7 +186,7 @@
               color="primary"
             >
               Sign in as a merchant
-            </q-btn>
+            </q-btn> -->
           </div>
         </div>
       </q-card>

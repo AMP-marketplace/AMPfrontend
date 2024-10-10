@@ -73,7 +73,7 @@
               <div v-if="store.storedetails.subscription !== null">
                 <q-badge class="text-body2" color="green-7">
                   Your are now the subscribed to the
-                  {{ store.storedetails.subscription.name }} plan
+                  {{ store.storedetails?.subscription?.name }} plan
                 </q-badge>
               </div>
 

@@ -144,9 +144,9 @@
           <div>
             <img src="/images/flourish.png" alt="" />
           </div>
-          <div>
+          <!-- <div>
             <img src="/images/ahk.png" alt="" />
-          </div>
+          </div> -->
           <div>
             <img src="/images/ihk.png" alt="" />
           </div>
@@ -173,6 +173,15 @@
           </div>
           <div>
             <img src="/images/giga.svg" alt="" />
+          </div>
+          <div>
+            <img src="/images/sponsor.jpg" alt="" />
+          </div>
+          <div>
+            <img src="/images/sponsor1.jpg" alt="" />
+          </div>
+          <div>
+            <img src="/images/sponsor2.jpg" alt="" />
           </div>
         </div>
       </div>
