@@ -117,7 +117,7 @@
             </q-card>
           </div>
         </div>
-        <q-infinite-scroll @load="loadMoreProducts" :offset="600">
+        <q-infinite-scroll @load="loadMoreProducts" :offset="calculatedOffset">
           <div class="responsive_grid q-mt-md">
             <ProductCompVue
               :product="product"
@@ -127,7 +127,7 @@
           </div>
           <div
             v-if="productStore.noMoreData"
-            class="no-more-data text-weight-bold row q-mt-lg justify-center"
+            class="no-more-data row q-mt-lg justify-center"
           >
             No more products to load.
           </div>
@@ -259,16 +259,11 @@ const loadMoreProducts = (index, done) => {
   console.log("trying to load more");
   console.log(productStore.nextPageUrl);
   if (productStore.nextPageUrl) {
-    setTimeout(() => {
-      productStore.fetchProducts(productStore.nextPageUrl);
-      done();
-    }, 2000);
-  } else {
-    done();
+    productStore.fetchProducts(productStore.nextPageUrl);
   }
 
   // Call done when loading is complete
-  // done();
+  done();
 };
 
 const getProducts = () => {

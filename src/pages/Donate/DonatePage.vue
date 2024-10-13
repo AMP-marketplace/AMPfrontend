@@ -106,7 +106,28 @@
             OUR PROUD SPONSORS
           </h4>
         </div>
-        <div class="responsive_grid sponsors">
+        <div class="responsive_grid q-mt-lg sponsors">
+          <div>
+            <img
+              style="max-width: 300px; width: 300px"
+              src="/images/sponsor.jpg"
+              alt=""
+            />
+          </div>
+          <div>
+            <img
+              style="max-width: 300px; width: 300px"
+              src="/images/sponsor1.jpg"
+              alt=""
+            />
+          </div>
+          <div>
+            <img
+              style="max-width: 300px; width: 300px"
+              src="/images/sponsor2.jpg"
+              alt=""
+            />
+          </div>
           <div>
             <img src="/images/mtn.png" alt="" />
           </div>
@@ -116,14 +137,14 @@
           <div>
             <img src="/images/flourish.png" alt="" />
           </div>
-          <div>
-            <img src="/images/vertebra.png" alt="" />
-          </div>
-          <div>
+          <!-- <div>
             <img src="/images/ahk.png" alt="" />
-          </div>
+          </div> -->
           <div>
             <img src="/images/ihk.png" alt="" />
+          </div>
+          <div>
+            <img src="/images/vertebra.png" alt="" />
           </div>
           <div>
             <img src="/images/rocat.svg" alt="" />

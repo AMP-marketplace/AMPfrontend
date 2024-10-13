@@ -81,7 +81,7 @@ export default boot(({ app, store, router }) => {
             : "Network error, check your internet connectivity...",
           color: "red",
           position: "top",
-          timeout: 20033,
+          timeout: 1033,
         });
       } else if (status_code === 401) {
         // console.log(status_code);

@@ -6,6 +6,9 @@ export const useProductStore = defineStore("productStore", {
   state: () => ({
     loadingProducts: true,
     products: [],
+    nextPageUrl: null,
+    loading: false,
+    noMoreData: false, // Track if there are more pages to load
     exchangeRates: {},
     selectedCurrency: "USD",
     filters: {
@@ -137,10 +140,20 @@ export const useProductStore = defineStore("productStore", {
     },
   },
   actions: {
-    async fetchProducts() {
-      const response = await authAxios.get("products/index/all");
+    async fetchProducts(url = `products/index/all`) {
+      if (this.noMoreData || this.loading) return;
+      const response = await authAxios.get(url);
       console.log(response);
-      this.products = response.data.data.products;
+      const { products: newProducts, meta } = response.data.data;
+
+      this.products.push(...newProducts); // Add new products
+      this.nextPageUrl = meta.next_page_url; // Update next page URL
+
+      if (!this.nextPageUrl) {
+        this.noMoreData = true; // No more pages to load
+      }
+
+      // this.products = response.data.data.products;
       this.loadingProducts = false;
     },
     async fetchExchangeRates() {
