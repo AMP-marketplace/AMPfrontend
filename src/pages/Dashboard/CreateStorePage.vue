@@ -931,7 +931,7 @@ const addProductFCN = () => {
   let dataToSend = {
     ...data.value,
     is_negotiable: typeOfPrice.value === "negotiable" ? 1 : 0,
-    maximum_price: data.value.maximum_price ? data.value.maximum_price : "",
+    maximum_price: data.value.maximum_price ? data.value.maximum_price : "1",
   };
   Loading.show();
   authAxios

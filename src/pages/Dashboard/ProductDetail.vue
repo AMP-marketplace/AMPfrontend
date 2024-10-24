@@ -740,7 +740,7 @@ const updateProductFunction = () => {
     name: data.value.name,
     currency: data.value.currency,
     minimum_price: data.value.minimum_price,
-    maximum_price: data.value.maximum_price ? data.value.maximum_price : "",
+    maximum_price: data.value.maximum_price ? data.value.maximum_price : "1",
     description: data.value.description,
     country: data.value.country,
     condition: data.value.condition,
@@ -758,8 +758,8 @@ const updateProductFunction = () => {
       data.value = {
         ...response.data.data,
         subcategory_id: response.data.data.subcategory.id,
-        maximum_price: response.data.data.price.maximum_price,
-        minimum_price: response.data.data.price.minimum_price,
+        maximum_price: response?.data.data?.price.maximum_price,
+        minimum_price: response?.data.data?.price.minimum_price,
       };
       Loading.hide();
       Notify.create({
@@ -792,8 +792,8 @@ const getProducts = async () => {
     data.value = {
       ...getProdDetail.data.data,
       subcategory_id: getProdDetail.data.data.subcategory.id,
-      maximum_price: getProdDetail.data.data.price.maximum_price,
-      minimum_price: getProdDetail.data.data.price.minimum_price,
+      maximum_price: getProdDetail.data.data?.price?.maximum_price,
+      minimum_price: getProdDetail.data.data?.price?.minimum_price,
     };
     Loading.hide();
   } catch (error) {

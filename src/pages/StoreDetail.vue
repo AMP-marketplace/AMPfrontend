@@ -390,7 +390,7 @@ const getProducts = async () => {
     // prodListArr.value = prodList.data.data.filter(
     //   (product) => product.store.id === storeDetails.value.id
     // );
-    prodListArr.value = prodList.data.data;
+    prodListArr.value = prodList.data.data.products;
     loadingProducts.value = false;
   } catch (error) {
     loadingProducts.value = false;

@@ -23,38 +23,8 @@ v
             <div class="row items-center no-wrap">
               <h4 class="bigText q-pa-sm q-mb-md">Market Place</h4>
             </div>
+
             <div class="explore_categories">
-              <h6 class="text-h5 q-mb-md">Category</h6>
-              <div>
-                <p class="text-weight-bold">MedEquipments</p>
-                <div class="q-mt-md" v-if="loading">
-                  <q-skeleton height="100px" />
-                </div>
-                <q-list v-else>
-                  <q-item
-                    clickable
-                    v-for="(cat, index) in medSolutionscategoryListArr"
-                    :key="index"
-                  >
-                    {{ cat.name }}
-                  </q-item>
-                </q-list>
-              </div>
-              <div class="q-mt-md">
-                <p class="text-weight-bold">MedComponents</p>
-                <div class="q-mt-md" v-if="loading">
-                  <q-skeleton height="100px" />
-                </div>
-                <q-list v-else>
-                  <q-item
-                    clickable
-                    v-for="(cat, index) in medEquipcategoryListArr"
-                    :key="index"
-                  >
-                    {{ cat.name }}
-                  </q-item>
-                </q-list>
-              </div>
               <div>
                 <div class="row items-center q-mt-md justify-between">
                   <h6 class="text-h5">Filters</h6>
@@ -132,6 +102,37 @@ v
                     </select>
                   </div>
                 </div>
+              </div>
+              <h6 class="text-h5 q-mb-md">Category</h6>
+              <div>
+                <p class="text-weight-bold">MedEquipments</p>
+                <div class="q-mt-md" v-if="loading">
+                  <q-skeleton height="100px" />
+                </div>
+                <q-list v-else>
+                  <q-item
+                    clickable
+                    v-for="(cat, index) in medSolutionscategoryListArr"
+                    :key="index"
+                  >
+                    {{ cat.name }}
+                  </q-item>
+                </q-list>
+              </div>
+              <div class="q-mt-md">
+                <p class="text-weight-bold">MedComponents</p>
+                <div class="q-mt-md" v-if="loading">
+                  <q-skeleton height="100px" />
+                </div>
+                <q-list v-else>
+                  <q-item
+                    clickable
+                    v-for="(cat, index) in medEquipcategoryListArr"
+                    :key="index"
+                  >
+                    {{ cat.name }}
+                  </q-item>
+                </q-list>
               </div>
             </div>
           </div>
@@ -255,34 +256,6 @@ v
   >
     <q-scroll-area class="fit" :horizontal-thumb-style="{ opacity: 0 }">
       <div class="explore_categories">
-        <h6 class="text-h5 text-weight-bold q-mb-md">Category</h6>
-        <p class="text-weight-bold">MedEquipments</p>
-        <div class="q-mt-md" v-if="loading">
-          <q-skeleton height="100px" />
-        </div>
-        <q-list v-else>
-          <q-item
-            clickable
-            v-for="(cat, index) in medSolutionscategoryListArr"
-            :key="index"
-          >
-            {{ cat.name }}
-          </q-item>
-        </q-list>
-        <p class="text-weight-bold">MedComponents</p>
-        <div class="q-mt-md" v-if="loading">
-          <q-skeleton height="100px" />
-        </div>
-        <q-list v-else>
-          <q-item
-            clickable
-            v-for="(cat, index) in medEquipcategoryListArr"
-            :key="index"
-          >
-            {{ cat.name }}
-          </q-item>
-        </q-list>
-
         <div>
           <div class="row q-mt-md items-center justify-between">
             <h6 class="text-h5">Filters</h6>
@@ -359,6 +332,33 @@ v
             </div>
           </div>
         </div>
+        <h6 class="text-h5 text-weight-bold q-mb-md">Category</h6>
+        <p class="text-weight-bold">MedEquipments</p>
+        <div class="q-mt-md" v-if="loading">
+          <q-skeleton height="100px" />
+        </div>
+        <q-list v-else>
+          <q-item
+            clickable
+            v-for="(cat, index) in medSolutionscategoryListArr"
+            :key="index"
+          >
+            {{ cat.name }}
+          </q-item>
+        </q-list>
+        <p class="text-weight-bold">MedComponents</p>
+        <div class="q-mt-md" v-if="loading">
+          <q-skeleton height="100px" />
+        </div>
+        <q-list v-else>
+          <q-item
+            clickable
+            v-for="(cat, index) in medEquipcategoryListArr"
+            :key="index"
+          >
+            {{ cat.name }}
+          </q-item>
+        </q-list>
       </div>
     </q-scroll-area>
 
