@@ -161,25 +161,22 @@
         </div>
         <div class="responsive_grid q-mt-lg sponsors">
           <div>
-            <img
-              style="max-width: 300px; width: 300px"
-              src="/images/sponsor.jpg"
-              alt=""
-            />
+            <img style="max-width: 300px" src="/images/sponsor.jpg" alt="" />
           </div>
           <div>
-            <img
-              style="max-width: 300px; width: 300px"
-              src="/images/sponsor1.jpg"
-              alt=""
-            />
+            <img style="max-width: 300px" src="/images/sponsor1.jpg" alt="" />
           </div>
           <div>
-            <img
-              style="max-width: 300px; width: 300px"
-              src="/images/sponsor2.jpg"
-              alt=""
-            />
+            <img style="max-width: 300px" src="/images/sponsor2.jpg" alt="" />
+          </div>
+          <div>
+            <img style="max-width: 300px" src="/images/spon4.jpg" alt="" />
+          </div>
+          <div>
+            <img style="max-width: 300px" src="/images/spon5.jpg" alt="" />
+          </div>
+          <div>
+            <img style="max-width: 300px" src="/images/spon6.jpg" alt="" />
           </div>
           <div>
             <img src="/images/mtn.png" alt="" />

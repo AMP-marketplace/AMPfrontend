@@ -336,6 +336,10 @@ hr {
   grid-template-columns: repeat(2, 1fr);
   gap: 2rem;
 }
+.not_found {
+  max-width: 600px;
+  margin-top: 5rem;
+}
 
 .merchant .auth_grid .right {
   display: flex;

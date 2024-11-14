@@ -171,6 +171,9 @@ export default boot(({ app, store, router }) => {
             name: "merchant.login",
             query: {
               name: from.name,
+              redirect: from.name,
+              slug: from.query.slug,
+              id: from.query.id,
             },
           });
         } else if (to.query.redirect === "dashboard") {
@@ -183,6 +186,9 @@ export default boot(({ app, store, router }) => {
             name: "customer.login",
             query: {
               name: from.name,
+              redirect: from.name,
+              slug: from.query.slug,
+              id: from.query.id,
             },
           });
         } else {
@@ -197,6 +203,9 @@ export default boot(({ app, store, router }) => {
             name: to.query.redirect,
             query: {
               name: from.name,
+              redirect: from.name,
+              slug: from.query.slug,
+              id: from.query.id,
             },
           });
         }
@@ -210,6 +219,9 @@ export default boot(({ app, store, router }) => {
               : "customer.login",
           query: {
             name: from.name,
+            redirect: from.name,
+            slug: from.query.slug,
+            id: from.query.id,
           },
         });
         store.state.value.ampauth.token = "";

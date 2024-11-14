@@ -145,10 +145,10 @@
           <i class="ri-arrow-left-up-fill text-h6"></i>
           <span class="text-grey-7"> Sell </span>
         </p> -->
-        <p style="gap: 0.6rem" class="row items-center no-wrap">
+        <!-- <p style="gap: 0.6rem" class="row items-center no-wrap">
           <i class="ri-eye-line text-h6 text-grey-7"></i>
           <span class="text-grey-7">{{ product?.views }} Views </span>
-        </p>
+        </p> -->
       </div>
 
       <p

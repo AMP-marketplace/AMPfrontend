@@ -195,10 +195,22 @@
                   flat
                   :loading="loadingChatBtn"
                   no-caps
+                  v-if="authStore.token"
                   no-wrap
                   class="bg-green-7 text-white"
                 >
                   <i class="ri-chat-2-line q-mr-sm"></i> Contact seller
+                </q-btn>
+                <q-btn
+                  v-else
+                  flat
+                  @click="contactSellerModal = !contactSellerModal"
+                  no-caps
+                  no-wrap
+                  class="bg-green-7 text-white"
+                >
+                  <i class="ri-chat-2-line q-mr-sm"></i> Please login to send
+                  seller a message
                 </q-btn>
               </div>
             </div>
@@ -410,6 +422,52 @@
         />
       </div>
     </q-dialog>
+
+    <q-dialog v-model="contactSellerModal">
+      <q-card v-if="!authStore.token">
+        <div class="column items-center justify-center text-center">
+          <p>You have to be signed in to contact seller</p>
+
+          <div
+            style="gap: 1rem"
+            class="row q-mt-md justify-center items-center no-wrap"
+          >
+            <q-btn
+              :to="{
+                name: 'customer.login',
+                query: {
+                  redirect: signleRouteData.name,
+                  name: signleRouteData.query.name,
+                  slug: signleRouteData.query.slug,
+                  id: signleRouteData.query.id,
+                },
+              }"
+              no-wrap
+              no-caps
+              color="primary"
+            >
+              Sign in as a user
+            </q-btn>
+            <q-btn
+              :to="{
+                name: 'merchant.login',
+                query: {
+                  redirect: signleRouteData.name,
+                  name: signleRouteData.query.name,
+                  slug: signleRouteData.query.slug,
+                  id: signleRouteData.query.id,
+                },
+              }"
+              no-wrap
+              no-caps
+              color="primary"
+            >
+              Sign in as a merchant
+            </q-btn>
+          </div>
+        </div>
+      </q-card>
+    </q-dialog>
   </q-layout>
 </template>
 
@@ -435,6 +493,7 @@ let data = ref({ media: null });
 let qty = ref(1);
 let ratingModel = ref(0);
 let loading = ref(false);
+let contactSellerModal = ref(false);
 let chatModal = ref(false);
 let rateModal = ref(false);
 let loadingChatBtn = ref(false);

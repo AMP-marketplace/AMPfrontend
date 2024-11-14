@@ -8,6 +8,7 @@
           unique store
         </p> -->
       </div>
+      <!-- {{ data }} -->
       <div style="gap: 0.5rem" class="row items-center no-wrap">
         <q-btn
           no-caps
@@ -636,7 +637,9 @@ const deletProduct = () => {
         message: "Deleting...",
       });
       authAxios
-        .delete(`merchant/${store.storedetails.slug}/${data.value.slug}/delete`)
+        .delete(
+          `merchant/${store.storedetails.slug}/${route.query.slug}/delete`
+        )
         .then((response) => {
           console.log(response);
           Loading.hide();
@@ -683,7 +686,7 @@ const publishorUnpublishProduct = () => {
   puborUnpubLoadBtn.value = true;
   if (!data.value.is_published) {
     authAxios
-      .post(`merchant/${store.storedetails.slug}/${data.value.slug}/publish`)
+      .post(`merchant/${store.storedetails.slug}/${route.query.slug}/publish`)
       .then((response) => {
         console.log(response);
         puborUnpubLoadBtn.value = false;
@@ -709,7 +712,7 @@ const publishorUnpublishProduct = () => {
       });
   } else {
     authAxios
-      .post(`merchant/${store.storedetails.slug}/${data.value.slug}/publish`)
+      .post(`merchant/${store.storedetails.slug}/${route.query.slug}/publish`)
       .then((response) => {
         console.log(response);
         puborUnpubLoadBtn.value = false;
@@ -750,7 +753,7 @@ const updateProductFunction = () => {
   };
   Loading.show();
   authAxios
-    .post(`merchant/${store.storedetails.slug}/${data.value.slug}/edit`, {
+    .post(`merchant/${store.storedetails.slug}/${route.query.slug}/edit`, {
       ...dataToSend,
     })
     .then((response) => {
@@ -820,10 +823,11 @@ onMounted(async () => {
     let getProdDetail = await authAxios.get(`${route.query.slug}/show`);
     let prodCatList = await authAxios.get("data?fetch=categories");
     console.log(getProdDetail);
+    console.log(getProdDetail.data.data);
     console.log(prodCatList);
     productCategoryListArr.value = prodCatList.data.data;
 
-    if (getProdDetail.data.data.price.maximum_price > 1) {
+    if (getProdDetail.data.data?.price?.maximum_price > 1) {
       typeOfPrice.value = "range";
     } else {
       typeOfPrice.value = "fixed";
@@ -834,12 +838,13 @@ onMounted(async () => {
         cat.id === parseInt(getProdDetail.data.data.subcategory.category_id)
     );
     selectedCategories.value = mainCatSlug.slug;
+    // console.log(selectedCategories.value);
     getSubcategories();
     data.value = {
       ...getProdDetail.data.data,
       subcategory_id: getProdDetail.data.data.subcategory.id,
-      maximum_price: getProdDetail.data.data.price.maximum_price,
-      minimum_price: getProdDetail.data.data.price.minimum_price,
+      maximum_price: getProdDetail.data.data?.price?.maximum_price,
+      minimum_price: getProdDetail.data.data?.price?.minimum_price,
     };
     Loading.hide();
   } catch (error) {

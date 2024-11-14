@@ -244,8 +244,9 @@ import { Dialog, Notify } from "quasar";
 import { authAxios } from "src/boot/axios";
 import { ref } from "vue";
 import { useMyAuthStore } from "src/stores/auth";
-import { useRouter } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 let router = useRouter();
+let route = useRoute();
 let data = ref({});
 let errors = ref({});
 let verifyModal = ref(false);
@@ -270,7 +271,10 @@ const submitForm = () => {
       console.log(response);
       loading.value = false;
       data.value = {};
-      if (response.data.data.user.roles[0].name === "merchant") {
+      if (
+        response.data.data.user.roles[0].name === "merchant" &&
+        !route.query.redirect
+      ) {
         Notify.create({
           message: response.data.message,
           color: "green",
@@ -297,6 +301,19 @@ const submitForm = () => {
         //   },
         // });
         // getKycData();
+      } else if (
+        response.data.data.user.roles[0].name === "merchant" &&
+        route.query.redirect
+      ) {
+        router.replace({
+          name: route.query.redirect,
+          query: {
+            redirect: route.name,
+            name: route.query.name,
+            slug: route.query.slug,
+            id: route.query.id,
+          },
+        });
       } else {
         Dialog.create({
           title: "Note",

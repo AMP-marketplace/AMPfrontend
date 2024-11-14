@@ -297,7 +297,15 @@ const submitForm = () => {
       if (response.data.data.user.roles[0].name === "shopper") {
         store.setUserDetails(response.data);
         if (route.query.redirect) {
-          router.replace({ name: route.query.redirect });
+          router.replace({
+            name: route.query.redirect,
+            query: {
+              redirect: route.name,
+              name: route.query.name,
+              slug: route.query.slug,
+              id: route.query.id,
+            },
+          });
         } else if (store.previousRoute) {
           router.push(store.previousRoute);
         } else {
