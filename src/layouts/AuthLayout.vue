@@ -78,9 +78,9 @@
                     >Donate Medical Equipments</router-link
                   >
                 </li>
-                <!-- <li class="navLinks">
-                  <router-link to="">Services</router-link>
-                </li> -->
+                <li class="navLinks">
+                  <router-link :to="{ name: 'faq' }">FAQs</router-link>
+                </li>
               </ul>
             </nav>
             <div style="gap: 1rem" class="row items-center no-wrap">
@@ -212,6 +212,7 @@
             <q-item :to="{ name: 'stores' }" clickable> All Stores </q-item>
             <q-item :to="{ name: 'explore' }" clickable> All Products </q-item>
             <q-item :to="{ name: 'donate' }">Donate Medical Equipments</q-item>
+            <q-item :to="{ name: 'faq' }">FAQs</q-item>
             <q-item
               v-if="!store.token"
               :to="{ name: 'merchant.register' }"

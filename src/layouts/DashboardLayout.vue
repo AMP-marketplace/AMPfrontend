@@ -76,9 +76,9 @@
                     >Donate Medical Equipments</router-link
                   >
                 </li>
-                <!-- <li class="navLinks">
-                  <router-link to="">Services</router-link>
-                </li> -->
+                <li class="navLinks">
+                  <router-link :to="{ name: 'faq' }">FAQs</router-link>
+                </li>
               </ul>
             </nav>
             <div class="row items-center no-wrap">

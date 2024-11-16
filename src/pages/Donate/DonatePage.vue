@@ -99,74 +99,52 @@
       </div>
     </section>
 
-    <section class="sponsors">
+    <section class="section">
       <div class="container">
-        <div class="">
-          <h4 class="text-h5 text-center text-weight-bold">
-            OUR PROUD SPONSORS
-          </h4>
-        </div>
-        <div class="responsive_grid q-mt-lg sponsors">
-          <div>
-            <img style="max-width: 300px" src="/images/sponsor.jpg" alt="" />
+        <div class="grid">
+          <div class="left">
+            <p>Join our waitlist</p>
+            <h5 class="text-weight-bold text-h5">
+              Be the first to be notified once theres a donation!
+            </h5>
+
+            <form @submit.prevent="joinWaitlist">
+              <div class="auth">
+                <div class="input_wrap">
+                  <label for=""> Email <span>*</span></label>
+                  <div class="input">
+                    <input
+                      v-model="waitlistData.email"
+                      placeholder="Enter email"
+                      required
+                      type="text"
+                    />
+                  </div>
+                </div>
+                <div class="row justify-start q-mt-lg">
+                  <q-btn
+                    color="primary"
+                    class="q-px-xl q-py-sm"
+                    rounded
+                    no-wrap
+                    no-caps
+                    type="submit"
+                  >
+                    Join waitlist
+                  </q-btn>
+                </div>
+              </div>
+            </form>
           </div>
-          <div>
-            <img style="max-width: 300px" src="/images/sponsor1.jpg" alt="" />
-          </div>
-          <div>
-            <img style="max-width: 300px" src="/images/sponsor2.jpg" alt="" />
-          </div>
-          <div>
-            <img style="max-width: 300px" src="/images/spon4.jpg" alt="" />
-          </div>
-          <div>
-            <img style="max-width: 300px" src="/images/spon5.jpg" alt="" />
-          </div>
-          <div>
-            <img style="max-width: 300px" src="/images/spon6.jpg" alt="" />
-          </div>
-          <div>
-            <img src="/images/mtn.png" alt="" />
-          </div>
-          <div>
-            <img src="/images/fate.png" alt="" />
-          </div>
-          <div>
-            <img src="/images/flourish.png" alt="" />
-          </div>
-          <!-- <div>
-            <img src="/images/ahk.png" alt="" />
-          </div> -->
-          <div>
-            <img src="/images/ihk.png" alt="" />
-          </div>
-          <div>
-            <img src="/images/vertebra.png" alt="" />
-          </div>
-          <div>
-            <img src="/images/rocat.svg" alt="" />
-          </div>
-          <div>
-            <img src="/images/msi.svg" alt="" />
-          </div>
-          <div>
-            <img src="/images/razer.svg" alt="" />
-          </div>
-          <div>
-            <img src="/images/therma.svg" alt="" />
-          </div>
-          <div>
-            <img src="/images/adata.svg" alt="" />
-          </div>
-          <div>
-            <img src="/images/hp.svg" alt="" />
-          </div>
-          <div>
-            <img src="/images/giga.svg" alt="" />
+
+          <div class="right">
+            <q-img src="/images/donate.jpg" />
           </div>
         </div>
       </div>
     </section>
+
+    <SponsorsCompVue />
 
     <FooterCompVue />
 
@@ -262,7 +240,7 @@
 
             <div class="auth_grid">
               <div class="input_wrap">
-                <label for="">Country<span>*</span></label>
+                <label for="">Country of donation<span>*</span></label>
                 <div class="input">
                   <select v-model="data.country" required>
                     <option disabled value="">Choose</option>
@@ -277,19 +255,28 @@
                 </div>
               </div>
               <div class="input_wrap">
-                <label for="">Condition <span>*</span></label>
+                <label for="">Donation targets<span>*</span></label>
                 <div class="input">
-                  <select v-model="data.condition">
-                    <option value="new">New</option>
-                    <option value="used">Used</option>
-                    <option value="refurbished">Refurbished</option>
-                    <option value="pre-owned">Pre owned</option>
-                    <option value="open_box">Open Box</option>
-                  </select>
+                  <input
+                    v-model="data.donation_target"
+                    type="text"
+                    placeholder="Lagos, Nigeria residents"
+                  />
                 </div>
               </div>
             </div>
-
+            <div class="input_wrap">
+              <label for="">Condition <span>*</span></label>
+              <div class="input">
+                <select v-model="data.condition">
+                  <option value="new">New</option>
+                  <option value="used">Used</option>
+                  <option value="refurbished">Refurbished</option>
+                  <option value="pre-owned">Pre owned</option>
+                  <option value="open_box">Open Box</option>
+                </select>
+              </div>
+            </div>
             <div class="row justify-end q-mt-lg">
               <q-btn
                 color="primary"
@@ -313,6 +300,7 @@
 import { authAxios } from "src/boot/axios";
 import { useProductStore } from "src/stores/productStore";
 import FooterCompVue from "src/components/FooterComp.vue";
+import SponsorsCompVue from "src/components/SponsorsComp.vue";
 import DonationsComp from "src/components/DonationsComp.vue";
 import { onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
@@ -334,6 +322,7 @@ const errors = ref({});
 const data = ref({ description: "" });
 const donateImagePreview = ref("");
 const addedDonationObj = ref({});
+const waitlistData = ref({});
 let page = ref(1);
 let totalPages = ref(1);
 let perPage = 10;
@@ -348,6 +337,7 @@ const onRejected = () => {
   });
 };
 
+const joinWaitlist = () => {};
 const toggleDonationModal = () => {
   addDonationModal.value = !addDonationModal.value;
 };

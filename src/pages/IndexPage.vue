@@ -152,75 +152,7 @@
       </div>
     </section>
 
-    <section class="sponsors">
-      <div class="container">
-        <div>
-          <h4 class="text-h5 text-center text-weight-bold">
-            OUR PROUD SPONSORS
-          </h4>
-        </div>
-        <div class="responsive_grid q-mt-lg sponsors">
-          <div>
-            <img style="max-width: 300px" src="/images/sponsor.jpg" alt="" />
-          </div>
-          <div>
-            <img style="max-width: 300px" src="/images/sponsor1.jpg" alt="" />
-          </div>
-          <div>
-            <img style="max-width: 300px" src="/images/sponsor2.jpg" alt="" />
-          </div>
-          <div>
-            <img style="max-width: 300px" src="/images/spon4.jpg" alt="" />
-          </div>
-          <div>
-            <img style="max-width: 300px" src="/images/spon5.jpg" alt="" />
-          </div>
-          <div>
-            <img style="max-width: 300px" src="/images/spon6.jpg" alt="" />
-          </div>
-          <div>
-            <img src="/images/mtn.png" alt="" />
-          </div>
-          <div>
-            <img src="/images/fate.png" alt="" />
-          </div>
-          <div>
-            <img src="/images/flourish.png" alt="" />
-          </div>
-          <!-- <div>
-            <img src="/images/ahk.png" alt="" />
-          </div> -->
-          <div>
-            <img src="/images/ihk.png" alt="" />
-          </div>
-          <div>
-            <img src="/images/vertebra.png" alt="" />
-          </div>
-          <div>
-            <img src="/images/rocat.svg" alt="" />
-          </div>
-          <div>
-            <img src="/images/msi.svg" alt="" />
-          </div>
-          <div>
-            <img src="/images/razer.svg" alt="" />
-          </div>
-          <div>
-            <img src="/images/therma.svg" alt="" />
-          </div>
-          <div>
-            <img src="/images/adata.svg" alt="" />
-          </div>
-          <div>
-            <img src="/images/hp.svg" alt="" />
-          </div>
-          <div>
-            <img src="/images/giga.svg" alt="" />
-          </div>
-        </div>
-      </div>
-    </section>
-
+    <SponsorsCompVue />
     <FooterCompVue />
 
     <q-dialog v-model="watchAStoreModal">
@@ -238,6 +170,7 @@
 import { authAxios } from "src/boot/axios";
 import { useProductStore } from "src/stores/productStore";
 import FooterCompVue from "src/components/FooterComp.vue";
+import SponsorsCompVue from "src/components/SponsorsComp.vue";
 import ProductCompVue from "src/components/ProductComp.vue";
 import { onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
