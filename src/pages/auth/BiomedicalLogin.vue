@@ -3,7 +3,7 @@
     <div class="container q-py-xl">
       <div class="grid">
         <div class="left">
-          <h4 class="text1">Registered Customers</h4>
+          <h4 class="text1">Logins</h4>
           <p class="mediumText">
             If you have an account, sign in with your email address.
           </p>
@@ -80,7 +80,7 @@
               Don't have an account?
               <router-link
                 :to="{
-                  name: 'individual.register',
+                  name: 'biomedic.register',
                 }"
               >
                 Sign up
@@ -90,25 +90,7 @@
         </div>
 
         <div class="right">
-          <h4 class="text1">New Customer?</h4>
-          <p class="mediumText">Creating an account has many benefits:</p>
-          <ul>
-            <li class="mediumText">Check out faster</li>
-            <li class="mediumText">Keep more than one address</li>
-            <li class="mediumText">Track orders and more</li>
-          </ul>
-          <div class="row justify-start q-mt-lg">
-            <q-btn
-              color="primary"
-              rounded
-              class="q-py-sm q-px-ms"
-              no-wrap
-              no-caps
-              :to="{ name: 'individual.register' }"
-            >
-              Create an account
-            </q-btn>
-          </div>
+          <img src="/images/biomedic.jpg" alt="" />
         </div>
       </div>
     </div>

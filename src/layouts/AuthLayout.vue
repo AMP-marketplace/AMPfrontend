@@ -79,6 +79,11 @@
                   >
                 </li>
                 <li class="navLinks">
+                  <router-link :to="{ name: 'biomedical.near.us' }"
+                    >BNU</router-link
+                  >
+                </li>
+                <li class="navLinks">
                   <router-link :to="{ name: 'faq' }">FAQs</router-link>
                 </li>
               </ul>
@@ -212,6 +217,9 @@
             <q-item :to="{ name: 'stores' }" clickable> All Stores </q-item>
             <q-item :to="{ name: 'explore' }" clickable> All Products </q-item>
             <q-item :to="{ name: 'donate' }">Donate Medical Equipments</q-item>
+            <q-item :to="{ name: 'biomedical.near.us' }" clickable
+              >Biomedical Near Us</q-item
+            >
             <q-item :to="{ name: 'faq' }">FAQs</q-item>
             <q-item
               v-if="!store.token"

@@ -170,6 +170,10 @@ header {
     background: url("/images/donate.jpg") no-repeat center top/cover;
     background-attachment: fixed;
   }
+  &.bio {
+    background: url("/images/biomedic.jpg") no-repeat center top/cover;
+    background-attachment: fixed;
+  }
   &::before {
     content: "";
     position: absolute;

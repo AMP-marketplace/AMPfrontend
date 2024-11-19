@@ -14,6 +14,16 @@ const routes = [
         name: "donate",
       },
       {
+        path: "/biomedical-near-us",
+        component: () => import("pages/Biomedical/BioMedicalPage.vue"),
+        name: "biomedical.near.us",
+      },
+      {
+        path: "/biomedical-listing/detail",
+        component: () => import("pages/Biomedical/BiomedicalDetailsPage.vue"),
+        name: "biomedical.detail",
+      },
+      {
         path: "/donate-details",
         component: () => import("pages/Donate/DonateDetailsPage.vue"),
         name: "donate.details",
@@ -221,6 +231,16 @@ const routes = [
         path: "/individual/register",
         component: () => import("pages/auth/merchant/IndividualRegister.vue"),
         name: "individual.register",
+      },
+      {
+        path: "/biomedic/register",
+        component: () => import("pages/auth/BiomedicalRegiser.vue"),
+        name: "biomedic.register",
+      },
+      {
+        path: "/biomedic/login",
+        component: () => import("pages/auth/BiomedicalLogin.vue"),
+        name: "biomedic.login",
       },
       {
         path: "/set",

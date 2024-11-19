@@ -3,13 +3,40 @@
     <div class="container q-py-xl">
       <div class="grid">
         <div class="left">
-          <h4 class="text1">Registered Customers</h4>
-          <p class="mediumText">
-            If you have an account, sign in with your email address.
-          </p>
+          <h4 class="text1">Register Now</h4>
+          <p class="mediumText">Fill in the details below to get started.</p>
 
           <div class="auth">
             <form @submit.prevent="submitForm">
+              <div class="input_wrap">
+                <label for="">Type<span>*</span></label>
+                <div class="input">
+                  <select v-model="data.type">
+                    <option value="company">Company</option>
+                    <option value="biomedical_engineer">
+                      Biomedical Engineer
+                    </option>
+                  </select>
+                </div>
+                <small v-if="errors.type" class="text-red text-weight-bold">
+                  {{ errors.type[0] }}
+                </small>
+              </div>
+              <div class="input_wrap">
+                <label for="">Fullname<span>*</span></label>
+                <div class="input">
+                  <input
+                    v-model="data.fullname"
+                    placeholder="Enter your name"
+                    required
+                    name="name"
+                    type="text"
+                  />
+                </div>
+                <small v-if="errors.fullname" class="text-red text-weight-bold">
+                  {{ errors.fullname[0] }}
+                </small>
+              </div>
               <div class="input_wrap">
                 <label for="">Email<span>*</span></label>
                 <div class="input">
@@ -23,6 +50,74 @@
                 </div>
                 <small v-if="errors.email" class="text-red text-weight-bold">
                   {{ errors.email[0] }}
+                </small>
+              </div>
+              <div class="phone">
+                <label for="">Phone Number<span>*</span></label>
+                <div class="phone_wrap">
+                  <div class="country_select">
+                    <div class="input_wrap">
+                      <div class="input">
+                        <select v-model="country_code">
+                          <option
+                            v-for="(country, index) in countries"
+                            :key="index"
+                            :value="country.phoneCode"
+                          >
+                            {{ country.phoneCode }} {{ country.flag }}
+                          </option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="input_wrap">
+                    <div class="input">
+                      <input
+                        v-model="data.phone"
+                        placeholder="Enter phone number"
+                        required
+                        type="text"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <small v-if="errors.phone" class="text-red text-weight-bold">
+                  {{ errors.phone[0] }}
+                </small>
+              </div>
+              <div class="input_wrap">
+                <label for="">NIN<span>*</span></label>
+                <div class="input">
+                  <input
+                    v-model="data.nin"
+                    placeholder="Enter NIN or your national identification"
+                    required
+                    name="nin"
+                    type="text"
+                  />
+                </div>
+                <small v-if="errors.nin" class="text-red text-weight-bold">
+                  {{ errors.nin[0] }}
+                </small>
+              </div>
+              <div class="input_wrap">
+                <label for=""
+                  >Certificate of License from Authorized bodies eg COREN<span
+                    >*</span
+                  ></label
+                >
+                <div class="input">
+                  <q-file outlined v-model="data.certificate">
+                    <template v-slot:prepend>
+                      <q-icon name="attach_file" />
+                    </template>
+                  </q-file>
+                </div>
+                <small
+                  v-if="errors.certificate"
+                  class="text-red text-weight-bold"
+                >
+                  {{ errors.certificate[0] }}
                 </small>
               </div>
 
@@ -52,6 +147,32 @@
                   </small>
                 </div>
               </div>
+              <div class="password">
+                <div class="input_wrap">
+                  <label for=""> Confirm Password<span>*</span></label>
+                  <div class="input row items-center no-wrap justify-between">
+                    <input
+                      v-model="data.confirm_password"
+                      required
+                      placeholder="*********"
+                      :type="!viewConfirmPassword ? 'password' : 'text'"
+                    />
+                    <q-btn
+                      @click="viewConfirmPassword = !viewConfirmPassword"
+                      flat
+                      icon="visibility"
+                    >
+                    </q-btn>
+                  </div>
+
+                  <small
+                    v-if="errors.confirm_password"
+                    class="text-red text-weight-bold"
+                  >
+                    {{ errors.confirm_password[0] }}
+                  </small>
+                </div>
+              </div>
               <div class="row justify-end">
                 <router-link
                   class="text-weight-bold"
@@ -77,38 +198,21 @@
             </form>
 
             <p class="text-h6 text-center q-mt-lg">
-              Don't have an account?
+              Already have an account?
               <router-link
                 :to="{
-                  name: 'individual.register',
+                  name: 'biomedic.login',
                 }"
               >
-                Sign up
+                Sign in
               </router-link>
             </p>
           </div>
         </div>
 
         <div class="right">
-          <h4 class="text1">New Customer?</h4>
-          <p class="mediumText">Creating an account has many benefits:</p>
-          <ul>
-            <li class="mediumText">Check out faster</li>
-            <li class="mediumText">Keep more than one address</li>
-            <li class="mediumText">Track orders and more</li>
-          </ul>
-          <div class="row justify-start q-mt-lg">
-            <q-btn
-              color="primary"
-              rounded
-              class="q-py-sm q-px-ms"
-              no-wrap
-              no-caps
-              :to="{ name: 'individual.register' }"
-            >
-              Create an account
-            </q-btn>
-          </div>
+          <img class="" src="/images/biomedic1.jpg" alt="" />
+          <img class="q-mt-lg" src="/images/biomedic.jpg" alt="" />
         </div>
       </div>
     </div>
@@ -123,7 +227,6 @@
           <div class="smallText q-mt-sm text-center">
             Please kindly enter the OTP code we sent to <br />
             your phone
-            <!-- <span class="text5"> {{ data.email }} </span> -->
           </div>
         </div>
 
@@ -266,6 +369,7 @@ import { authAxios } from "src/boot/axios";
 import { ref } from "vue";
 import { useMyAuthStore } from "src/stores/auth";
 import { useRoute, useRouter } from "vue-router";
+import countries from "app/countries";
 
 let router = useRouter();
 let route = useRoute();
@@ -275,6 +379,7 @@ let verifyModal = ref(false);
 let verifyEmailModal = ref(false);
 let code = ref("");
 const bindModal = ref("");
+const country_code = ref("");
 const bindEmailModal = ref("");
 const resending = ref(false);
 const viewConfirmPassword = ref(false);
