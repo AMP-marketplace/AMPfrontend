@@ -78,7 +78,7 @@
                 </li>
                 <li class="navLinks">
                   <router-link :to="{ name: 'biomedical.near.us' }"
-                    >BNU</router-link
+                    >Biomedical Engineers</router-link
                   >
                 </li>
                 <li class="navLinks">

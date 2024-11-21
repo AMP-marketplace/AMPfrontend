@@ -186,6 +186,7 @@
                   style="width: 100%"
                   color="primary"
                   rounded
+                  disable
                   class="q-pa-sm"
                   no-wrap
                   no-caps

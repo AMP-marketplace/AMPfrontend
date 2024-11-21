@@ -60,6 +60,18 @@
       </q-breadcrumbs>
     </div>
     <section class="new_products section">
+      <div>
+        <div class="container">
+          <h6 class="text-h6 text-weight-bold">Top Engineers</h6>
+        </div>
+
+        <div class="column items-center text-center q-mt-lg">
+          <i class="ri-delete-bin-7-line text-h5"></i>
+          <p>Coming soon</p>
+        </div>
+      </div>
+    </section>
+    <section class="new_products section">
       <div class="container">
         <div class="row items-center justify-between">
           <h4 class="text-h6 text-weight-bold">Job Listings</h4>
@@ -69,7 +81,11 @@
             > -->
           </div>
         </div>
-        <div v-if="loadingDonations" class="responsive_grid q-mt-md">
+        <div class="column items-center text-center q-mt-lg">
+          <i class="ri-delete-bin-7-line text-h5"></i>
+          <p>Coming soon</p>
+        </div>
+        <!-- <div v-if="loadingDonations" class="responsive_grid q-mt-md">
           <div v-for="n in 3" :key="n">
             <q-card flat style="max-width: 300px">
               <q-skeleton height="150px" square />
@@ -81,8 +97,9 @@
               </q-card-section>
             </q-card>
           </div>
-        </div>
-        <div v-if="!loadingDonations" class="q-mt-md">
+        </div> -->
+
+        <!-- <div v-if="!loadingDonations" class="q-mt-md">
           <q-infinite-scroll
             @load="loadMore"
             :offset="100"
@@ -97,7 +114,7 @@
               />
             </div>
           </q-infinite-scroll>
-        </div>
+        </div> -->
       </div>
     </section>
 

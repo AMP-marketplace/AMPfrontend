@@ -467,11 +467,13 @@ const clearAllFilters = () => {
 };
 onMounted(() => {
   getCategories();
-  if (productStore.products.length) {
-    return;
-  } else {
-    productStore.fetchProducts();
-  }
+  productStore.fetchProducts();
+  // if (productStore.products.length) {
+  //   return;
+  // } else {
+  //   productStore.fetchProducts();
+  // }
+
   if (route.query.search) {
     filters.value.searchTerm = route.query.search;
   }

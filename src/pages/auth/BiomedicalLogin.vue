@@ -66,6 +66,7 @@
                   color="primary"
                   rounded
                   class="q-pa-sm"
+                  disable
                   no-wrap
                   no-caps
                   :loading="loading"
