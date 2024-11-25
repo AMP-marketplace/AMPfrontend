@@ -62,12 +62,12 @@
 
               <q-expansion-item>
                 <template v-slot:header>
-                  <q-item-section> How do I sign up? </q-item-section>
+                  <q-item-section> How do I register? </q-item-section>
                 </template>
 
                 <q-card>
                   <q-card-section>
-                    Click on the Sign Up button at the top of our homepage.
+                    Click on the register button at the top of our homepage.
                     Select the type of user (Healthcare Provider, Supplier, or
                     Buyer) and follow the registration instructions.
                   </q-card-section>

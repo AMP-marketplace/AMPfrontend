@@ -48,7 +48,7 @@
               no-caps
               rounded
               color="primary"
-              >Sign in to{{ store.business_name }}</q-btn
+              >Login to{{ store.business_name }}</q-btn
             >
           </div>
         </div>

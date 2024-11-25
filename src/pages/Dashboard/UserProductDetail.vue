@@ -446,7 +446,7 @@
               no-caps
               color="primary"
             >
-              Sign in as a user
+              Login as a user
             </q-btn>
             <q-btn
               :to="{
@@ -462,7 +462,7 @@
               no-caps
               color="primary"
             >
-              Sign in as a merchant
+              Login as a merchant
             </q-btn>
           </div>
         </div>

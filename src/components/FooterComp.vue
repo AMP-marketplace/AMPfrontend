@@ -43,32 +43,48 @@
             </h4>
             <q-separator class="bg-white" />
             <p class="text-white q-my-md">
-              <router-link to=""> How to upload </router-link>
+              <a
+                download="Upload manual"
+                class="ogency-btn"
+                href="/images/AMP UPLOAD MANUAL.pdf"
+              >
+                How to upload
+              </a>
             </p>
             <p class="text-white q-my-s">
-              <router-link to=""> Buy and Sell Quickly </router-link>
+              <router-link :to="{ name: 'explore' }">
+                Buy and Sell Quickly
+              </router-link>
             </p>
             <p class="text-white q-my-md">
-              <router-link to="">Membership </router-link>
+              <router-link :to="{ name: 'plans.page' }"
+                >Explore subscription plans
+              </router-link>
             </p>
-            <p class="text-white q-my-md">
+            <!-- <p class="text-white q-my-md">
               <router-link to=""> Banner Advertising </router-link>
             </p>
             <p class="text-white q-my-md">
               <router-link to=""> Promote your ad </router-link>
-            </p>
+            </p> -->
           </div>
           <div>
-            <h4 class="text-h6 text-white text-weight-bold">Information</h4>
+            <h4 class="text-h6 text-white text-weight-bold">Explore</h4>
             <q-separator class="bg-white" />
             <p class="text-white q-my-md">
-              <router-link to=""> Company info </router-link>
+              <router-link :to="{ name: 'explore' }"> Marketplace</router-link>
             </p>
             <p class="text-white q-my-md">
-              <router-link to=""> Biomedical </router-link>
+              <router-link :to="{ name: 'donate' }"> Donate </router-link>
             </p>
             <p class="text-white q-my-md">
-              <router-link to="">Privacy policy </router-link>
+              <router-link :to="{ name: 'biomedical.near.us' }">
+                Biomedical near us
+              </router-link>
+            </p>
+
+            <p class="text-white q-my-md">
+              <router-link to="">Blog </router-link>
             </p>
           </div>
           <div>
@@ -77,10 +93,15 @@
             </h4>
             <q-separator class="bg-white" />
             <p class="text-white q-my-md">
-              <router-link to=""> FAQ </router-link>
+              <router-link :to="{ name: 'faq' }"> FAQ </router-link>
             </p>
             <p class="text-white q-my-md">
-              <router-link to=""> Contact us </router-link>
+              <a
+                href="mailto:hello@africamedicalmarketplace.com"
+                target="_blank"
+              >
+                Contact us
+              </a>
             </p>
             <p lass="text-white q-my-md">
               <a

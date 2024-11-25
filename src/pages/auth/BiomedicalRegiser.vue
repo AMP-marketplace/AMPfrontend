@@ -205,15 +205,15 @@
                   name: 'biomedic.login',
                 }"
               >
-                Sign in
+                Login
               </router-link>
             </p>
           </div>
         </div>
 
         <div class="right">
-          <img class="" src="/images/biomedic1.jpg" alt="" />
-          <img class="q-mt-lg" src="/images/biomedic.jpg" alt="" />
+          <img class="" src="/images/biom.jpg" alt="" />
+          <img class="q-mt-lg" src="/images/biom1.jpg" alt="" />
         </div>
       </div>
     </div>

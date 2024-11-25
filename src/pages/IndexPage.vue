@@ -117,7 +117,22 @@
             </q-card>
           </div>
         </div>
-        <q-infinite-scroll @load="loadMoreProducts" :offset="600">
+
+        <div class="responsive_grid q-mt-md">
+          <ProductCompVue
+            :product="product"
+            v-for="(product, index) in productStore.products"
+            :key="index"
+          />
+        </div>
+        <div
+          v-if="productStore.noMoreData"
+          class="no-more-data text-weight-bold row q-mt-lg justify-center"
+        >
+          No more products to load.
+        </div>
+
+        <!-- <q-infinite-scroll @load="loadMoreProducts" :offset="600">
           <div class="responsive_grid q-mt-md">
             <ProductCompVue
               :product="product"
@@ -136,7 +151,7 @@
               <q-spinner-dots color="primary" size="40px" />
             </div>
           </template>
-        </q-infinite-scroll>
+        </q-infinite-scroll> -->
         <!-- <q-infinite-scroll
           :handler="loadMoreProducts"
           :offset="100"

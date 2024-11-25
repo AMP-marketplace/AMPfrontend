@@ -140,8 +140,10 @@ export const useProductStore = defineStore("productStore", {
     },
   },
   actions: {
-    async fetchProducts(url = `products/index/all`) {
-      if (this.noMoreData || this.loading) return;
+    async fetchProducts(url = `products/index/all?perPage=30`) {
+      // this.products = [];
+      // this.noMoreData = false;
+      // if (this.noMoreData || this.loading) return;
       const response = await authAxios.get(url);
       console.log(response);
       const { products: newProducts, meta } = response.data.data;
@@ -149,9 +151,9 @@ export const useProductStore = defineStore("productStore", {
       this.products.push(...newProducts); // Add new products
       this.nextPageUrl = meta.next_page_url; // Update next page URL
 
-      if (!this.nextPageUrl) {
-        this.noMoreData = true; // No more pages to load
-      }
+      // if (!this.nextPageUrl) {
+      //   this.noMoreData = true; // No more pages to load
+      // }
 
       // this.products = response.data.data.products;
       this.loadingProducts = false;

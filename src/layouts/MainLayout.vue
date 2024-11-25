@@ -72,19 +72,25 @@
                     >All Products</router-link
                   >
                 </li>
-                <li class="navLinks">
-                  <router-link :to="{ name: 'donate' }"
-                    >Donate Medical Equipments</router-link
-                  >
-                </li>
+
                 <li class="navLinks">
                   <router-link :to="{ name: 'biomedical.near.us' }"
                     >Biomedical Engineers</router-link
                   >
                 </li>
                 <li class="navLinks">
-                  <router-link :to="{ name: 'faq' }">FAQs</router-link>
+                  <router-link :to="{ name: 'donate' }"
+                    >Donate Medical Equipments</router-link
+                  >
                 </li>
+                <li class="navLinks">
+                  <router-link :to="{ name: 'plans.page' }"
+                    >Pricing</router-link
+                  >
+                </li>
+                <!-- <li class="navLinks">
+                  <router-link :to="{ name: 'faq' }">FAQs</router-link>
+                </li> -->
               </ul>
             </nav>
 
@@ -96,7 +102,7 @@
                 }}</q-badge>
               </q-btn>
 
-              <q-btn v-if="store.token" flat>
+              <q-btn v-if="store.token" color="green-7" flat>
                 <img
                   style="width: 36px; height: 36px; border-radius: 100%"
                   src="https://w7.pngwing.com/pngs/178/595/png-transparent-user-profile-computer-icons-login-user-avatars-thumbnail.png"
@@ -160,11 +166,11 @@
                 :to="{
                   name: 'merchant.register',
                 }"
-                color="primary"
+                color="green-7"
                 no-caps
                 no-wrap
                 rounded
-                label="Sign in"
+                label="Login"
               />
               <q-btn @click="drawer = !drawer" class="expand_cats" flat>
                 <i class="fa-solid text-black fa-bars"></i>
@@ -190,17 +196,20 @@
           <q-list>
             <q-item :to="{ name: 'stores' }" clickable> All Stores </q-item>
             <q-item :to="{ name: 'explore' }" clickable> All Products </q-item>
-            <q-item :to="{ name: 'donate' }" clickable
-              >Donate Medical Equipments</q-item
-            >
             <q-item :to="{ name: 'biomedical.near.us' }" clickable
               >Biomedical Near Us</q-item
             >
-            <q-item :to="{ name: 'faq' }" clickable>FAQs</q-item>
+            <q-item :to="{ name: 'donate' }" clickable
+              >Donate Medical Equipments</q-item
+            >
+
+            <q-item :to="{ name: 'plans.page' }">Pricing</q-item>
+            <!-- <q-item :to="{ name: 'faq' }" clickable>FAQs</q-item> -->
             <q-item
               v-if="!store.token"
               :to="{ name: 'merchant.register' }"
               clickable
+              class="bg-green-7"
             >
               Register
             </q-item>
@@ -208,6 +217,7 @@
               v-if="!store.token"
               :to="{ name: 'merchant.login' }"
               clickable
+              class="bg-green-7"
             >
               Login
             </q-item>

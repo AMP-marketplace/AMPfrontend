@@ -5,7 +5,7 @@
         <div class="left">
           <h4 class="text1">Registered Customers</h4>
           <p class="mediumText">
-            If you have an account, sign in with your email address.
+            If you have an account, login with your email address.
           </p>
 
           <div class="auth">
@@ -83,7 +83,7 @@
                   name: 'individual.register',
                 }"
               >
-                Sign up
+                Register
               </router-link>
             </p>
           </div>

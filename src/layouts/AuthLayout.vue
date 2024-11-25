@@ -73,18 +73,26 @@
                     >Explore Products</router-link
                   >
                 </li>
-                <li class="navLinks">
-                  <router-link :to="{ name: 'donate' }"
-                    >Donate Medical Equipments</router-link
+                <!-- <li class="navLinks">
+                  <router-link :to="{ name: 'plans.page' }"
+                    >Subscription Plans</router-link
                   >
-                </li>
+                </li> -->
+
                 <li class="navLinks">
                   <router-link :to="{ name: 'biomedical.near.us' }"
                     >Biomedical Engineers</router-link
                   >
                 </li>
                 <li class="navLinks">
-                  <router-link :to="{ name: 'faq' }">FAQs</router-link>
+                  <router-link :to="{ name: 'donate' }"
+                    >Donate Medical Equipments</router-link
+                  >
+                </li>
+                <li class="navLinks">
+                  <router-link :to="{ name: 'plans.page' }"
+                    >Pricing</router-link
+                  >
                 </li>
               </ul>
             </nav>
@@ -112,8 +120,8 @@
                 no-caps
                 no-wrap
                 rounded
-                color="primary"
-                label="Sign in"
+                color="green-7"
+                label="Login"
               >
                 <q-list>
                   <q-item
@@ -216,15 +224,18 @@
           <q-list>
             <q-item :to="{ name: 'stores' }" clickable> All Stores </q-item>
             <q-item :to="{ name: 'explore' }" clickable> All Products </q-item>
-            <q-item :to="{ name: 'donate' }">Donate Medical Equipments</q-item>
             <q-item :to="{ name: 'biomedical.near.us' }" clickable
               >Biomedical Near Us</q-item
             >
+            <q-item :to="{ name: 'donate' }">Donate Medical Equipments</q-item>
+
+            <q-item :to="{ name: 'plans.page' }">Pricing</q-item>
             <q-item :to="{ name: 'faq' }">FAQs</q-item>
             <q-item
               v-if="!store.token"
               :to="{ name: 'merchant.register' }"
               clickable
+              class="bg-green-7"
             >
               Register
             </q-item>
@@ -232,6 +243,7 @@
               v-if="!store.token"
               :to="{ name: 'merchant.register' }"
               clickable
+              class="bg-green-7"
             >
               Login
             </q-item>

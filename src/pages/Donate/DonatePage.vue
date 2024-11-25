@@ -171,7 +171,7 @@
               no-caps
               color="primary"
             >
-              Sign in as a Donor
+              Login as a Donor
             </q-btn>
 
             <!-- <q-btn
@@ -181,7 +181,7 @@
               no-caps
               color="primary"
             >
-              Sign in as a merchant
+              Login as a merchant
             </q-btn> -->
           </div>
         </div>

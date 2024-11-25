@@ -5,26 +5,28 @@
         title=" Create an account"
         subtitle="One more step before starting your free trial"
       />
-      <div class="flex flex-col gap-3 items-center my-10 mx-10 md:mx-0 justify-center">
+      <div
+        class="flex flex-col gap-3 items-center my-10 mx-10 md:mx-0 justify-center"
+      >
         <q-btn
           class="bg-gray-100 w-full px-5 md:w-1/3 py-4"
           icon="mail"
-          label="Sign up with email"
+          label="Register with email"
         ></q-btn>
         <q-btn
           class="bg-gray-100 w-full px-5 md:w-1/3 py-4"
           icon="fa-brands fa-apple"
-          label="Sign up with Apple"
+          label="Register with Apple"
         ></q-btn>
         <q-btn
           class="bg-gray-100 w-full px-5 md:w-1/3 py-4"
           icon="fa-brands fa-facebook"
-          label="Sign up with Facebook"
+          label="Register with Facebook"
         ></q-btn>
         <q-btn
           class="bg-gray-100 w-full px-5 md:w-1/3 py-4"
           icon="fa-brands fa-google"
-          label="Sign up with Google"
+          label="Register with Google"
         ></q-btn>
       </div>
       <div class="flex items-center justify-center">

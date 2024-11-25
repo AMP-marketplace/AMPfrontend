@@ -5,7 +5,7 @@
         <div class="left">
           <h4 class="text1">Logins</h4>
           <p class="mediumText">
-            If you have an account, sign in with your email address.
+            If you have an account, Login with your email address.
           </p>
 
           <div class="auth">
@@ -84,14 +84,15 @@
                   name: 'biomedic.register',
                 }"
               >
-                Sign up
+                register
               </router-link>
             </p>
           </div>
         </div>
 
         <div class="right">
-          <img src="/images/biomedic.jpg" alt="" />
+          <img src="/images/biom.jpg" alt="" />
+          <img class="q-mt-md" src="/images/biom1.jpg" alt="" />
         </div>
       </div>
     </div>

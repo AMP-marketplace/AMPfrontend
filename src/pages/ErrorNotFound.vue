@@ -159,7 +159,7 @@
                 no-caps
                 no-wrap
                 rounded
-                label="Sign in"
+                label="Login"
               />
               <q-btn @click="drawer = !drawer" class="expand_cats" flat>
                 <i class="fa-solid text-black fa-bars"></i>

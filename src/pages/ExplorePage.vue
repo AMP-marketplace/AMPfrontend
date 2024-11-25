@@ -219,7 +219,7 @@ v
               "
               class="responsive_grid q-mt-lg"
             >
-              <div v-for="product in sortedProducts" :key="product.id">
+              <div v-for="(product, index) in sortedProducts" :key="index">
                 <ProductComp :product="product" />
               </div>
             </div>
@@ -467,6 +467,7 @@ const clearAllFilters = () => {
 };
 onMounted(() => {
   getCategories();
+  productStore.products = [];
   productStore.fetchProducts();
   // if (productStore.products.length) {
   //   return;

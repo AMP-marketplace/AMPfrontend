@@ -157,7 +157,7 @@
           </div>
 
           <div class="right">
-            <q-img src="/images/biomedic1.jpg" />
+            <q-img src="/images/biom1.jpg" />
           </div>
         </div>
       </div>
@@ -190,7 +190,7 @@
               no-caps
               color="primary"
             >
-              Sign in
+              Login
             </q-btn>
 
             <!-- <q-btn
@@ -200,7 +200,7 @@
               no-caps
               color="primary"
             >
-              Sign in as a merchant
+              Login as a merchant
             </q-btn> -->
           </div>
         </div>

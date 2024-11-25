@@ -72,17 +72,19 @@
                   >
                 </li>
                 <li class="navLinks">
-                  <router-link :to="{ name: 'donate' }"
-                    >Donate Medical Equipments</router-link
-                  >
-                </li>
-                <li class="navLinks">
                   <router-link :to="{ name: 'biomedical.near.us' }"
                     >Biomedical Engineers</router-link
                   >
                 </li>
                 <li class="navLinks">
-                  <router-link :to="{ name: 'faq' }">FAQs</router-link>
+                  <router-link :to="{ name: 'donate' }"
+                    >Donate Medical Equipments</router-link
+                  >
+                </li>
+                <li class="navLinks">
+                  <router-link :to="{ name: 'plans.page' }"
+                    >Pricing</router-link
+                  >
                 </li>
               </ul>
             </nav>
