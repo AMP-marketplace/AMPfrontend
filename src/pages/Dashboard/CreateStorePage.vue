@@ -933,8 +933,8 @@ const addProductFCN = () => {
     is_negotiable: typeOfPrice.value === "negotiable" ? 1 : 0,
     maximum_price: data.value.maximum_price ? data.value.maximum_price : "1",
     minimum_price: data.value.minimum_price
-      ? data.value.minimum_price + data.value.minimum_price * 0.05
-      : data.value.minimum_price + data.value.minimum_price * 0.05,
+      ? data.value.minimum_price + data.value.minimum_price
+      : data.value.minimum_price + data.value.minimum_price,
   };
   Loading.show();
   authAxios

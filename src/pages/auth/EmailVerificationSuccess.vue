@@ -48,6 +48,7 @@
 </template>
 
 <script setup>
+import { Notify } from "quasar";
 import { authAxios } from "src/boot/axios";
 import { useMyAuthStore } from "src/stores/auth";
 import { onMounted, ref } from "vue";
@@ -57,39 +58,38 @@ let route = useRoute();
 let loading = ref(true);
 
 const confirmOrder = () => {
-  if (store.userdetails.email_verified_at === null) {
-    authAxios
-      .get(
-        `/verify/email?expires=${route.query.expires}&user=${route.query.user}&signature=${route.query.signature}`
-      )
-      .then((response) => {
-        console.log(response);
-        Notify.create({
-          message: response.data.message ? response.data.message : "Successful",
-          color: "green",
-          position: "top",
-          actions: [{ icon: "close", color: "white" }],
-        });
-        store.userdetails.email_verified_at = true;
-        loading.value = false;
-      })
-      .catch(({ response }) => {
-        Notify.create({
-          message: response.data.message ? response.data.message : "Successful",
-          color: "red",
-          position: "top",
-          actions: [{ icon: "close", color: "white" }],
-        });
+  authAxios
+    .get(
+      `/verify/email?expires=${route.query.expires}&user=${route.query.user}&signature=${route.query.signature}`
+    )
+    .then((response) => {
+      console.log(response);
+      Notify.create({
+        message: response.data.message ? response.data.message : "Successful",
+        color: "green",
+        position: "top",
+        actions: [{ icon: "close", color: "white" }],
       });
-  } else {
-    Notify.create({
-      message: "Email already verified",
-      color: "red",
-      position: "top",
-      actions: [{ icon: "close", color: "white" }],
+      store.userdetails.email_verified_at = true;
+      loading.value = false;
+    })
+    .catch(({ response }) => {
+      Notify.create({
+        message: response.data.message ? response.data.message : "Successful",
+        color: "red",
+        position: "top",
+        actions: [{ icon: "close", color: "white" }],
+      });
     });
-    return;
-  }
+  // else {
+  //   Notify.create({
+  //     message: "Email already verified",
+  //     color: "red",
+  //     position: "top",
+  //     actions: [{ icon: "close", color: "white" }],
+  //   });
+  //   return;
+  // }
 };
 onMounted(() => {
   confirmOrder();

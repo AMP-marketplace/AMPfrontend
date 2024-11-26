@@ -4,7 +4,7 @@
       <div class="">
         <div class="top_nav">
           <div class="container">
-            <div class="left">Mon-Sat : <span>9:00am - 5:00pm</span></div>
+            <!-- <div class="left">Mon-Sat : <span>9:00am - 5:00pm</span></div> -->
             <div style="gap: 0.5rem" class="middle row items-center no-wrap">
               <p>
                 For advert placements & store features on Africa Medical

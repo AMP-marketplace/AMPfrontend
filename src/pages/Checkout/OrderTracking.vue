@@ -144,9 +144,7 @@ v
               <q-separator class="q-my-md" />
               <div class="row q-mt-sm justify-between items-center">
                 <p class="smallerText">VAT</p>
-                <p class="smallText">
-                  ₦{{ (totalSumVal * 0.075).toLocaleString() }}
-                </p>
+                <p class="smallText">₦{{ totalSumVal.toLocaleString() }}</p>
               </div>
               <q-separator class="q-my-md" />
               <div class="row q-mt-sm justify-between items-center">

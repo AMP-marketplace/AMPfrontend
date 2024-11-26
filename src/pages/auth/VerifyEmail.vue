@@ -69,7 +69,7 @@
 import FooterCompVue from "src/components/FooterComp.vue";
 import { Dialog, Notify } from "quasar";
 import { authAxios } from "src/boot/axios";
-import { ref } from "vue";
+import { onMounted, ref } from "vue";
 import { useMyAuthStore } from "src/stores/auth";
 import { useRouter } from "vue-router";
 let router = useRouter();
@@ -126,6 +126,10 @@ const submitForm = () => {
       });
     });
 };
+
+onMounted(() => {
+  data.value.email = store.userdetails.email;
+});
 </script>
 
 <style lang="scss" scoped>

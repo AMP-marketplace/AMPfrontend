@@ -275,23 +275,41 @@ const submitForm = () => {
         response.data.data.user.roles[0].name === "merchant" &&
         !route.query.redirect
       ) {
-        Notify.create({
-          message: response.data.message,
-          color: "green",
-          position: "top",
-        });
-
-        store.setUserDetails(response.data);
-        if (response.data.data.merchant.business_name) {
-          store.storedetails = response.data.data.merchant;
-          store.userstores.push(response.data.data.merchant);
+        if (
+          response.data.data.user.roles[0].name === "merchant" &&
+          !response.data.data.merchant
+        ) {
+          Notify.create({
+            message: response.data.message,
+            color: "green",
+            position: "top",
+          });
+          store.setUserDetails(response.data);
           router.replace({
-            name: "account.dashboard",
+            name: "create.store",
+            query: {
+              create: "new",
+            },
           });
         } else {
-          router.replace({
-            name: "all.set",
+          Notify.create({
+            message: response.data.message,
+            color: "green",
+            position: "top",
           });
+
+          store.setUserDetails(response.data);
+          if (response.data.data.merchant.business_name) {
+            store.storedetails = response.data.data.merchant;
+            store.userstores.push(response.data.data.merchant);
+            router.replace({
+              name: "account.dashboard",
+            });
+          } else {
+            router.replace({
+              name: "all.set",
+            });
+          }
         }
 
         // router.replace({

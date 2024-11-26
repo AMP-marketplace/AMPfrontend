@@ -3,7 +3,7 @@
 .container {
   max-width: 1400px !important;
   width: 95% !important;
-  margin: 0 auto;
+  margin: 0 auto !important;
 }
 
 .small_container {
@@ -636,7 +636,7 @@ hr {
   padding: 1rem;
   border-radius: 5px;
   min-height: 450px;
-
+  overflow: hidden;
   .main {
     img {
       height: 250px;
