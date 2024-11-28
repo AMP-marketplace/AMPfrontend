@@ -29,7 +29,7 @@
             }"
             no-wrap
             no-caps
-            color="primary"
+            color="green-7"
           >
             Register as a customer
           </q-btn>
@@ -42,7 +42,7 @@
             }"
             no-wrap
             no-caps
-            color="primary"
+            color="green-7"
           >
             Register as a business
           </q-btn>

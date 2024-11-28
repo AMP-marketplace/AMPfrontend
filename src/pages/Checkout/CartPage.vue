@@ -56,22 +56,12 @@ v
                     )
                   }} -->
                   $
-                  {{
-                    props.row.product?.price?.minimum_price.replace(
-                      /\B(?=(\d{3})+(?!\d))/g,
-                      ","
-                    )
-                  }}
-                  <span v-if="props.row.product.price?.maximum_price !== '1'">
+                  {{ props.row.product?.cleanedPrice }}
+                  <!-- <span v-if="props.row.product.price?.maximum_price !== '1'">
                     -</span
                   >
                   <span v-if="props.row.product.price?.maximum_price !== '1'">
-                    <!-- {{
-                      getCountryCurrencySymbol(
-                        props.row.product?.country,
-                        props.row.product
-                      )
-                    }} -->
+
                     $
                     {{
                       props.row.product.price?.maximum_price.replace(
@@ -79,7 +69,7 @@ v
                         ","
                       )
                     }}
-                  </span>
+                  </span> -->
                 </p>
                 <!-- <p class="smallerText q-mt-sm">
                   ₦{{

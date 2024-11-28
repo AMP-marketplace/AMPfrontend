@@ -39,7 +39,7 @@
           <template v-slot:body-cell-actions="props">
             <q-td :props="props">
               <div>
-                <q-btn
+                <!-- <q-btn
                   @click="cancelOrder(props.row)"
                   flat
                   no-wrap
@@ -62,7 +62,7 @@
                   :loading="loaders.save[props]"
                 >
                   Delete Order
-                </q-btn>
+                </q-btn> -->
                 <q-btn
                   :to="{
                     name: 'order.tracking.new',
@@ -106,7 +106,9 @@ const columns = [
     label: "Products name",
     align: "left",
     field: (row) =>
-      `${row.products.map((product) => product.product.name.toString())} `,
+      `${row.products.map(
+        (product) => product.product.name.toString() + " "
+      )} `,
     sortable: true,
   },
   {
@@ -114,7 +116,7 @@ const columns = [
     required: true,
     label: "Amount",
     align: "left",
-    field: (row) => `${row.amount}`,
+    field: (row) => `$${row.amount}`,
     sortable: true,
   },
   // {
@@ -125,14 +127,14 @@ const columns = [
   //   field: "quantity",
   //   sortable: true,
   // },
-  {
-    name: "tracking_number",
-    required: true,
-    label: "Tracking number",
-    align: "left",
-    field: (row) => `${row.shipping_information.tracking_number} `,
-    sortable: true,
-  },
+  // {
+  //   name: "tracking_number",
+  //   required: true,
+  //   label: "Tracking number",
+  //   align: "left",
+  //   field: (row) => `${row.shipping_information.tracking_number} `,
+  //   sortable: true,
+  // },
 
   // {
   //   name: "created_at",

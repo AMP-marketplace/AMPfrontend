@@ -29,6 +29,10 @@ v
           or continue to create a new acount to checkout. <br />
           You can use a default shipping address when you are logged in.
         </p>
+        <p class="text-grey-7 text-weight-bold">
+          Note: At this point you should have discussed delivery fee with
+          vendors.
+        </p>
       </div>
       <div v-else>
         <q-separator class="q-my-sm" />
@@ -41,6 +45,10 @@ v
         <p class="text-red-7 text-weight-bold">
           Note: If you select an address from the previous addresses <br />
           you no longer need to fill in the form just click continue
+        </p>
+        <p class="text-grey-7 text-weight-bold">
+          Note: At this point you should have discussed delivery fee with
+          vendors.
         </p>
       </div>
       <!-- {{ addressData }} -->
@@ -91,7 +99,7 @@ v
                                   @click="setDefault(address)"
                                   no-caps
                                   no-wrap
-                                  color="primary"
+                                  color="green-7"
                                 >
                                   Use this delivery address
                                 </q-btn>
@@ -128,12 +136,48 @@ v
                       </div>
                     </div>
                   </q-card-section>
+                  <div style="margin-top: 0" class="auth q-px-md">
+                    <div class="input_wrap">
+                      <label for="">Delivery type </label>
+                      <div class="input">
+                        <select v-model="delivery_method">
+                          <option value="Enter Delivery Amount from Seller">
+                            Enter Delivery Amount from Seller – Allows the buyer
+                            to input the agreed delivery fee with the vendor.
+                          </option>
+                          <option value="Free Delivery">
+                            Free Delivery – Select this option if the vendor
+                            offers free delivery for the purchase.
+                          </option>
+                          <option value="Using My Own Delivery Pickup">
+                            Using My Own Delivery Pickup – Choose this option if
+                            the buyer plans to arrange their own logistics or
+                            pickup.
+                          </option>
+                        </select>
+                      </div>
+                    </div>
+                    <div
+                      v-if="
+                        delivery_method === 'Enter Delivery Amount from Seller'
+                      "
+                      class="input_wrap"
+                    >
+                      <label for=""
+                        >Delivery cost(from seller) in dollars($)
+                        <span>*</span></label
+                      >
+                      <div class="input">
+                        <input v-model="delivery_cost" type="number" />
+                      </div>
+                    </div>
+                  </div>
                   <div class="q-pa-md">
                     <div class="row items-center justify-center">
                       <q-btn
                         :disable="!addressData.address_line_1"
                         @click="checkoutCurrencyModal = !checkoutCurrencyModal"
-                        color="primary"
+                        color="green-7"
                         no-caps
                         v-if="addressArr.length"
                         no-wrap
@@ -333,7 +377,37 @@ v
                     {{ errors.country[0] }}
                   </small>
                 </div>
-
+                <div class="input_wrap">
+                  <label for="">Delivery type </label>
+                  <div class="input">
+                    <select v-model="delivery_method">
+                      <option value="Enter Delivery Amount from Seller">
+                        Enter Delivery Amount from Seller – Allows the buyer to
+                        input the agreed delivery fee with the vendor.
+                      </option>
+                      <option value="Free Delivery">
+                        Free Delivery – Select this option if the vendor offers
+                        free delivery for the purchase.
+                      </option>
+                      <option value="Using My Own Delivery Pickup">
+                        Using My Own Delivery Pickup – Choose this option if the
+                        buyer plans to arrange their own logistics or pickup.
+                      </option>
+                    </select>
+                  </div>
+                </div>
+                <div
+                  v-if="delivery_method === 'Enter Delivery Amount from Seller'"
+                  class="input_wrap"
+                >
+                  <label for=""
+                    >Delivery cost(from seller) in dollars($)
+                    <span>*</span></label
+                  >
+                  <div class="input">
+                    <input v-model="delivery_cost" type="number" />
+                  </div>
+                </div>
                 <q-separator class="q-mt-lg" />
                 <div class="row justify-start q-mt-lg">
                   <q-btn
@@ -382,9 +456,7 @@ v
                 <p class="smallerText">
                   <!-- <span class="q-mx-sm"></span> -->
                   <span class="text-weight-bold"
-                    >${{
-                      parseInt(item.product.price.minimum_price) * item.quantity
-                    }}</span
+                    >${{ item.product.cleanedPrice * item.quantity }}</span
                   >
                 </p>
               </div>
@@ -399,13 +471,13 @@ v
           <q-separator class="q-my-md" />
           <div class="row q-mt-sm justify-between items-center">
             <p class="smallerText">Sub Total</p>
-            <p class="smallText">${{ cartStore.totalPrice }}</p>
+            <p class="smallText">${{ cartStore.totalPrice + delivery_cost }}</p>
           </div>
           <q-separator class="q-my-md" />
           <div class="row q-mt-sm justify-between items-center">
             <p class="smallerText">Order Total</p>
             <p class="smallText">
-              ${{ cartStore.totalPrice.toLocaleString() }}
+              ${{ (cartStore.totalPrice + delivery_cost).toLocaleString() }}
             </p>
           </div>
           <!-- <div class="row q-mt-sm justify-between items-center">
@@ -429,7 +501,10 @@ v
           </div>
         </div>
 
-        <div class="total no-wrap row justify-center q-mt-md items-center">
+        <div
+          style="gap: 0.6rem"
+          class="total no-wrap row justify-center q-mt-md items-center"
+        >
           <q-btn
             class="apply bg-primary q-px-xl q-mt-md"
             no-caps
@@ -464,31 +539,44 @@ v
             you will be checking out with, it can be either Naira or Dollar...
           </div> -->
           <p class="q-mt-sm text-center">
-            Dear exteemed customer please note that all transactions are
+            Dear exteemed customer please note that transactions are
             <br />
-            currenctly in Dollar though we are working to enable you check out
-            with <br />
-            other currencies soon.
+            currenctly in Dollars and Naira. <strong>NOTE:</strong> Using the
+            Dollar option you can enter a valid Card detail and it will charge
+            the dollar equivalent in your local currency.
           </p>
           <!-- <p class="text-green text-weight-bold">
             Please select naira to continue
           </p> -->
           <!-- {{ checkoutCurrency }} -->
-          <div class="row justify-center">
+          <div class="column justify-center">
             <div class="q-gutter-sm">
               <q-radio v-model="checkoutCurrency" val="dollar" label="Dollar" />
-              <!-- <q-radio
-                @update:model-value="getTotalInCurrency"
+              <q-radio
+                @update:model-value="getTotalInCurrencyNaira"
                 v-model="checkoutCurrency"
                 val="naira"
                 label="Naira"
-              /> -->
+              />
             </div>
+
+            <p v-if="currencyRatesData.rates" class="q-mt-xs">
+              Your order total in Naira is
+              <strong>
+                NGN
+                {{
+                  (
+                    (cartStore.totalPrice + delivery_cost) *
+                    currencyRatesData?.rates["NGN"]
+                  ).toLocaleString()
+                }}</strong
+              >
+            </p>
           </div>
           <div>
             <div class="input_wrap">
               <label for="">See total in your currency</label>
-              <div class="input">
+              <div style="max-width: 400px; margin: 0 auto" class="input">
                 <select
                   @change="getTotalInCurrency"
                   v-model="showEquivInCurrency"
@@ -507,7 +595,9 @@ v
             </div>
           </div>
           <p class="text-weight-bold text-h5">
-            Your order total: ${{ cartStore.totalPrice.toLocaleString() }}
+            Your order total: ${{
+              (cartStore.totalPrice + delivery_cost).toLocaleString()
+            }}
           </p>
           {{ showEquivInCurrency }}
           <p
@@ -524,12 +614,12 @@ v
             v-if="currencyRatesData.rates && showEquivInCurrency"
             class="q-mt-xs"
           >
-            This is your order total in {{ showEquivInCurrency }} is
+            Your order total in {{ showEquivInCurrency }} is
             <strong>
               {{ showEquivInCurrency }}
               {{
                 (
-                  cartStore.totalPrice *
+                  (cartStore.totalPrice + delivery_cost) *
                   currencyRatesData?.rates[showEquivInCurrency]
                 ).toLocaleString()
               }}</strong
@@ -542,7 +632,6 @@ v
             class="apply bg-primary q-px-xl q-mx-sm q-mt-md"
             no-caps
             flat
-            :disable="checkoutCurrency === 'naira'"
             @click="createOrder(addressData.id)"
             rounded
             text-color="white"
@@ -627,12 +716,21 @@ let country_code = ref("+234");
 let checkoutCurrency = ref("dollar");
 let stripeLoaded = ref(false);
 let stripeMounted = ref(false);
+let delivery_cost = ref(0);
+let delivery_method = ref("");
 let loadingBtn = ref(false);
 let stripeIns = ref(null);
 let refValue = ref("");
 const $q = useQuasar();
 const appearance = {
   theme: "stripe",
+  labels: "floating",
+};
+const options = {
+  layout: {
+    type: "tabs",
+    defaultCollapsed: false,
+  },
 };
 let stripe;
 let elements;
@@ -737,7 +835,7 @@ const handleSubmit = async () => {
     // Send token to the backend to process payment
     try {
       const response = await authAxios.post(
-        `payment/charge?reference=${refValue.value}`,
+        `payment/charge?type=stripe&reference=${refValue.value}`,
         {
           stripeToken: token.id,
         }
@@ -768,7 +866,7 @@ const handleSubmit = async () => {
           // Loading.show();
           cartStore.cart = [];
           router.replace({
-            name: "payment.success",
+            name: "payment.success.stripe",
           });
         })
         .onCancel(() => {
@@ -808,6 +906,23 @@ const getTotalInCurrency = async () => {
   );
   console.log(response);
   currencyRatesData.value = response.data;
+  Loading.hide();
+};
+const getTotalInCurrencyNaira = async () => {
+  // console.log("first");
+  Loading.show({
+    spinner: QSpinnerRings,
+    spinnerColor: "yellow",
+    spinnerSize: 140,
+    message: "Fetching, please wait...",
+    messageColor: "white",
+  });
+  let response = await axios.get(
+    "https://openexchangerates.org/api/latest.json?app_id=928ab800ac8d4100ae7d72be1fbf3ca0"
+  );
+  console.log(response);
+  currencyRatesData.value = response.data;
+  showEquivInCurrency.value = "NGN";
   Loading.hide();
 };
 
@@ -913,7 +1028,7 @@ const createOrder = (shipping_id) => {
     const result = cartStore.cart.map((item) => ({
       id: item.product.id,
       unit: item.quantity,
-      price: item.product.price.minimum_price,
+      price: item.product.cleanedPrice,
     }));
     console.log(result);
     const formData = new FormData();
@@ -927,7 +1042,7 @@ const createOrder = (shipping_id) => {
     //   "total_amount",
     //   cartStore.totalPrice * currencyRatesData.value?.rates["NGN"]
     // );
-    formData.append("total_amount", cartStore.totalPrice);
+    formData.append("total_amount", cartStore.totalPrice + delivery_cost.value);
     Loading.show({
       spinner: QSpinnerRings,
       spinnerColor: "yellow",
@@ -970,10 +1085,43 @@ const createOrder = (shipping_id) => {
   }
 };
 const initPayment = () => {
-  Loading.show();
-  orderSuccessModal.value = false;
-  showPaymentForm.value = true;
-  Loading.hide();
+  if (checkoutCurrency.value === "dollar") {
+    Loading.show();
+    orderSuccessModal.value = false;
+    showPaymentForm.value = true;
+    Loading.hide();
+  } else {
+    Loading.show();
+    // console.log(currencyRatesData?.rates);
+    authAxios
+      .post(`payment/charge?type=paystack&reference=${refValue.value}`, {
+        amount: (
+          (cartStore.totalPrice + delivery_cost.value) *
+          currencyRatesData.value?.rates[showEquivInCurrency.value]
+        ).toString(),
+        currency: showEquivInCurrency.value,
+      })
+      .then(({ data }) => {
+        console.log(data);
+        Loading.hide();
+        Notify.create({
+          message: data.message,
+          color: "green",
+          position: "top",
+          actions: [{ icon: "close", color: "white" }],
+        });
+        window.location.href = data.data;
+      })
+      .catch(({ response }) => {
+        Loading.hide();
+        Notify.create({
+          message: response.data.message,
+          color: "red",
+          position: "top",
+          actions: [{ icon: "close", color: "white" }],
+        });
+      });
+  }
   // window.location.href = cartStore.orderDetail;
 };
 const getDeliveryAddresses = () => {

@@ -223,7 +223,7 @@
                 clickable
                 v-ripple
               >
-                <q-item-section> Account Information </q-item-section>
+                <q-item-section> Bank Account Information </q-item-section>
               </q-item>
               <q-item
                 :to="{ name: 'merchant.messages' }"
@@ -397,7 +397,7 @@
         clickable
         v-ripple
       >
-        <q-item-section> Account Information </q-item-section>
+        <q-item-section> Bank Account Information </q-item-section>
       </q-item>
       <q-item
         :to="{ name: 'merchant.messages' }"
@@ -426,10 +426,11 @@
 </template>
 
 <script setup>
-import { Loading, Notify, QSpinnerOval } from "quasar";
+import { Loading, Notify, QSpinnerOval, QSpinnerRings } from "quasar";
 import { ref } from "vue";
 import { useMyAuthStore } from "src/stores/auth";
 import { authAxios } from "src/boot/axios";
+
 import FooterCompVue from "src/components/FooterComp.vue";
 import countries from "../../../countries";
 let store = useMyAuthStore();
@@ -468,13 +469,14 @@ const toggleEditStoreData = () => {
 
   editStoreDetailsModal.value = !editStoreDetailsModal.value;
 };
+
 const editStore = () => {
   Loading.show({
     spinner: QSpinnerOval,
     message: "Editing store data...",
   });
   authAxios
-    .post(`merchant/${store.userdetails.slug}/edit`, {
+    .patch(`merchant/${store.userdetails.slug}/update`, {
       ...data.value,
     })
     .then((response) => {

@@ -258,7 +258,7 @@
                 <label for="">Donation targets<span>*</span></label>
                 <div class="input">
                   <input
-                    v-model="data.donation_target"
+                    v-model="data.target_audience"
                     type="text"
                     placeholder="Lagos, Nigeria residents"
                   />

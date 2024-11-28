@@ -190,8 +190,10 @@ v
                     <p class="smallerText">
                       <!-- <span class="q-mx-sm"></span> -->
                       <span class="text-weight-bold"
-                        >₦{{
-                          (product.price * data.unit).toLocaleString()
+                        >${{
+                          (
+                            parseFloat(product.price) * parseFloat(product.unit)
+                          ).toLocaleString()
                         }}</span
                       >
                     </p>
@@ -226,18 +228,54 @@ v
               </div> -->
             </div>
             <div class="checkout_details no_stick q-mt-lg">
-              <h4 class="bigMediumText">Delivery details</h4>
+              <h4 class="bigMediumText">Delivery/Shipping details</h4>
               <q-separator class="q-mt-md" />
               <div class="q-my-lg">
-                <p class="smallerText q-mb-md text-info">
+                <p class="smallerText q-mb-md text-weight-bold">
                   Estimated delivery date
                 </p>
-                <p class="mediumText">4 - 6days</p>
+                <p class="mediumText">Keep in touch with seller</p>
               </div>
-              <!-- <div class="q-my-lg">
-                <p class="smallerText q-mb-md text-info">Order number</p>
-                <p class="mediumText">NL2309443064</p>
-              </div> -->
+              <div class="q-my-lg">
+                <p class="smallerText q-mb-md ttext-weight-bold">
+                  Tracking number
+                </p>
+                <p class="mediumText">
+                  {{ data.shipping_information.tracking_number }}
+                </p>
+              </div>
+              <div class="q-my-lg">
+                <p class="smallerText q-mb-md ttext-weight-bold">Status</p>
+                <p class="mediumText">
+                  {{ data.shipping_information.status }}
+                </p>
+              </div>
+              <div class="q-my-lg">
+                <p class="smallerText q-mb-md ttext-weight-bold">
+                  Delivery address
+                </p>
+                <p class="mediumText">
+                  {{ data.shipping_information.address.address_line_1 }}
+                </p>
+              </div>
+              <div class="q-my-lg">
+                <p class="smallerText q-mb-md ttext-weight-bold">
+                  Postal code/City/State/Country
+                </p>
+                <p class="mediumText">
+                  {{ data.shipping_information.address.postal_code }} /
+                  {{ data.shipping_information.address.city }} /
+                  {{ data.shipping_information.address.state }} //
+                  {{ data.shipping_information.address.country }}
+                </p>
+              </div>
+              <div class="q-my-lg">
+                <p class="smallerText q-mb-md ttext-weight-bold">Name</p>
+                <p class="mediumText">
+                  {{ data.shipping_information.address.first_name }}
+                  {{ data.shipping_information.address.last_name }}
+                </p>
+              </div>
               <!-- <div style="gap: 1rem" class="q-my-lg row items-center no-wrap">
                 <p class="smallerText text-info">Store Name:</p>
                 <p class="mediumText">{{ data.store.name }}</p>

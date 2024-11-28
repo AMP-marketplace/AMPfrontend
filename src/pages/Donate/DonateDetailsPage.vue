@@ -500,7 +500,7 @@
               <div class="input">
                 <input
                   v-model="data.name"
-                  placeholder="Enter product name"
+                  placeholder="Enter name"
                   required
                   type="text"
                 />
@@ -843,7 +843,7 @@ const editDonationFCN = () => {
   };
   Loading.show();
   authAxios
-    .post(`donation/create`, {
+    .patch(`donation/${data.value.slug}/update`, {
       ...dataToSend,
     })
     .then((response) => {
@@ -855,8 +855,9 @@ const editDonationFCN = () => {
         position: "top",
       });
       data.value = { description: "" };
-      addedDonationObj.value = response.data.data;
-      showAddDonateImage.value = true;
+      editDonationModal.value = false;
+      // addedDonationObj.value = response.data.data;
+      // showAddDonateImage.value = true;
     })
     .catch(({ response }) => {
       // console.log(response);
@@ -907,62 +908,6 @@ const setPostStatus = (value) => {
       Loading.hide();
     });
 };
-const createPost = () => {
-  if (editPostMode.value) {
-    loading.value = true;
-    authAxios
-      .put(`forums/${postData.value._id}`, {
-        title: post.value.title,
-        description: post.value.description,
-      })
-      .then((response) => {
-        loading.value = false;
-        Notify.create({
-          message: response.data.message,
-          color: "green",
-          position: "top",
-        });
-        // console.log(response);
-        editPostMode.value = false;
-        getPostDetail();
-        seamless.value = false;
-      })
-      .catch(({ response }) => {
-        loading.value = false;
-        Notify.create({
-          message: response.data.message,
-          color: "red",
-          position: "bottom",
-          actions: [{ icon: "close", color: "white" }],
-        });
-        // console.log(response);
-      });
-  } else {
-    loading.value = true;
-    authAxios
-      .post(`forums`, post.value)
-      .then((response) => {
-        loading.value = false;
-        Notify.create({
-          message: response.data.message,
-          color: "green",
-          position: "top",
-        });
-        // console.log(response);
-        seamless.value = false;
-      })
-      .catch(({ response }) => {
-        loading.value = false;
-        Notify.create({
-          message: response.data.message,
-          color: "red",
-          position: "bottom",
-          actions: [{ icon: "close", color: "white" }],
-        });
-        // console.log(response);
-      });
-  }
-};
 
 const deleteReview = (review) => {
   Dialog.create({
@@ -1010,7 +955,7 @@ const deletePost = (id) => {
     })
       .onOk(() => {
         authAxios
-          .delete(`donation/delete/${slug}`)
+          .delete(`donation/${slug}/delete`)
           .then((response) => {
             loading.value = false;
             Notify.create({

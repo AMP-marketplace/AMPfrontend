@@ -42,19 +42,12 @@ let route = useRoute();
 let loading = ref(true);
 
 const confirmOrder = () => {
-  authAxios
-    .get(
-      `payment/callback?trxref=${route.query.trxref}&reference=${route.query.reference}`
-    )
-    .then((response) => {
-      console.log(response);
-      loading.value = false;
-      cartStore.cart = [];
-    })
-    .catch(({ response }) => {});
+  setTimeout(() => {
+    loading.value = false;
+  }, 3000);
 };
 onMounted(() => {
-  confirmOrder();
+  // confirmOrder();
 });
 </script>
 

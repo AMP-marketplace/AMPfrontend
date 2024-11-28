@@ -16,6 +16,13 @@
               }}
             </div>
             <div class="name_down act text-weight-bold">Active</div>
+            <div
+              v-if="conversationDetails?.participants[1]?.data?.name"
+              class="name_down act text-center text-weight-bold"
+            >
+              Dear Esteemed customer please delivery options and cost with
+              Vendors
+            </div>
           </div>
         </div>
         <!--  <div
@@ -281,6 +288,7 @@ let onSelectEmoji = (emoji) => {
 };
 
 let sendMessage = () => {
+  console.log(props.conversationDetails);
   if (newMessage.value === "") {
     Notify.create({
       message: "Type in a message",
@@ -292,12 +300,8 @@ let sendMessage = () => {
   sendingMessageLoading.value = true;
   authAxios
     .post(`chat/${props.conversationDetails.slug}/message/send`, {
-      sender_id:
-        store?.userdetails?.roles[0].name === "shopper"
-          ? props.conversationDetails.customer.id
-          : props.conversationDetails.merchant.id,
-      sender_type:
-        store?.userdetails?.roles[0].name === "shopper" ? "user" : "merchant",
+      sender_id: store?.userdetails?.id,
+      sender_type: store?.userdetails?.roles[0].name,
       message: newMessage.value,
       // sender_id: store.userdetails.id,
       // sender_type: store.userdetails.roles

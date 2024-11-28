@@ -196,7 +196,7 @@
             </div>
           </div>
           <div v-if="typeOfPrice === 'fixed'" class="input_wrap">
-            <label for="">Product Price <span>*</span></label>
+            <label for="">Product Price($) <span>*</span></label>
             <div class="input">
               <input
                 v-model="data.minimum_price"
@@ -204,10 +204,90 @@
                 type="text"
               />
             </div>
-            <small class="text-grey-9"
-              >Note: Leave the price field empty if the buyer needs to cntact
-              you for details</small
-            >
+            <div class="row q-mt-sm items-center justify-between">
+              <small class="text-grey-9"
+                >Note: Leave the price field empty if the buyer needs to cntact
+                you for details</small
+              >
+
+              <q-btn
+                push
+                color="primary"
+                no-caps
+                no-wrap
+                :disable="!data.minimum_price"
+                size="10px"
+                label="View price in your currency"
+              >
+                <q-popup-proxy>
+                  <q-card class="q-pa-md">
+                    <div style="margin-top: 0rem" class="auth">
+                      <div class="input_wrap">
+                        <label for="">See price in your currency</label>
+                        <div class="input">
+                          <select
+                            @change="getTotalInCurrency"
+                            v-model="showEquivInCurrency"
+                            required
+                          >
+                            <option disabled value="">Choose</option>
+                            <option
+                              v-for="currency in currencies"
+                              :key="currency.name"
+                              :value="currency.code"
+                            >
+                              {{ currency.name }} {{ currency.flag }}
+                            </option>
+                          </select>
+                        </div>
+                      </div>
+                      <p class="text-weight-bold text-body1">
+                        Product price:
+                        <span
+                          v-if="data?.minimum_price"
+                          class="text-blue-10 q-mt-md text-body2 text-weight-bold"
+                        >
+                          $
+                          {{
+                            data?.minimum_price?.replace(
+                              /\B(?=(\d{3})+(?!\d))/g,
+                              ","
+                            )
+                          }}
+                        </span>
+                      </p>
+                      <!-- {{ showEquivInCurrency }} -->
+                      <p
+                        v-if="currencyRatesData.rates && showEquivInCurrency"
+                        class="q-mt-xs"
+                      >
+                        {{ showEquivInCurrency }} to Dollar rate at this time is
+                        <span class="text-green text-weight-bold">
+                          {{ showEquivInCurrency }}
+                          {{ currencyRatesData?.rates[showEquivInCurrency] }}
+                        </span>
+                      </p>
+                      <p
+                        v-if="currencyRatesData.rates && showEquivInCurrency"
+                        class="q-mt-xs"
+                      >
+                        <!-- {{ parseFloat(product?.price?.minimum_price) }} -->
+                        Product price in {{ showEquivInCurrency }} is
+                        <strong>
+                          {{ showEquivInCurrency }}
+                          {{
+                            (
+                              parseFloat(data?.minimum_price) *
+                              currencyRatesData?.rates[showEquivInCurrency]
+                            ).toLocaleString()
+                          }}</strong
+                        >
+                      </p>
+                    </div>
+                  </q-card>
+                </q-popup-proxy>
+              </q-btn>
+            </div>
           </div>
           <div v-if="typeOfPrice === 'negotiable'" class="input_wrap">
             <label for="">Product Price <span>*</span></label>
@@ -217,6 +297,91 @@
                 placeholder="N0.00"
                 type="text"
               />
+            </div>
+
+            <div class="row q-mt-sm items-center justify-between">
+              <small class="text-grey-9"
+                >Note: Leave the price field empty if the buyer needs to cntact
+                you for details</small
+              >
+
+              <q-btn
+                push
+                color="primary"
+                no-caps
+                no-wrap
+                :disable="!data.minimum_price"
+                size="10px"
+                label="View price in your currency"
+              >
+                <q-popup-proxy>
+                  <q-card class="q-pa-md">
+                    <div style="margin-top: 0rem" class="auth">
+                      <div class="input_wrap">
+                        <label for="">See price in your currency</label>
+                        <div class="input">
+                          <select
+                            @change="getTotalInCurrency"
+                            v-model="showEquivInCurrency"
+                            required
+                          >
+                            <option disabled value="">Choose</option>
+                            <option
+                              v-for="currency in currencies"
+                              :key="currency.name"
+                              :value="currency.code"
+                            >
+                              {{ currency.name }} {{ currency.flag }}
+                            </option>
+                          </select>
+                        </div>
+                      </div>
+                      <p class="text-weight-bold text-body1">
+                        Product price:
+                        <span
+                          v-if="data?.minimum_price"
+                          class="text-blue-10 q-mt-md text-body2 text-weight-bold"
+                        >
+                          $
+                          {{
+                            data?.minimum_price?.replace(
+                              /\B(?=(\d{3})+(?!\d))/g,
+                              ","
+                            )
+                          }}
+                        </span>
+                      </p>
+                      <!-- {{ showEquivInCurrency }} -->
+                      <p
+                        v-if="currencyRatesData.rates && showEquivInCurrency"
+                        class="q-mt-xs"
+                      >
+                        {{ showEquivInCurrency }} to Dollar rate at this time is
+                        <span class="text-green text-weight-bold">
+                          {{ showEquivInCurrency }}
+                          {{ currencyRatesData?.rates[showEquivInCurrency] }}
+                        </span>
+                      </p>
+                      <p
+                        v-if="currencyRatesData.rates && showEquivInCurrency"
+                        class="q-mt-xs"
+                      >
+                        <!-- {{ parseFloat(product?.price?.minimum_price) }} -->
+                        Product price in {{ showEquivInCurrency }} is
+                        <strong>
+                          {{ showEquivInCurrency }}
+                          {{
+                            (
+                              parseFloat(data?.minimum_price) *
+                              currencyRatesData?.rates[showEquivInCurrency]
+                            ).toLocaleString()
+                          }}</strong
+                        >
+                      </p>
+                    </div>
+                  </q-card>
+                </q-popup-proxy>
+              </q-btn>
             </div>
           </div>
           <!-- <div class="input_wrap">
@@ -397,7 +562,7 @@
 </template>
 
 <script setup>
-import { Loading, Notify, QSpinnerOval } from "quasar";
+import { Loading, Notify, QSpinnerOval, QSpinnerRings } from "quasar";
 import { authAxios } from "src/boot/axios";
 import { useMyAuthStore } from "src/stores/auth";
 import { onMounted, ref } from "vue";
@@ -406,7 +571,7 @@ import { useRoute, useRouter } from "vue-router";
 import countries from "../../../countries";
 import FooterCompVue from "src/components/FooterComp.vue";
 import currencies from "../../../currencies";
-
+import axios from "axios";
 let store = useMyAuthStore();
 let router = useRouter();
 let route = useRoute();
@@ -442,6 +607,8 @@ let loadingProducts = ref(true);
 let puborUnpubLoadBtn = ref(false);
 let loading = ref(false);
 let errors = ref({});
+let currencyRatesData = ref({});
+let showEquivInCurrency = ref("");
 let countriesArr = ref([]);
 let countriesBaseArr = [];
 
@@ -461,7 +628,22 @@ const filterFn = (val, update, abort) => {
     );
   });
 };
-
+const getTotalInCurrency = async () => {
+  // console.log("first");
+  Loading.show({
+    spinner: QSpinnerRings,
+    spinnerColor: "yellow",
+    spinnerSize: 140,
+    message: "Fetching, please wait...",
+    messageColor: "white",
+  });
+  let response = await axios.get(
+    "https://openexchangerates.org/api/latest.json?app_id=928ab800ac8d4100ae7d72be1fbf3ca0"
+  );
+  console.log(response);
+  currencyRatesData.value = response.data;
+  Loading.hide();
+};
 const setCoverFile = (props) => {
   coverFile.value = props;
   var reader = new FileReader();
@@ -476,7 +658,7 @@ const setCoverFile = (props) => {
   });
   authAxios
     .post(
-      `merchant/${store.storedetails.slug}/update-media`,
+      `merchant/${store.storedetails.slug}/media/update`,
       {
         banner: coverFile.value,
       },
@@ -590,7 +772,7 @@ const setProfileFile = (props) => {
   });
   authAxios
     .post(
-      `merchant/${store.storedetails.slug}/update-media`,
+      `merchant/${store.storedetails.slug}/media/update`,
       {
         logo: profileFile.value,
       },

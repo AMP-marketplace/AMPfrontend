@@ -72,13 +72,16 @@
       </router-link>
     </div>
     <div style="gap: 0.5rem" class="row justify-end items-center no-wrap">
+      <!-- :disable="
+          !product.price || isNaN(parseFloat(product.price.minimum_price))
+        " -->
       <q-btn
         no-caps
         class="addtocart q-mt-sm"
         no-wrap
-        v-if="store.role !== 'merchant'"
+        v-if="store.storedetails.slug !== product?.merchant.slug"
         @click="cartStore.addTocart(product)"
-        color="primary"
+        color="green-7"
         >Add to cart <i class="fa-solid q-ml-sm fa-cart-shopping"></i
       ></q-btn>
 
@@ -179,7 +182,10 @@
         >
       </p>
 
-      <p class="view_details q-mt-md">
+      <p
+        style="gap: 0.7rem"
+        class="view_details row justify-between items-center q-mt-md"
+      >
         <router-link
           style="text-decoration: underline"
           :to="{
@@ -197,6 +203,96 @@
         >
           View Details
         </router-link>
+
+        <q-btn
+          push
+          color="primary"
+          no-caps
+          no-wrap
+          :disable="
+            !product.price || isNaN(parseFloat(product.price.minimum_price))
+          "
+          size="10px"
+          label="View price in your currency"
+        >
+          <q-popup-proxy>
+            <q-card class="q-pa-md">
+              <div style="margin-top: 0rem" class="auth">
+                <div class="input_wrap">
+                  <label for="">See price in your currency</label>
+                  <div class="input">
+                    <select
+                      @change="getTotalInCurrency"
+                      v-model="showEquivInCurrency"
+                      required
+                    >
+                      <option disabled value="">Choose</option>
+                      <option
+                        v-for="currency in currencies"
+                        :key="currency.name"
+                        :value="currency.code"
+                      >
+                        {{ currency.name }} {{ currency.flag }}
+                      </option>
+                    </select>
+                  </div>
+                </div>
+                <p class="text-weight-bold text-body1">
+                  Product price:
+                  <span
+                    v-if="product?.price?.minimum_price"
+                    class="text-blue-10 q-mt-md text-body2 text-weight-bold"
+                  >
+                    {{ getCountryCurrencySymbol(product?.country) }}
+                    {{
+                      product?.price?.minimum_price?.replace(
+                        /\B(?=(\d{3})+(?!\d))/g,
+                        ","
+                      )
+                    }}
+                    <span v-if="product?.price?.maximum_price !== '1'"> -</span>
+                    <span v-if="product?.price?.maximum_price !== '1'">
+                      {{ getCountryCurrencySymbol(product?.country)
+                      }}{{
+                        product?.price?.maximum_price?.replace(
+                          /\B(?=(\d{3})+(?!\d))/g,
+                          ","
+                        )
+                      }}</span
+                    >
+                  </span>
+                </p>
+                <!-- {{ showEquivInCurrency }} -->
+                <p
+                  v-if="currencyRatesData.rates && showEquivInCurrency"
+                  class="q-mt-xs"
+                >
+                  {{ showEquivInCurrency }} to Dollar rate at this time is
+                  <span class="text-green text-weight-bold">
+                    {{ showEquivInCurrency }}
+                    {{ currencyRatesData?.rates[showEquivInCurrency] }}
+                  </span>
+                </p>
+                <p
+                  v-if="currencyRatesData.rates && showEquivInCurrency"
+                  class="q-mt-xs"
+                >
+                  <!-- {{ parseFloat(product?.price?.minimum_price) }} -->
+                  Product price in {{ showEquivInCurrency }} is
+                  <strong>
+                    {{ showEquivInCurrency }}
+                    {{
+                      (
+                        parseFloat(product?.price?.minimum_price) *
+                        currencyRatesData?.rates[showEquivInCurrency]
+                      ).toLocaleString()
+                    }}</strong
+                  >
+                </p>
+              </div>
+            </q-card>
+          </q-popup-proxy>
+        </q-btn>
       </p>
     </div>
   </div>
@@ -207,15 +303,36 @@ import { useMyAuthStore } from "src/stores/auth";
 import { useCartStore } from "src/stores/cart";
 import { useRoute } from "vue-router";
 import { formatDistanceToNow, parseISO } from "date-fns";
+import currencies from "app/currencies";
+import countries from "app/countries";
+import { Loading, QSpinnerRings } from "quasar";
+import axios from "axios";
+import { ref } from "vue";
 let route = useRoute();
 let store = useMyAuthStore();
 let cartStore = useCartStore();
-import currencies from "app/currencies";
-import countries from "app/countries";
-
+let showEquivInCurrency = ref("");
+let currencyRatesData = ref({});
 let props = defineProps({
   product: Object,
 });
+
+const getTotalInCurrency = async () => {
+  // console.log("first");
+  Loading.show({
+    spinner: QSpinnerRings,
+    spinnerColor: "yellow",
+    spinnerSize: 140,
+    message: "Fetching, please wait...",
+    messageColor: "white",
+  });
+  let response = await axios.get(
+    "https://openexchangerates.org/api/latest.json?app_id=928ab800ac8d4100ae7d72be1fbf3ca0"
+  );
+  console.log(response);
+  currencyRatesData.value = response.data;
+  Loading.hide();
+};
 
 function formatDate() {
   const date = parseISO(props.product?.created_at);

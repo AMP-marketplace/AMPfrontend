@@ -2,6 +2,14 @@ v
 <template>
   <div class="q-mt-xl">
     <div class="container">
+      <p class="q-my-sm text-center">
+        <strong> Dear exteemed customer</strong> please note that even though
+        you see prices in dollars you can check its equivalent in your local
+        currency. Also <strong>NOTE:</strong> that on checkout you will be able
+        to see the order total equivalent in your local currency and using the
+        Dollar option on checkout you can enter a valid Card detail and it will
+        charge the dollar equivalent in your local currency.
+      </p>
       <div class="row items-center no-wrap justify-between">
         <h4 class="bigText q-pa-sm q-mb-md"></h4>
         <div class="search_input">
@@ -468,6 +476,7 @@ const clearAllFilters = () => {
 onMounted(() => {
   getCategories();
   productStore.products = [];
+  productStore.loadingProducts = true;
   productStore.fetchProducts();
   // if (productStore.products.length) {
   //   return;
