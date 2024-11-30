@@ -2,10 +2,14 @@
   <div class="q-pb-xl">
     <div class="top_modal">
       <h4 class="text1">Account Information</h4>
+      <p class="text-weight-bold">
+        Please enter a valid Nigeria Naira or Nigeria Dollar Bank account. We
+        are currently expanding this reach.
+      </p>
     </div>
     <!-- {{ bankDetails }} -->
     <q-separator class="q-mt-lg" />
-    <div v-if="!bankDetails.account_name || editState" class="auth">
+    <div v-if="!bankDetails?.account_name || editState" class="auth">
       <form @submit.prevent="addInfo">
         <div class="auth_grid">
           <div class="input_wrap">
@@ -85,9 +89,9 @@
 
     <div v-else>
       <div class="row q-mt-md justify-end">
-        <q-btn @click="toggleEdit" no-caps no-wrap color="primary"
+        <!-- <q-btn @click="toggleEdit" no-caps no-wrap color="primary"
           >Edit Data</q-btn
-        >
+        > -->
       </div>
 
       <p class="mediumText">
@@ -170,7 +174,7 @@ const addInfo = () => {
       .then((response) => {
         console.log(response);
         getInfo();
-        bankDetails.value = response.data.data;
+        // bankDetails.value = response.data.data;
         Loading.hide();
         Notify.create({
           message: response.data.message,

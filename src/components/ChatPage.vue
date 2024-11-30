@@ -10,9 +10,11 @@
             <!-- {{ conversationDetails.participants[1] }} -->
             <div class="title name_top">
               {{
-                conversationDetails?.participants[1]?.data?.business_name
-                  ? conversationDetails?.participants[1]?.data?.business_name
+                route.name === "merchant.messages"
+                  ? conversationDetails?.messages[0]?.sender?.name
                   : conversationDetails?.participants[1]?.data?.name
+                  ? conversationDetails?.participants[1]?.data?.name
+                  : conversationDetails?.participants[1]?.data?.business_name
               }}
             </div>
             <div class="name_down act text-weight-bold">Active</div>
@@ -20,8 +22,10 @@
               v-if="conversationDetails?.participants[1]?.data?.name"
               class="name_down act text-center text-weight-bold"
             >
-              Dear Esteemed customer please delivery options and cost with
-              Vendors
+              <small
+                >Dear Esteemed customer please delivery options and cost with
+                Vendors</small
+              >
             </div>
           </div>
         </div>
@@ -199,7 +203,8 @@ import clickOutside from "vue3-clickoutside-component";
 import Pusher from "pusher-js";
 import "vue3-emoji-picker/css";
 import { useMyAuthStore } from "src/stores/auth";
-
+import { useRoute } from "vue-router";
+let route = useRoute();
 let store = useMyAuthStore();
 let whispering = ref(false);
 let listening = ref(false);
@@ -232,7 +237,7 @@ Pusher.logToConsole = true;
 // Access the globally available Pusher instance
 const pusher = new Pusher("f71ee69f460a2ede9930", {
   cluster: "eu",
-  authEndpoint: "https://agora.lyt24tech.com/api/broadcasting/auth",
+  authEndpoint: "https://agora.lyt24tech.com/api/v1/broadcasting/auth",
   auth: {
     headers: {
       Authorization: `Bearer ${store.token}`, // Replace with your auth token
@@ -300,8 +305,17 @@ let sendMessage = () => {
   sendingMessageLoading.value = true;
   authAxios
     .post(`chat/${props.conversationDetails.slug}/message/send`, {
-      sender_id: store?.userdetails?.id,
-      sender_type: store?.userdetails?.roles[0].name,
+      sender_id:
+        store?.userdetails?.roles[0].name === "shopper"
+          ? store?.userdetails?.id
+          : store?.storedetails?.id,
+      sender_type:
+        store?.userdetails?.roles[0].name === "shopper" ? "user" : "merchant",
+      //   store?.userdetails?.roles[0].name === "shopper"
+      //     ? props.conversationDetails.customer.id
+      //     : props.conversationDetails.merchant.id,
+      // sender_type:
+      //   store?.userdetails?.roles[0].name === "shopper" ? "user" : "merchant",
       message: newMessage.value,
       // sender_id: store.userdetails.id,
       // sender_type: store.userdetails.roles

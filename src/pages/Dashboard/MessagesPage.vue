@@ -17,8 +17,8 @@
 
       <div class="sort_area">
         <q-btn flat class="active">Recent </q-btn>
-        <q-btn flat class="regular"> Expired </q-btn>
-        <q-btn flat class="regular"> Archived </q-btn>
+        <q-btn flat class="regular"> </q-btn>
+        <q-btn flat class="regular"> </q-btn>
       </div>
     </div>
     <div v-if="rows.length" class="style q-py-md">
@@ -48,15 +48,20 @@
                 />
               </q-avatar>
               <div class="name">
+                <!-- {{ props.row }} -->
                 <div class="name_top">
-                  {{ props.row.customer.name }}
+                  {{
+                    props?.row?.participants[0].data.business_name
+                      ? props?.row?.participants[0].data.business_name
+                      : props?.row?.participants[0].data.name
+                  }}
                 </div>
                 <div class="name_down">
-                  {{ props.row.customer.email }}
+                  {{ props?.row?.messages.length }} Messages
                 </div>
-                <div class="name_last">
-                  {{ props.row.customer.phone }}
-                </div>
+                <!-- <div class="name_last">
+                  {{ props?.row?.participants[0].data?.phone }}
+                </div> -->
               </div>
             </div>
           </q-td>
@@ -113,7 +118,7 @@ const columns = [
     required: true,
     label: "Messages",
     align: "left",
-    field: (row) => row.user,
+    field: (row) => row?.sender.name,
     sortable: true,
   },
   {
@@ -150,7 +155,7 @@ let pagination = ref({
   sortBy: "id",
   descending: false,
   page: 1,
-  rowsPerPage: 5,
+  rowsPerPage: 10,
   // rowsNumber: 100,
 });
 let loaders = ref({
@@ -172,7 +177,7 @@ let onRequest = (props) => {
     .then(({ data }) => {
       console.log(data);
       loadingCol.value = false;
-      rows.value = data.data;
+      rows.value = data.data.filter((message) => message.messages.length);
     })
     .catch(({ response }) => {
       loadingCol.value = false;

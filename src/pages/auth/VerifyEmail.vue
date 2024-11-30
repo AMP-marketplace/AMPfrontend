@@ -98,7 +98,7 @@ const submitForm = () => {
       loading.value = false;
       Dialog.create({
         title: "Successful",
-        message: `We have sent some instructions to your mail enable you continue, please check your mail ${data.value.email}. By clicking 'Ok' we would take you back to your dashboard`,
+        message: `We have sent some instructions to your mail enable you continue, please check your mail ${data.value.email}. By clicking 'Ok' we would take you back to your dashboard. Please make sure you are logged in on the device the mail was sent to to successfully verify your EMAIL.`,
         persistent: true,
       })
         .onOk(() => {

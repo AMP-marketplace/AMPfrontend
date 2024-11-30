@@ -10,7 +10,7 @@ v
       <!-- <h6>Shipping Address</h6> -->
 
       <!-- {{ route.name }} -->
-      <div v-if="!authStore.token">
+      <div style="max-width: 700px" v-if="!authStore.token">
         <q-separator class="q-my-xs" />
         <p class="text-body1">
           Do you already have an account?
@@ -25,26 +25,26 @@ v
           >
             Login
           </router-link>
-          <br />
-          or continue to create a new acount to checkout. <br />
-          You can use a default shipping address when you are logged in.
+
+          or continue to create a new acount to checkout. You can use a default
+          shipping address when you are logged in.
         </p>
         <p class="text-grey-7 text-weight-bold">
-          Note: At this point you should have discussed delivery fee with
-          vendors.
+          Note: At this point you should have discussed delivery fee or delivery
+          procedure with vendors, find the delivery type selection below.
         </p>
       </div>
-      <div v-else>
+      <div style="max-width: 700px" v-else>
         <q-separator class="q-my-sm" />
         <p>
-          Your can select from a list of delivery addresses you have checkedout
-          <br />
+          You can select from a list of delivery addresses you have checkedout
           with before or fill out delivery details to checkout
         </p>
 
         <p class="text-red-7 text-weight-bold">
-          Note: If you select an address from the previous addresses <br />
-          you no longer need to fill in the form just click continue
+          Note: If you select an address from the previous addresses you no
+          longer need to fill in the form, just select a valid delivery type and
+          click continue
         </p>
         <p class="text-grey-7 text-weight-bold">
           Note: At this point you should have discussed delivery fee with
@@ -175,7 +175,9 @@ v
                   <div class="q-pa-md">
                     <div class="row items-center justify-center">
                       <q-btn
-                        :disable="!addressData.address_line_1"
+                        :disable="
+                          !addressData.address_line_1 || !delivery_method
+                        "
                         @click="checkoutCurrencyModal = !checkoutCurrencyModal"
                         color="green-7"
                         no-caps
@@ -186,8 +188,15 @@ v
                       </q-btn>
                     </div>
                     <p v-if="addressArr.length" class="q-mt-xs text-center">
-                      Please make your have selected an address before clicking
-                      continue
+                      Please make you have selected
+                      <span class="text-weight-bold text-green-7"
+                        >an address
+                      </span>
+                      and a
+                      <span class="text-weight-bold text-green-7">
+                        valid delivery type
+                      </span>
+                      before clicking continue
                     </p>
                   </div>
                 </q-card>

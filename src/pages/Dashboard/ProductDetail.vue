@@ -665,7 +665,7 @@ const setProductImage = (props) => {
   formData.append("media[]", AnotherproductImageFile.value);
   authAxios
     .post(
-      `merchant/${store.storedetails.slug}/${data.value.slug}/upload/media`,
+      `merchant/${store.storedetails.slug}/${data.value.slug}/media/upload`,
       formData,
       {
         headers: {
