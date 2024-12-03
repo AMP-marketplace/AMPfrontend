@@ -3,8 +3,8 @@
     <div class="top_modal">
       <h4 class="text1">Account Information</h4>
       <p class="text-weight-bold">
-        Please enter a valid Nigeria Naira or Nigeria Dollar Bank account. We
-        are currently expanding this reach.
+        Please provide a valid Nigeria Naira, Nigerian Dollar Bank account. We
+        are working to expand our options soon.
       </p>
     </div>
     <!-- {{ bankDetails }} -->

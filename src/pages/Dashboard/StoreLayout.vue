@@ -190,7 +190,7 @@
                 clickable
                 v-ripple
               >
-                <q-item-section> Account and Payment (Escrow) </q-item-section>
+                <q-item-section>Payments </q-item-section>
               </q-item>
               <q-item
                 :to="{ name: 'customer.orders' }"
@@ -338,7 +338,7 @@
               no-caps
               type="submit"
             >
-              Edit
+              Save changes
             </q-btn>
           </div>
         </form>
@@ -365,14 +365,14 @@
       >
         <q-item-section> Account Dashboard </q-item-section>
       </q-item>
-      <q-item
+      <!-- <q-item
         :to="{ name: 'payment.escrow' }"
         class="navLinks"
         clickable
         v-ripple
       >
         <q-item-section> Account and Payment (Escrow) </q-item-section>
-      </q-item>
+      </q-item> -->
       <q-item
         :to="{ name: 'customer.orders' }"
         class="navLinks"
@@ -382,7 +382,7 @@
         <q-item-section> Customer Orders </q-item-section>
       </q-item>
 
-      <q-separator />
+      <!-- <q-separator />
       <q-item
         :to="{ name: 'dispatch.riders' }"
         class="navLinks"
@@ -390,7 +390,7 @@
         v-ripple
       >
         <q-item-section> Dispatch Drivers </q-item-section>
-      </q-item>
+      </q-item> -->
       <q-item
         :to="{ name: 'account.info' }"
         class="navLinks"
@@ -476,7 +476,7 @@ const editStore = () => {
     message: "Editing store data...",
   });
   authAxios
-    .patch(`merchant/${store.userdetails.slug}/update`, {
+    .patch(`merchant/${store.storedetails.slug}/update`, {
       ...data.value,
     })
     .then((response) => {

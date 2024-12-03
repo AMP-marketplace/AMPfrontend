@@ -2,14 +2,14 @@
   <div>
     <div class="auth">
       <div class="q-mt-lg">
-        <div class="row items-center justify-between">
-          <h4 class="bigMediumText">Escrow Information</h4>
+        <!-- <div class="row items-center justify-between">
+          <h4 class="bigMediumText">Payments Information</h4>
           <div></div>
         </div>
 
-        <q-separator />
+        <q-separator /> -->
 
-        <div class="escrow_top_area">
+        <!-- <div class="escrow_top_area">
           <div style="gap: 1rem" class="row items-center no-wrap">
             <div class="img">
               <img src="../../assets/escrowtotalamt.svg" alt="" />
@@ -37,7 +37,7 @@
               <h4 class="text1">15</h4>
             </div>
           </div>
-        </div>
+        </div> -->
 
         <div style="gap: 1rem" class="sortbtns row items-center">
           <q-btn
