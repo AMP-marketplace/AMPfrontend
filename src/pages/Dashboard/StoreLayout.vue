@@ -518,7 +518,7 @@ const setCoverFile = (props) => {
   });
   authAxios
     .post(
-      `merchant/${store.storedetails.slug}/update-media`,
+      `merchant/${store.storedetails.slug}/media/update`,
       {
         banner: coverFile.value,
       },
@@ -568,7 +568,7 @@ const setProductImage = (props) => {
   });
   authAxios
     .post(
-      `merchant/product/${addedProductData.value.id}/upload-image`,
+      `merchant/${store.storedetails.slug}/${addedProductData.value.slug}/media/upload`,
       {
         image: productImageFile.value,
         role: "main",
@@ -629,7 +629,7 @@ const setProfileFile = (props) => {
   });
   authAxios
     .post(
-      `merchant/${store.storedetails.slug}/update-media`,
+      `merchant/${store.storedetails.slug}/media/update`,
       {
         logo: profileFile.value,
       },

@@ -15,11 +15,24 @@
           :columns="columns"
           row-key="investor"
           :filter="filter"
-          class="sort_tables"
+          class="sort_tables orders"
           :loading="loading"
           v-model:pagination="pagination"
           @request="onRequest"
         >
+          <template v-slot:body-cell-product="props">
+            <q-td :props="props">
+              <div style="gap: 1rem" class="row no-wrap items-center">
+                <p style="border-radius: 8px; max-width: 300px">
+                  {{
+                    props.row.products
+                      .map((product) => product.product.name)
+                      .toString() + " "
+                  }}
+                </p>
+              </div>
+            </q-td>
+          </template>
           <template v-slot:body-cell-status="props">
             <q-td :props="props">
               <div style="gap: 1rem" class="row no-wrap items-center">
@@ -105,10 +118,7 @@ const columns = [
     required: true,
     label: "Products name",
     align: "left",
-    field: (row) =>
-      `${row.products.map(
-        (product) => product.product.name.toString() + " "
-      )} `,
+    field: "product",
     sortable: true,
   },
   {

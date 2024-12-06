@@ -791,6 +791,10 @@ hr {
 .q-table tbody td {
 }
 
+.sort_tables.orders td:first-of-type {
+  white-space: normal;
+}
+
 .stores_wrap {
   .stores_card {
     position: relative;

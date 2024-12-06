@@ -846,7 +846,7 @@ const setCoverFile = (props) => {
   });
   authAxios
     .post(
-      `merchant/${store.storedetails.slug}/update-media`,
+      `merchant/${store.storedetails.slug}/media/update`,
       {
         banner: coverFile.value,
       },
@@ -957,7 +957,7 @@ const setProfileFile = (props) => {
   });
   authAxios
     .post(
-      `merchant/${store.storedetails.slug}/update-media`,
+      `merchant/${store.storedetails.slug}/media/update`,
       {
         logo: profileFile.value,
       },

@@ -68,55 +68,57 @@ v
                       <div v-if="addressArr.length">
                         <p>Your previous delivery addresses</p>
                         <q-list class="bg-white">
-                          <q-item
-                            class="q-my-sm bg-grey-2"
-                            v-for="(address, index) in addressArr"
-                            :key="index"
-                          >
-                            <q-item-section>
-                              <q-item-label
-                                >{{ address.first_name }}
-                                {{ address.last_name }}</q-item-label
-                              >
-                              <q-item-label caption lines="2">{{
-                                address.address_line_1
-                              }}</q-item-label>
-                              <q-item-label caption lines="2"
-                                >{{ address.city }}, {{ address.state }},
-                                {{ address.country }}.</q-item-label
-                              >
-                              <q-item-label caption lines="2">{{
-                                address.postal_code
-                              }}</q-item-label>
-                            </q-item-section>
-
-                            <q-item-section side top>
-                              <div
-                                style="gap: 1rem"
-                                class="row q-mt-md items-center no-wrap"
-                              >
-                                <q-btn
-                                  @click="setDefault(address)"
-                                  no-caps
-                                  no-wrap
-                                  color="green-7"
-                                >
-                                  Use this delivery address
-                                </q-btn>
-                              </div>
-                            </q-item-section>
-
-                            <q-badge
-                              v-if="
-                                address.address_line_1 ===
-                                addressData.address_line_1
-                              "
-                              color="green"
-                              floating
+                          <q-scroll-area style="height: 200px">
+                            <q-item
+                              class="q-my-sm bg-grey-2"
+                              v-for="(address, index) in addressArr"
+                              :key="index"
                             >
-                              selected
-                            </q-badge>
-                          </q-item>
+                              <q-item-section>
+                                <q-item-label
+                                  >{{ address.first_name }}
+                                  {{ address.last_name }}</q-item-label
+                                >
+                                <q-item-label caption lines="2">{{
+                                  address.address_line_1
+                                }}</q-item-label>
+                                <q-item-label caption lines="2"
+                                  >{{ address.city }}, {{ address.state }},
+                                  {{ address.country }}.</q-item-label
+                                >
+                                <q-item-label caption lines="2">{{
+                                  address.postal_code
+                                }}</q-item-label>
+                              </q-item-section>
+
+                              <q-item-section side top>
+                                <div
+                                  style="gap: 1rem"
+                                  class="row q-mt-md items-center no-wrap"
+                                >
+                                  <q-btn
+                                    @click="setDefault(address)"
+                                    no-caps
+                                    no-wrap
+                                    color="green-7"
+                                  >
+                                    Use this delivery address
+                                  </q-btn>
+                                </div>
+                              </q-item-section>
+
+                              <q-badge
+                                v-if="
+                                  address.address_line_1 ===
+                                  addressData.address_line_1
+                                "
+                                color="green"
+                                floating
+                              >
+                                selected
+                              </q-badge>
+                            </q-item>
+                          </q-scroll-area>
                         </q-list>
                       </div>
 
@@ -136,8 +138,17 @@ v
                       </div>
                     </div>
                   </q-card-section>
+                  <p
+                    class="text-green-7 q-px-md text-weight-bold"
+                    v-if="addressData.address_line_1"
+                  >
+                    Please proceed to select delivery type
+                  </p>
                   <div style="margin-top: 0" class="auth q-px-md">
-                    <div class="input_wrap">
+                    <div
+                      :class="addressData.address_line_1 ? 'add_border' : ''"
+                      class="input_wrap"
+                    >
                       <label for="">Delivery type </label>
                       <div class="input">
                         <select v-model="delivery_method">
@@ -188,7 +199,7 @@ v
                       </q-btn>
                     </div>
                     <p v-if="addressArr.length" class="q-mt-xs text-center">
-                      Please make you have selected
+                      Please make sure you have selected
                       <span class="text-weight-bold text-green-7"
                         >an address
                       </span>
@@ -205,134 +216,172 @@ v
             <div class="text-h5 text-center q-my-sm" v-if="authStore.token">
               OR
             </div>
-            <div style="margin-top: 0" class="auth">
-              <form @submit.prevent="handleCheckout">
-                <div v-if="!authStore.token" class="input_wrap">
-                  <label for="">Email Address <span>*</span></label>
-                  <div class="input">
-                    <input v-model="data.email" required type="email" />
-                  </div>
-                  <small v-if="errors.email" class="text-red text-weight-bold">
-                    {{ errors.email[0] }}
-                  </small>
-                </div>
-                <!-- <p class="text-primary q-my-md smallerText">
+            <q-list bordered separator>
+              <q-expansion-item
+                :label="
+                  authStore.token
+                    ? 'Use another delivery address'
+                    : 'Create a new account with a delivery address to checkout'
+                "
+              >
+                <q-card>
+                  <q-card-section>
+                    <div>
+                      <div style="margin-top: 0" class="auth">
+                        <form @submit.prevent="handleCheckout">
+                          <div v-if="!authStore.token" class="input_wrap">
+                            <label for="">Email Address <span>*</span></label>
+                            <div class="input">
+                              <input
+                                v-model="data.email"
+                                required
+                                type="email"
+                              />
+                            </div>
+                            <small
+                              v-if="errors.email"
+                              class="text-red text-weight-bold"
+                            >
+                              {{ errors.email[0] }}
+                            </small>
+                          </div>
+                          <!-- <p class="text-primary q-my-md smallerText">
                   You can create an account after checkout.
                 </p> -->
-                <q-separator />
+                          <q-separator />
 
-                <div class="input_wrap">
-                  <label for="">First Name <span>*</span></label>
-                  <div class="input">
-                    <input v-model="data.first_name" required type="text" />
-                  </div>
+                          <div class="input_wrap">
+                            <label for="">First Name <span>*</span></label>
+                            <div class="input">
+                              <input
+                                v-model="data.first_name"
+                                required
+                                type="text"
+                              />
+                            </div>
 
-                  <small
-                    v-if="errors.first_name"
-                    class="text-red text-weight-bold"
-                  >
-                    {{ errors.first_name[0] }}
-                  </small>
-                </div>
-                <div class="input_wrap">
-                  <label for="">Last Name <span>*</span></label>
-                  <div class="input">
-                    <input v-model="data.last_name" required type="text" />
-                  </div>
-                  <small
-                    v-if="errors.last_name"
-                    class="text-red text-weight-bold"
-                  >
-                    {{ errors.last_name[0] }}
-                  </small>
-                </div>
-                <div v-if="!authStore.token" class="phone">
-                  <label for="">Phone Number<span>*</span></label>
-                  <div class="phone_wrap">
-                    <div class="country_select">
-                      <div class="input_wrap">
-                        <div class="input">
-                          <select v-model="country_code">
-                            <option
-                              v-for="(country, index) in countries"
-                              :key="index"
-                              :value="country.phoneCode"
+                            <small
+                              v-if="errors.first_name"
+                              class="text-red text-weight-bold"
                             >
-                              {{ country.phoneCode }} {{ country.flag }}
-                            </option>
-                          </select>
-                        </div>
-                      </div>
-                    </div>
-                    <div class="input_wrap">
-                      <div class="input">
-                        <input
-                          v-model="data.phone"
-                          placeholder="Enter phone number"
-                          required
-                          type="text"
-                        />
-                      </div>
-                    </div>
-                  </div>
-                  <small v-if="errors.phone" class="text-red text-weight-bold">
-                    {{ errors.phone[0] }}
-                  </small>
-                </div>
-                <div v-if="!authStore.token" class="password">
-                  <div class="input_wrap">
-                    <label for=""> Password<span>*</span></label>
-                    <div class="input row justify-between no-wrap">
-                      <input
-                        v-model="data.password"
-                        required
-                        :type="!viewConfirmPassword ? 'password' : 'text'"
-                      />
-                      <q-btn
-                        @click="viewConfirmPassword = !viewConfirmPassword"
-                        flat
-                        icon="visibility"
-                      >
-                      </q-btn>
-                    </div>
-                    <small
-                      v-if="errors.confirm_password"
-                      class="text-red text-weight-bold"
-                    >
-                      {{ errors.confirm_password[0] }}
-                    </small>
-                    <small
-                      v-if="errors.confirm_password"
-                      class="text-red text-weight-bold"
-                    >
-                      {{ errors.confirm_password[0] }}
-                    </small>
-                  </div>
-                </div>
-                <div class="input_wrap">
-                  <label for="">Street Address <span>*</span></label>
-                  <div class="input">
-                    <textarea
-                      v-model="data.street_address"
-                      required
-                      cols="30"
-                      rows="5"
-                    ></textarea>
-                  </div>
-                </div>
-                <div class="input_wrap">
-                  <label for="">City <span>*</span></label>
-                  <div class="input">
-                    <input v-model="data.city" required type="text" />
-                  </div>
-                </div>
-                <div class="input_wrap">
-                  <label for="">State <span>*</span></label>
-                  <div class="input">
-                    <input v-model="data.state" required type="text" />
-                  </div>
-                </div>
-                <!-- <div class="input_wrap">
+                              {{ errors.first_name[0] }}
+                            </small>
+                          </div>
+                          <div class="input_wrap">
+                            <label for="">Last Name <span>*</span></label>
+                            <div class="input">
+                              <input
+                                v-model="data.last_name"
+                                required
+                                type="text"
+                              />
+                            </div>
+                            <small
+                              v-if="errors.last_name"
+                              class="text-red text-weight-bold"
+                            >
+                              {{ errors.last_name[0] }}
+                            </small>
+                          </div>
+                          <div v-if="!authStore.token" class="phone">
+                            <label for="">Phone Number<span>*</span></label>
+                            <div class="phone_wrap">
+                              <div class="country_select">
+                                <div class="input_wrap">
+                                  <div class="input">
+                                    <select v-model="country_code">
+                                      <option
+                                        v-for="(country, index) in countries"
+                                        :key="index"
+                                        :value="country.phoneCode"
+                                      >
+                                        {{ country.phoneCode }}
+                                        {{ country.flag }}
+                                      </option>
+                                    </select>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="input_wrap">
+                                <div class="input">
+                                  <input
+                                    v-model="data.phone"
+                                    placeholder="Enter phone number"
+                                    required
+                                    type="text"
+                                  />
+                                </div>
+                              </div>
+                            </div>
+                            <small
+                              v-if="errors.phone"
+                              class="text-red text-weight-bold"
+                            >
+                              {{ errors.phone[0] }}
+                            </small>
+                          </div>
+                          <div v-if="!authStore.token" class="password">
+                            <div class="input_wrap">
+                              <label for=""> Password<span>*</span></label>
+                              <div class="input row justify-between no-wrap">
+                                <input
+                                  v-model="data.password"
+                                  required
+                                  :type="
+                                    !viewConfirmPassword ? 'password' : 'text'
+                                  "
+                                />
+                                <q-btn
+                                  @click="
+                                    viewConfirmPassword = !viewConfirmPassword
+                                  "
+                                  flat
+                                  icon="visibility"
+                                >
+                                </q-btn>
+                              </div>
+                              <small
+                                v-if="errors.confirm_password"
+                                class="text-red text-weight-bold"
+                              >
+                                {{ errors.confirm_password[0] }}
+                              </small>
+                              <small
+                                v-if="errors.confirm_password"
+                                class="text-red text-weight-bold"
+                              >
+                                {{ errors.confirm_password[0] }}
+                              </small>
+                            </div>
+                          </div>
+                          <div class="input_wrap">
+                            <label for="">Street Address <span>*</span></label>
+                            <div class="input">
+                              <textarea
+                                v-model="data.street_address"
+                                required
+                                cols="30"
+                                rows="5"
+                              ></textarea>
+                            </div>
+                          </div>
+                          <div class="input_wrap">
+                            <label for="">City <span>*</span></label>
+                            <div class="input">
+                              <input v-model="data.city" required type="text" />
+                            </div>
+                          </div>
+                          <div class="input_wrap">
+                            <label for="">State <span>*</span></label>
+                            <div class="input">
+                              <input
+                                v-model="data.state"
+                                required
+                                type="text"
+                              />
+                            </div>
+                          </div>
+                          <!-- <div class="input_wrap">
                 <label for="">State/Province<span>*</span></label>
                 <div class="input">
                   <select v-model="data.state" >
@@ -343,14 +392,18 @@ v
                 </div>
               </div> -->
 
-                <div class="input_wrap">
-                  <label for="">Zip/Postal Code <span>*</span></label>
-                  <div class="input">
-                    <input v-model="data.postal_code" required type="number" />
-                  </div>
-                </div>
+                          <div class="input_wrap">
+                            <label for="">Zip/Postal Code <span>*</span></label>
+                            <div class="input">
+                              <input
+                                v-model="data.postal_code"
+                                required
+                                type="number"
+                              />
+                            </div>
+                          </div>
 
-                <!-- <div class="input_wrap">
+                          <!-- <div class="input_wrap">
                 <label for="">Country<span>*</span></label>
                 <div class="input">
                   <select v-model="data.state" >
@@ -358,81 +411,93 @@ v
                   </select>
                 </div>
               </div> -->
-                <div class="input_wrap q-sel">
-                  <label for=""> Country <span>*</span></label>
-                  <div class="input">
-                    <q-select
-                      v-model="data.country"
-                      use-input
-                      @filter="filterFn"
-                      behavior="dialog"
-                      :options="countriesArr"
-                      class="multi_select"
-                      label="Select from the list of countiries"
-                      style="width: 100%"
-                      ><template v-slot:no-option>
-                        <q-item>
-                          <q-item-section class="text-grey">
-                            No results
-                          </q-item-section>
-                        </q-item>
-                      </template></q-select
-                    >
-                  </div>
-                  <small
-                    v-if="errors.country"
-                    class="text-weight-bold text-red"
-                  >
-                    {{ errors.country[0] }}
-                  </small>
-                </div>
-                <div class="input_wrap">
-                  <label for="">Delivery type </label>
-                  <div class="input">
-                    <select v-model="delivery_method">
-                      <option value="Enter Delivery Amount from Seller">
-                        Enter Delivery Amount from Seller – Allows the buyer to
-                        input the agreed delivery fee with the vendor.
-                      </option>
-                      <option value="Free Delivery">
-                        Free Delivery – Select this option if the vendor offers
-                        free delivery for the purchase.
-                      </option>
-                      <option value="Using My Own Delivery Pickup">
-                        Using My Own Delivery Pickup – Choose this option if the
-                        buyer plans to arrange their own logistics or pickup.
-                      </option>
-                    </select>
-                  </div>
-                </div>
-                <div
-                  v-if="delivery_method === 'Enter Delivery Amount from Seller'"
-                  class="input_wrap"
-                >
-                  <label for=""
-                    >Delivery cost(from seller) in dollars($)
-                    <span>*</span></label
-                  >
-                  <div class="input">
-                    <input v-model="delivery_cost" type="number" />
-                  </div>
-                </div>
-                <q-separator class="q-mt-lg" />
-                <div class="row justify-start q-mt-lg">
-                  <q-btn
-                    color="primary"
-                    class="q-px-xl"
-                    rounded
-                    no-wrap
-                    :loading="loadBtn"
-                    no-caps
-                    type="submit"
-                  >
-                    Next
-                  </q-btn>
-                </div>
-              </form>
-            </div>
+                          <div class="input_wrap q-sel">
+                            <label for=""> Country <span>*</span></label>
+                            <div class="input">
+                              <q-select
+                                v-model="data.country"
+                                use-input
+                                @filter="filterFn"
+                                behavior="dialog"
+                                :options="countriesArr"
+                                class="multi_select"
+                                label="Select from the list of countiries"
+                                style="width: 100%"
+                                ><template v-slot:no-option>
+                                  <q-item>
+                                    <q-item-section class="text-grey">
+                                      No results
+                                    </q-item-section>
+                                  </q-item>
+                                </template></q-select
+                              >
+                            </div>
+                            <small
+                              v-if="errors.country"
+                              class="text-weight-bold text-red"
+                            >
+                              {{ errors.country[0] }}
+                            </small>
+                          </div>
+                          <div class="input_wrap">
+                            <label for="">Delivery type </label>
+                            <div class="input">
+                              <select v-model="delivery_method">
+                                <option
+                                  value="Enter Delivery Amount from Seller"
+                                >
+                                  Enter Delivery Amount from Seller – Allows the
+                                  buyer to input the agreed delivery fee with
+                                  the vendor.
+                                </option>
+                                <option value="Free Delivery">
+                                  Free Delivery – Select this option if the
+                                  vendor offers free delivery for the purchase.
+                                </option>
+                                <option value="Using My Own Delivery Pickup">
+                                  Using My Own Delivery Pickup – Choose this
+                                  option if the buyer plans to arrange their own
+                                  logistics or pickup.
+                                </option>
+                              </select>
+                            </div>
+                          </div>
+                          <div
+                            v-if="
+                              delivery_method ===
+                              'Enter Delivery Amount from Seller'
+                            "
+                            class="input_wrap"
+                          >
+                            <label for=""
+                              >Delivery cost(from seller) in dollars($)
+                              <span>*</span></label
+                            >
+                            <div class="input">
+                              <input v-model="delivery_cost" type="number" />
+                            </div>
+                          </div>
+                          <q-separator class="q-mt-lg" />
+                          <div class="row justify-start q-mt-lg">
+                            <q-btn
+                              color="primary"
+                              class="q-px-xl"
+                              rounded
+                              no-wrap
+                              :loading="loadBtn"
+                              no-caps
+                              type="submit"
+                            >
+                              Next
+                            </q-btn>
+                          </div>
+                        </form>
+                      </div>
+                    </div>
+                  </q-card-section>
+                </q-card>
+              </q-expansion-item>
+            </q-list>
           </div>
         </div>
         <div class="checkout_details">

@@ -230,6 +230,12 @@ header {
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   }
 }
+
+.add_border {
+  border: 2px solid green;
+  border-radius: 5px;
+  padding: 0.75rem;
+}
 .product_card {
   max-width: 350px;
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
