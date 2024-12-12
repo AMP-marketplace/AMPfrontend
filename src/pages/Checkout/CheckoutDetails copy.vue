@@ -729,34 +729,26 @@ v
 
   <q-dialog v-model="showPaymentForm">
     <q-card>
+      <div class="form-header">
+        <div>Enter Your Payment Details</div>
+      </div>
+
       <q-form @submit.prevent="handleSubmit" class="q-mt-md">
-        <div>
-          <div class="stripe-logo row justify-center">
-            <img src="/images/stripe.png" alt="Stripe Logo" />
-          </div>
-          <div class="form-header q-my-md">
-            <div class="text-weight-bold">
-              Enter valid card details to complete your payment
-            </div>
-          </div>
-          <div ref="cardElement" id="card-element" class="q-mb-md"></div>
-          <!-- <q-btn type="submit" label="Submit Payment" color="secondary" /> -->
-          <div v-if="errorMessage" class="q-mt-md text-negative">
-            {{ errorMessage }}
-          </div>
-          <div class="row justify-center">
-            <q-btn
-              class="pay-button q-mt-md text-white"
-              type="submit"
-              no-caps
-              no-wrap
-              :loading="loadingBtn"
-              >Proceed</q-btn
-            >
-          </div>
-          <div class="stripe-logo q-mt-lg row justify-center">
-            <img src="/images/cards.png" alt="Stripe Logo" />
-          </div>
+        <!-- <small>Secure payments powered by <img src="https://stripe.com/img/logo.svg" alt="Stripe"></small> -->
+        <div ref="cardElement" id="card-element" class="q-mb-md"></div>
+        <!-- <q-btn type="submit" label="Submit Payment" color="secondary" /> -->
+        <div v-if="errorMessage" class="q-mt-md text-negative">
+          {{ errorMessage }}
+        </div>
+        <div class="row justify-center">
+          <q-btn
+            class="bg-primary q-mt-md text-white"
+            type="submit"
+            no-caps
+            no-wrap
+            :loading="loadingBtn"
+            >Proceed</q-btn
+          >
         </div>
       </q-form>
     </q-card>
@@ -848,19 +840,13 @@ watch(showPaymentForm, async (newValue) => {
     card = elements.create("card", {
       style: {
         base: {
-          iconColor: "#5469d4",
-          fontSize: "20px",
+          fontSize: "16px",
           color: "#32325d",
-          fontWeight: "500",
-          fontSmoothing: "antialiased",
           fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
           "::placeholder": {
             color: "#aab7c4",
           },
-          ":-webkit-autofill": {
-            color: "#fce883",
-          },
-          padding: "20px 12px",
+          padding: "10px 12px",
           border: "1px solid #ccc",
           borderRadius: "4px",
           backgroundColor: "#f8f9fa", // Light background for better contrast
@@ -1210,7 +1196,7 @@ const initPayment = () => {
           actions: [{ icon: "close", color: "white" }],
         });
         window.location.href = data.data;
-        // cartStore.cart = [];
+        cartStore.cart = [];
       })
       .catch(({ response }) => {
         Loading.hide();
@@ -1263,49 +1249,6 @@ onMounted(async () => {
   .small_container.left {
     width: 90%;
   }
-}
-
-.card-container {
-  max-width: 400px;
-  margin: 20px auto;
-  padding: 20px;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  background: #ffffff;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-}
-
-.stripe-logo {
-  text-align: center;
-  margin-bottom: 16px;
-}
-
-.stripe-logo img {
-  width: 120px;
-}
-
-.pay-button {
-  display: block;
-  width: 100%;
-  margin-top: 16px;
-  padding: 12px;
-  background: #5469d4;
-  color: #fff;
-  font-size: 16px;
-  font-weight: bold;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
-
-.pay-button:hover {
-  background: #4355c6;
-}
-
-.error-message {
-  color: #fa755a;
-  font-size: 14px;
-  margin-top: 8px;
 }
 
 @media (max-width: 800px) {

@@ -290,7 +290,7 @@
             </div>
           </div>
           <div v-if="typeOfPrice === 'negotiable'" class="input_wrap">
-            <label for="">Product Price <span>*</span></label>
+            <label for="">Product Price($) <span>*</span></label>
             <div class="input">
               <input
                 v-model="data.minimum_price"

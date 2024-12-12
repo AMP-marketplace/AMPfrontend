@@ -72,7 +72,7 @@
         </q-btn> -->
         <q-list padding>
           <q-item
-            :to="{ name: 'admin.list.merchants' }"
+            :to="{ name: 'admin.list.payments' }"
             class="links"
             v-ripple
             clickable
@@ -81,10 +81,10 @@
               <q-icon size="18px" name="home" />
             </q-item-section>
             <q-item-section>
-              <q-item-label>All Merchants</q-item-label>
+              <q-item-label>All Payments</q-item-label>
             </q-item-section>
           </q-item>
-          <q-item
+          <!-- <q-item
             :to="{ name: 'admin.list.kyc' }"
             class="links"
             v-ripple
@@ -122,7 +122,7 @@
             <q-item-section>
               <q-item-label>Fees</q-item-label>
             </q-item-section>
-          </q-item>
+          </q-item> -->
 
           <q-separator class="q-my-md" />
         </q-list>

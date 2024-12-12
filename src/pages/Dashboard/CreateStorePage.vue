@@ -388,7 +388,7 @@
             </div>
           </div>
           <div v-if="typeOfPrice === 'fixed'" class="input_wrap">
-            <label for="">Product Price <span>*</span></label>
+            <label for="">Product Price($) <span>*</span></label>
             <div class="input">
               <input
                 v-model="data.minimum_price"
@@ -483,7 +483,7 @@
             </div>
           </div>
           <div v-if="typeOfPrice === 'negotiable'" class="input_wrap">
-            <label for="">Product Price <span>*</span></label>
+            <label for="">Product Price($) <span>*</span></label>
             <div class="input">
               <input
                 v-model="data.minimum_price"
@@ -904,7 +904,7 @@ const setProductImage = (props) => {
   });
   authAxios
     .post(
-      `merchant/${store.storedetails.slug}/${addedProductData.value.slug}/upload/media`,
+      `merchant/${store.storedetails.slug}/${addedProductData.value.slug}/media/upload`,
       formData,
       {
         headers: {

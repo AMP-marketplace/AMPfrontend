@@ -151,7 +151,7 @@
           </div>
         </div>
         <div v-if="typeOfPrice === 'fixed'" class="input_wrap">
-          <label for="">Product Price <span>*</span></label>
+          <label for="">Product Price($) <span>*</span></label>
           <div class="input">
             <input
               v-model="data.minimum_price"
@@ -247,7 +247,7 @@
           </div>
         </div>
         <div v-if="typeOfPrice === 'negotiable'" class="input_wrap">
-          <label for="">Product Price <span>*</span></label>
+          <label for="">Product Price($) <span>*</span></label>
           <div class="input">
             <input
               v-model="data.minimum_price"
@@ -770,7 +770,7 @@ const deleteImageProps = (imageData) => {
       });
       authAxios
         .post(
-          `merchant/${store.storedetails.slug}/${data.value.slug}/remove/media?key=${imageData.key}`
+          `merchant/${store.storedetails.slug}/${data.value.slug}/media/remove?key=${imageData.key}`
         )
         .then((response) => {
           console.log(response);
