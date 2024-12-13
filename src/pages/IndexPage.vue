@@ -90,7 +90,7 @@
         </div>
       </div>
     </section>
-
+    <div id="scroll"></div>
     <section class="new_products section">
       <div class="container">
         <div class="row items-center justify-between">
@@ -124,6 +124,20 @@
             v-for="(product, index) in productStore.products"
             :key="index"
           />
+        </div>
+
+        <div class="row justify-center q-mt-xl q-pa-md">
+          <q-pagination
+            v-if="totalItems > rowsPerPage"
+            :model-value="currentPage"
+            :max="lastPage"
+            :rows-per-page="rowsPerPage"
+            boundary-numbers
+            @update:model-value="handlePageChange"
+          />
+
+          <!-- <q-spinner-rings v-if="showSpinner" color="primary" size="2em" /> -->
+          <q-spinner-hourglass v-if="showSpinner" color="primary" size="4em" />
         </div>
         <div
           v-if="productStore.noMoreData"
@@ -187,33 +201,42 @@ import { useProductStore } from "src/stores/productStore";
 import FooterCompVue from "src/components/FooterComp.vue";
 import SponsorsCompVue from "src/components/SponsorsComp.vue";
 import ProductCompVue from "src/components/ProductComp.vue";
-import { onMounted, ref } from "vue";
+import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useMyAuthStore } from "src/stores/auth";
+import { Loading, QSpinnerRings } from "quasar";
 useI18n();
 let productStore = useProductStore();
 let store = useMyAuthStore();
-let loadingProducts = ref(true);
 let watchAStoreModal = ref(false);
 const productsArr = ref([]);
 const searchTerm = ref("");
 let disableInfiniteScroll = ref(false);
+let showSpinner = ref(false);
 
-const calculatedOffset = window.innerHeight * 1;
-const loadMoreProducts = (index, done) => {
-  console.log("trying to load more");
-  console.log(productStore.nextPageUrl);
-  if (productStore.nextPageUrl) {
-    setTimeout(() => {
-      productStore.fetchProducts(productStore.nextPageUrl);
-      done();
-    }, 2000);
-  } else {
-    done();
+// Reactive state from the store
+const products = computed(() => productStore.products);
+const loadingProducts = computed(() => productStore.loadingProducts);
+const totalItems = computed(() => productStore.totalItems);
+const rowsPerPage = computed(() => productStore.rowsPerPage);
+const currentPage = computed(() => productStore.currentPage);
+const lastPage = computed(() => productStore.lastPage);
+
+// Paginated products
+const paginatedProducts = computed(() => products.value);
+
+// Handle page change
+const handlePageChange = async (page) => {
+  console.log(page);
+  if (page !== currentPage.value) {
+    const url = `products/index/all?products=${page}`;
+    // const url = `products/index/all?perPage=${rowsPerPage.value}&page=${page}`;
+    showSpinner.value = true;
+    await productStore.fetchProducts(url, true); // Reset products on page change
+    // Loading.hide();
+    showSpinner.value = false;
+    document.getElementById("scroll").scrollIntoView({ behavior: "smooth" });
   }
-
-  // Call done when loading is complete
-  // done();
 };
 
 const getProducts = () => {
@@ -237,6 +260,31 @@ const getProducts = () => {
 };
 onMounted(() => {
   // getProducts();
-  productStore.fetchProducts();
+  productStore.fetchProducts(undefined, true);
 });
 </script>
+
+<style scoped>
+/* Add styles for your loading spinner, product grid, and cards */
+.loading-spinner {
+  text-align: center;
+  padding: 20px;
+}
+
+.no-products {
+  text-align: center;
+  color: #666;
+}
+
+.products-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.product-card {
+  border: 1px solid #ccc;
+  padding: 16px;
+  border-radius: 8px;
+}
+</style>

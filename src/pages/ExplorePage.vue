@@ -2,7 +2,7 @@ v
 <template>
   <div class="q-mt-xl">
     <div class="container">
-      <p class="q-my-sm text-center">
+      <p id="scroll" class="q-my-sm text-center">
         <strong> Dear exteemed customers note:</strong> Prices are in USD, but
         you can view the equivalent in your local currency. Also
         <strong>NOTE:</strong> that on checkout you will be able to view total
@@ -229,6 +229,24 @@ v
                 <ProductComp :product="product" />
               </div>
             </div>
+
+            <div class="row justify-center q-mt-xl q-pa-md">
+              <q-pagination
+                v-if="totalItems > rowsPerPage"
+                :model-value="currentPage"
+                :max="lastPage"
+                :rows-per-page="rowsPerPage"
+                boundary-numbers
+                @update:model-value="handlePageChange"
+              />
+
+              <!-- <q-spinner-rings v-if="showSpinner" color="primary" size="2em" /> -->
+              <q-spinner-hourglass
+                v-if="showSpinner"
+                color="primary"
+                size="4em"
+              />
+            </div>
             <div
               v-if="
                 !productStore.loadingProducts && sortedProducts.length === 0
@@ -388,7 +406,7 @@ import countries from "app/countries";
 import { useRoute } from "vue-router";
 let route = useRoute();
 let productStore = useProductStore();
-let loadingProducts = ref(true);
+// let loadingProducts = ref(true);
 let loading = ref(true);
 let prodListArr = ref([]);
 let medSolutionscategoryListArr = ref([]);
@@ -396,7 +414,7 @@ let medEquipcategoryListArr = ref([]);
 const selectedSort = ref("name");
 const searchQuery = ref("");
 const drawer = ref(false);
-
+let showSpinner = ref(false);
 const getProducts = async () => {
   try {
     loadingProducts.value = true;
@@ -471,11 +489,37 @@ const convertedPrice = (price) => {
 const clearAllFilters = () => {
   productStore.clearFilters();
 };
+
+// Reactive state from the store
+const products = computed(() => productStore.products);
+const loadingProducts = computed(() => productStore.loadingProducts);
+const totalItems = computed(() => productStore.totalItems);
+const rowsPerPage = computed(() => productStore.rowsPerPage);
+const currentPage = computed(() => productStore.currentPage);
+const lastPage = computed(() => productStore.lastPage);
+
+// Paginated products
+const paginatedProducts = computed(() => products.value);
+
+// Handle page change
+const handlePageChange = async (page) => {
+  console.log(page);
+  if (page !== currentPage.value) {
+    const url = `products/index/all?products=${page}`;
+    // const url = `products/index/all?perPage=${rowsPerPage.value}&page=${page}`;
+    showSpinner.value = true;
+    await productStore.fetchProducts(url, true); // Reset products on page change
+    // Loading.hide();
+    showSpinner.value = false;
+    document.getElementById("scroll").scrollIntoView({ behavior: "smooth" });
+  }
+};
 onMounted(() => {
   getCategories();
   productStore.products = [];
   productStore.loadingProducts = true;
-  productStore.fetchProducts();
+  // productStore.fetchProducts();
+  productStore.fetchProducts(undefined, true);
   // if (productStore.products.length) {
   //   return;
   // } else {

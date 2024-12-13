@@ -235,7 +235,7 @@
               v-if="!store.token"
               :to="{ name: 'merchant.register' }"
               clickable
-              class="bg-green-7"
+              class="bg-green-7 text-white"
             >
               Register
             </q-item>
@@ -243,7 +243,7 @@
               v-if="!store.token"
               :to="{ name: 'merchant.register' }"
               clickable
-              class="bg-green-7"
+              class="bg-green-7 text-white"
             >
               Login
             </q-item>

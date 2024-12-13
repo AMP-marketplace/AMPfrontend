@@ -1113,6 +1113,13 @@ hr {
   .explore_categories {
     height: 100%;
   }
+
+  .q-drawer {
+    .q-item {
+      font-size: 14px;
+      margin: 1rem 0;
+    }
+  }
   .auth .otp-input {
     width: 35px !important;
     height: 35px;

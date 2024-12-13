@@ -119,6 +119,14 @@
     </q-dialog>
     <q-dialog v-model="stripepaymentDialog">
       <q-card>
+        <div class="stripe-logo row justify-center">
+          <img src="/images/stripe.png" alt="Stripe Logo" />
+        </div>
+        <div class="form-header q-my-md">
+          <div class="text-weight-bold">
+            Enter valid card details to complete your payment
+          </div>
+        </div>
         <div ref="paymentRef"></div>
 
         <div class="row justify-center">
@@ -131,6 +139,9 @@
             :loading="loadingBtn"
             >Pay</q-btn
           >
+        </div>
+        <div class="stripe-logo q-mt-lg row justify-center">
+          <img src="/images/cards.png" alt="Stripe Logo" />
         </div>
       </q-card>
     </q-dialog>

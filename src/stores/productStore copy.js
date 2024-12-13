@@ -5,16 +5,16 @@ import { authAxios } from "src/boot/axios";
 export const useProductStore = defineStore("productStore", {
   state: () => ({
     loadingProducts: true,
-    products: [], // Holds all loaded products
-    nextPageUrl: null, // For loading the next page
-    loading: false, // Tracks loading state
-    noMoreData: false, // Indicates if there are no more pages
+    products: [],
+    nextPageUrl: null,
+    loading: false,
+    noMoreData: false, // Track if there are more pages to load
     exchangeRates: {},
     selectedCurrency: "USD",
-    currentPage: 1, // Tracks the current page from meta
-    lastPage: 1, // Total number of pages from meta
-    rowsPerPage: 15, // Number of items per page
-    totalItems: 0, // Total number of products from meta
+    currentPage: 1, // Current page from meta
+    lastPage: 1, // Total number of pages
+    rowsPerPage: 15, // Items per page
+    totalItems: 0, // Total number of products
     filters: {
       country: "",
       category: "",
@@ -24,7 +24,7 @@ export const useProductStore = defineStore("productStore", {
       dateSortOrder: "newest", // 'newest' or 'oldest'
       nameFilter: "",
     },
-    sortOption: "relevance", // Default sort option
+    sortOption: "relevance",
   }),
   persist: {
     key: "productStore",
@@ -48,7 +48,8 @@ export const useProductStore = defineStore("productStore", {
         );
       }
 
-      // Filter by price range
+      // Filter by price range (using text inputs for min and max price)
+      // Filter by price range (without exchange rates)
       if (state.filters.minPrice) {
         filtered = filtered.filter(
           (product) =>
@@ -77,7 +78,7 @@ export const useProductStore = defineStore("productStore", {
         );
       }
 
-      // Sort by date
+      // Sort by date (newest or oldest)
       if (state.filters.dateSortOrder === "newest") {
         filtered.sort(
           (a, b) => new Date(b.created_at) - new Date(a.created_at)
@@ -119,7 +120,7 @@ export const useProductStore = defineStore("productStore", {
           sorted.sort((a, b) => b.rating - a.rating);
           break;
         default:
-          // Default sort option
+          // Relevance or any other default sort option
           break;
       }
 
@@ -127,62 +128,45 @@ export const useProductStore = defineStore("productStore", {
     },
   },
   actions: {
-    async fetchProducts(
-      url = `products/index/all?perPage=${15}`,
-      reset = false
-    ) {
-      console.log(this.rowsPerPage);
-      this.loadingProducts = true;
+    async fetchProducts(url = `products/index/all?perPage=30`) {
+      // this.products = [];
+      // this.noMoreData = false;
+      // if (this.noMoreData || this.loading) return;
+      const response = await authAxios.get(url);
+      console.log(response);
+      const { products: newProducts, meta } = response.data.data;
 
-      return authAxios.get(url).then((response) => {
-        console.log(response);
-        const { products: newProducts, meta } = response.data.data;
+      this.products.push(...newProducts); // Add new products
+      this.nextPageUrl = meta.next_page_url; // Update next page URL
 
-        if (reset) {
-          this.products = newProducts; // Replace existing products
-        } else {
-          this.products.push(...newProducts); // Append products
-        }
+      // if (!this.nextPageUrl) {
+      //   this.noMoreData = true; // No more pages to load
+      // }
 
-        this.nextPageUrl = meta.next_page_url;
-        this.currentPage = meta.current_page; // Update current page from response
-        this.lastPage = meta.last_page;
-        this.rowsPerPage = meta.per_page;
-        this.totalItems = meta.total;
-
-        this.loadingProducts = false;
-      });
+      // this.products = response.data.data.products;
+      this.loadingProducts = false;
     },
-
     async fetchExchangeRates() {
-      try {
-        const response = await axios.get("YOUR_EXCHANGE_RATE_API");
-        this.exchangeRates = response.data.rates;
-      } catch (error) {
-        console.error("Error fetching exchange rates:", error);
-      }
+      const response = await axios.get("YOUR_EXCHANGE_RATE_API");
+      this.exchangeRates = response.data.rates;
     },
-
     setCurrency(currency) {
       this.selectedCurrency = currency;
     },
-
     setFilter(filterType, value) {
       this.filters[filterType] = value;
     },
-
     setSortOption(option) {
       this.sortOption = option;
     },
-
     clearFilters() {
       this.filters = {
         country: "",
         category: "",
-        minPrice: "",
-        maxPrice: "",
+        minPrice: "", // Text input for minimum price
+        maxPrice: "", // Text input for maximum price
         searchTerm: "",
-        dateSortOrder: "newest",
+        dateSortOrder: "newest", // 'newest' or 'oldest'
         nameFilter: "",
       };
       this.sortOption = "relevance";
