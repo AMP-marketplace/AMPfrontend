@@ -5,11 +5,15 @@
         <img v-if="storeData.banner" :src="storeData.banner.url" alt="" />
         <img v-else :src="img" alt="" />
         <h6 class="mediumText">{{ storeData.business_name }}</h6>
+
         <!-- <q-btn flat><i class="fa-regular fa-heart"></i></q-btn> -->
       </div>
       <p class="smallText q-mt-sm">
         {{ truncatedDescription(storeData.description) }}
       </p>
+      <h6 class="mediumText">
+        <i class="ri-map-pin-line"></i>{{ storeData.country }}
+      </h6>
       <div class="row q-mt-lg justify-center">
         <router-link
           :to="{

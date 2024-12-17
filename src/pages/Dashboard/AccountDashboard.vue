@@ -101,7 +101,9 @@
           class="input justify-between column items-center no-wrap"
         >
           <div class="smallText text-weight-bold">
-            Note that this will be your main/display product image
+            Note that the first image will be your main/display product image.
+            You can select multiple images you would want to upload for this
+            product
           </div>
           <!-- {{ addedProductData }} -->
           <!-- max-file-size="512000"
@@ -109,6 +111,9 @@
           <q-file
             @update:model-value="setProductImage"
             accept=".png,.jpeg,.jpg"
+            use-chips
+            filled
+            multiple
             class="column profile_field justify-center items-center"
             v-model="productImageFile"
           >
@@ -702,17 +707,27 @@ const setCoverFile = (props) => {
     });
 };
 const setProductImage = (props) => {
-  productImageFile.value = props;
-  var reader = new FileReader();
-  reader.onload = (e) => {
-    productImagePreview.value = e.target.result;
-  };
-  reader.readAsDataURL(props);
+  const files = Array.isArray(props) ? props : [props]; // Ensure we handle multiple files
   const formData = new FormData();
-  formData.append("media[]", productImageFile.value);
+  const imagePreviews = [];
+
+  files.forEach((file) => {
+    formData.append("media[]", file);
+
+    // Generate image previews
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      imagePreviews.push(e.target.result);
+      productImagePreview.value = [...imagePreviews]; // Update previews
+    };
+    reader.readAsDataURL(file);
+  });
+
+  productImageFile.value = files; // Store the selected files
+
   Loading.show({
     spinner: QSpinnerOval,
-    message: "Uploading image...",
+    message: "Uploading images...",
   });
 
   authAxios
@@ -737,13 +752,10 @@ const setProductImage = (props) => {
       addProductModal.value = false;
       showAddProductImage.value = false;
       productImageFile.value = null;
-      // router.replace({
-      //   name: "account.dashboard",
-      // });
+      productImagePreview.value = []; // Clear previews
       getProducts();
     })
     .catch(({ response }) => {
-      // console.log(response);
       storeDetailsLoadBtn.value = false;
       Loading.hide();
       errors.value = response.data.data.errors;
@@ -755,6 +767,7 @@ const setProductImage = (props) => {
       });
     });
 };
+
 // const togglePriceType = () => {
 
 // }

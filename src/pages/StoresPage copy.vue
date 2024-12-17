@@ -1,3 +1,4 @@
+v
 <template>
   <div class="q-my-xl">
     <div class="container">
@@ -47,16 +48,16 @@
 
               <!-- Price Filter -->
 
-              <!-- <div class="input_wrap">
+              <div class="input_wrap">
                 <label for="date-sort">Sort by Date:</label>
                 <div class="input">
-                  <select @change="setSortByDate" v-model="sortOrder">
+                  <select v-model="sortOrder">
                     <option value="">All</option>
                     <option value="newest">Newest to Oldest</option>
                     <option value="oldest">Oldest to Newest</option>
                   </select>
                 </div>
-              </div> -->
+              </div>
               <div class="input_wrap">
                 <label for="date-sort">Verified Stores:</label>
                 <div class="input">
@@ -86,16 +87,20 @@
           </div>
 
           <div
-            v-if="!loadingProducts && paginatedStores.length !== 0"
+            v-if="!loadingProducts && sortedAndFilteredStores.length !== 0"
             class="stores_wrap"
           >
-            <div v-for="store in paginatedStores" class="" :key="store.id">
+            <div
+              v-for="store in sortedAndFilteredStores"
+              class=""
+              :key="store.id"
+            >
               <StoresComp :storeData="store" />
             </div>
           </div>
 
           <div
-            v-if="!loadingProducts && paginatedStores.length === 0"
+            v-if="!loadingProducts && sortedAndFilteredStores.length === 0"
             class="column items-center text-center justify-center"
           >
             <img
@@ -104,16 +109,6 @@
               alt=""
             />
             <p class="smallText q-my-lg">No stores</p>
-          </div>
-
-          <!-- Pagination Controls -->
-          <div class="row justify-center q-mt-sm q-pa-md">
-            <q-pagination
-              v-model="currentPage"
-              :max="totalPages"
-              boundary-numbers
-              class="q-mt-lg"
-            />
           </div>
         </div>
       </div>
@@ -129,7 +124,6 @@ import { authAxios } from "src/boot/axios";
 import FooterCompVue from "src/components/FooterComp.vue";
 import { computed, onMounted, ref } from "vue";
 import StoresComp from "../components/StoresComp.vue";
-
 let loading = ref(false);
 let storesArr = ref([]);
 let categoryListArr = ref([]);
@@ -142,25 +136,14 @@ const selectedCountry = ref("");
 const sortOrder = ref("newest");
 const verifiedStoresSort = ref("");
 
-// Pagination
-const currentPage = ref(1);
-const itemsPerPage = ref(6);
-
-// Computed property to get the total number of pages
-const totalPages = computed(() => {
-  return Math.ceil(sortedAndFilteredStores.value.length / itemsPerPage.value);
-});
-
-// Computed property to get the stores for the current page
-const paginatedStores = computed(() => {
-  const startIndex = (currentPage.value - 1) * itemsPerPage.value;
-  const endIndex = startIndex + itemsPerPage.value;
-  return sortedAndFilteredStores.value.slice(startIndex, endIndex);
+// Computed property to get a list of unique countries
+const availableCountries = computed(() => {
+  return [...new Set(storesArr.value.map((store) => store.country))];
 });
 
 // Computed property to filter and sort the stores
 const sortedAndFilteredStores = computed(() => {
-  let filtered = [...storesArr.value];
+  let filtered = storesArr.value;
 
   // Filter by search term
   if (searchTerm.value) {
@@ -184,27 +167,16 @@ const sortedAndFilteredStores = computed(() => {
   }
 
   // Sort by date
-  console.log(sortOrder.value);
-  if (sortOrder.value) {
-    filtered.sort((a, b) => {
-      const dateA = new Date(a.created_at);
-      const dateB = new Date(b.created_at);
-
-      if (sortOrder.value === "newest") {
-        return dateB - dateA; // Newest to oldest
-      } else if (sortOrder.value === "oldest") {
-        return dateA - dateB; // Oldest to newest
-      }
-      return 0; // Default case
-    });
-  }
+  filtered = filtered.sort((a, b) => {
+    if (sortOrder.value === "newest") {
+      return new Date(b.created_at) - new Date(a.created_at);
+    } else {
+      return new Date(a.created_at) - new Date(b.created_at);
+    }
+  });
 
   return filtered;
 });
-
-// const setSortByDate = () =>{
-//   sortOrder
-// }
 
 // Method to clear all filters
 function clearFilters() {
@@ -212,7 +184,6 @@ function clearFilters() {
   selectedCountry.value = "";
   sortOrder.value = "newest";
 }
-
 const getCategories = async () => {
   try {
     loading.value = true;
@@ -245,9 +216,9 @@ const getStores = () => {
       });
     });
 };
-
 onMounted(() => {
   getStores();
+  // getCategories();
 });
 </script>
 

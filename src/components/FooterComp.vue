@@ -103,6 +103,14 @@
                 Contact us
               </a>
             </p>
+            <p class="text-white q-my-md">
+              <a
+                href="https://www.amp.africamedicalmarketplace.com/blog/"
+                target="_blank"
+              >
+                Blog
+              </a>
+            </p>
             <p lass="text-white q-my-md">
               <a
                 style="display: inline-block"

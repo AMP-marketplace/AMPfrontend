@@ -151,8 +151,11 @@
     </q-dialog>
     <q-dialog v-model="showPaymentForm">
       <q-card>
+        <div class="stripe-logo row justify-center">
+          <img src="/images/stripe.png" alt="Stripe Logo" />
+        </div>
         <div class="form-header">
-          <div>Enter Your Payment Details</div>
+          <div>Enter valid card details to complete your payment</div>
         </div>
 
         <q-form @submit.prevent="handleSubmit" class="q-mt-md">
@@ -171,6 +174,10 @@
               >Proceed</q-btn
             >
           </div>
+
+          <div class="stripe-logo q-mt-lg row justify-center">
+            <img src="/images/cards.png" alt="Stripe Logo" />
+          </div>
         </q-form>
       </q-card>
     </q-dialog>
@@ -183,9 +190,10 @@ import { authAxios } from "src/boot/axios";
 import { useMyAuthStore } from "src/stores/auth";
 import { ref, watch } from "vue";
 import { loadStripe } from "@stripe/stripe-js";
+import { useRouter } from "vue-router";
 let store = useMyAuthStore();
 let props = defineProps(["plan", "loadingsign", "planDesc", "view"]);
-
+let router = useRouter();
 let dialogCreate = ref(false);
 let loading = ref(false);
 let loadingBtn = ref(false);
@@ -270,7 +278,7 @@ const handleSubmit = async () => {
     // Send token to the backend to process payment
     try {
       const response = await authAxios.post(
-        `payment/charge?reference=${refValue.value}`,
+        `payment/charge?type=stripe&reference=${refValue.value}`,
         {
           stripeToken: token.id,
         }
@@ -593,6 +601,49 @@ let purchasePlan = () => {
 }
 .dialog_content .close::before {
   box-shadow: none;
+}
+
+.card-container {
+  max-width: 400px;
+  margin: 20px auto;
+  padding: 20px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.stripe-logo {
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.stripe-logo img {
+  width: 120px;
+}
+
+.pay-button {
+  display: block;
+  width: 100%;
+  margin-top: 16px;
+  padding: 12px;
+  background: #5469d4;
+  color: #fff;
+  font-size: 16px;
+  font-weight: bold;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.pay-button:hover {
+  background: #4355c6;
+}
+
+.error-message {
+  color: #fa755a;
+  font-size: 14px;
+  margin-top: 8px;
 }
 
 $color: #80868b;

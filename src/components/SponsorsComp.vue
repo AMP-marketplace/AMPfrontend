@@ -62,6 +62,9 @@
         <div>
           <img src="/images/giga.svg" alt="" />
         </div>
+        <div>
+          <img src="/images/toe.jpg" alt="" />
+        </div>
       </div>
     </div>
   </section>

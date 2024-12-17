@@ -1196,7 +1196,7 @@ const initPayment = () => {
           actions: [{ icon: "close", color: "white" }],
         });
         window.location.href = data.data;
-        cartStore.cart = [];
+        // cartStore.cart = [];
       })
       .catch(({ response }) => {
         Loading.hide();

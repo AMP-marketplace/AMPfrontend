@@ -448,7 +448,7 @@
             no-caps
             type="submit"
           >
-            Edit Product
+            Save
           </q-btn>
         </div>
       </form>
@@ -470,6 +470,9 @@
         @rejected="onRejected" -->
       <q-file
         @update:model-value="setProductImage"
+        use-chips
+        filled
+        multiple
         accept=".png,.jpeg,.jpg,.webp"
         class="column profile_field justify-center items-center"
         v-model="AnotherproductImageFile"
@@ -655,14 +658,20 @@ const getTotalInCurrency = async () => {
   Loading.hide();
 };
 const setProductImage = (props) => {
-  AnotherproductImageFile.value = props;
+  const files = Array.isArray(props) ? props : [props]; // Handle multiple or single files
+  const formData = new FormData();
+
+  files.forEach((file) => {
+    formData.append("media[]", file);
+  });
+
+  AnotherproductImageFile.value = files; // Store the selected files
 
   Loading.show({
     spinner: QSpinnerOval,
-    message: "Uploading product image...",
+    message: "Uploading product images...",
   });
-  const formData = new FormData();
-  formData.append("media[]", AnotherproductImageFile.value);
+
   authAxios
     .post(
       `merchant/${store.storedetails.slug}/${data.value.slug}/media/upload`,
@@ -675,27 +684,30 @@ const setProductImage = (props) => {
     )
     .then((response) => {
       console.log(response);
+
+      // Update data object with new response
       data.value = {
         ...response.data.data,
         subcategory_id: response.data.data.subcategory.id,
         maximum_price: response.data.data.price.maximum_price,
         minimum_price: response.data.data.price.minimum_price,
       };
-      // getProducts();
+
       Notify.create({
         message: response.data.message + ", product successfully added.",
         color: "green",
         position: "top",
       });
+
       Loading.hide();
-      AnotherproductImageFile.value = null;
-      AddProductImageModal.value = false;
+      AnotherproductImageFile.value = null; // Clear file references
+      AddProductImageModal.value = false; // Close modal
     })
     .catch(({ response }) => {
-      // console.log(response);
       storeDetailsLoadBtn.value = false;
       Loading.hide();
       errors.value = response.data.data.errors;
+
       Notify.create({
         message: response.data.message,
         color: "red",

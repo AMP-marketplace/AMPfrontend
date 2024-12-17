@@ -555,24 +555,32 @@ const setCoverFile = (props) => {
     });
 };
 const setProductImage = (props) => {
-  productImageFile.value = props;
-  var reader = new FileReader();
-  reader.onload = (e) => {
-    productImagePreview.value = e.target.result;
-  };
-  reader.readAsDataURL(props);
+  const files = Array.isArray(props) ? props : [props]; // Handle single or multiple files
+  const formData = new FormData();
+  productImageFile.value = files; // Store the selected files
+  productImagePreview.value = []; // Initialize previews array
+
+  files.forEach((file) => {
+    formData.append("media[]", file);
+    // formData.append("role[]", "main"); // Add role for each file if needed
+
+    // Generate preview for each file
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      productImagePreview.value.push(e.target.result);
+    };
+    reader.readAsDataURL(file);
+  });
 
   Loading.show({
     spinner: QSpinnerOval,
-    message: "Uploading product image...",
+    message: "Uploading product image(s)...",
   });
+
   authAxios
     .post(
       `merchant/${store.storedetails.slug}/${addedProductData.value.slug}/media/upload`,
-      {
-        image: productImageFile.value,
-        role: "main",
-      },
+      formData,
       {
         headers: {
           "Content-Type": "multipart/form-data",
@@ -583,19 +591,23 @@ const setProductImage = (props) => {
       console.log(response);
 
       Notify.create({
-        message: response.data.message + ", product successfully added.",
+        message:
+          response.data.message + ", product image(s) successfully added.",
         color: "green",
         position: "top",
       });
+
       Loading.hide();
       addProductModal.value = false;
-      getProducts();
+      productImageFile.value = null; // Reset file selection
+      productImagePreview.value = []; // Clear previews
+      getProducts(); // Fetch updated product list
     })
     .catch(({ response }) => {
-      // console.log(response);
       storeDetailsLoadBtn.value = false;
       Loading.hide();
       errors.value = response.data.data.errors;
+
       Notify.create({
         message: response.data.message,
         color: "red",
