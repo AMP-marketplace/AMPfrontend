@@ -201,6 +201,9 @@
             </div>
           </div>
           <div v-if="typeOfPrice === 'fixed'" class="input_wrap">
+            <small class="text-red"
+              >NOTE: Please do not use comma's when inputing your price</small
+            >
             <label for="">Product Price($) <span>*</span></label>
             <div class="input">
               <input
@@ -209,6 +212,7 @@
                 type="text"
               />
             </div>
+
             <div class="row q-mt-sm items-center justify-between">
               <small class="text-grey-9"
                 >Note: Leave the price field empty if the buyer needs to cntact
@@ -951,9 +955,7 @@ const addProductFCN = () => {
     ...data.value,
     is_negotiable: typeOfPrice.value === "negotiable" ? 1 : 0,
     maximum_price: data.value.maximum_price ? data.value.maximum_price : "1",
-    minimum_price: data.value.minimum_price
-      ? data.value.minimum_price + data.value.minimum_price
-      : data.value.minimum_price + data.value.minimum_price,
+    minimum_price: data.value.minimum_price ? data.value.minimum_price : "",
   };
   Loading.show();
   authAxios
