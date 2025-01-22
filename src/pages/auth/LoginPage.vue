@@ -311,14 +311,6 @@ const submitForm = () => {
             });
           }
         }
-
-        // router.replace({
-        //   name: "create.store",
-        //   query: {
-        //     create: "new",
-        //   },
-        // });
-        // getKycData();
       } else if (
         response.data.data.user.roles[0].name === "merchant" &&
         route.query.redirect

@@ -185,11 +185,33 @@
     <FooterCompVue />
 
     <q-dialog v-model="watchAStoreModal">
+      <!-- <iframe width="560" height="315" src="https://www.youtube.com/embed/F5ybNKruzts?si=jyk-09p9k8WrbGf_" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe> -->
       <q-card>
-        <q-video
-          style="height: 250px"
-          src="https://res.cloudinary.com/dvs0cchst/video/upload/v1725036270/Emmy_slides_1_ekfp6n.mp4"
-        />
+        <q-carousel animated v-model="videoSlide" infinite>
+          <q-carousel-slide :name="1">
+            <q-video
+              class="absolute-full"
+              src="https://www.youtube.com/embed/F5ybNKruzts?si=jyk-09p9k8WrbGf_"
+            />
+          </q-carousel-slide>
+
+          <q-carousel-slide :name="2">
+            <q-video
+              class="absolute-full"
+              src="https://res.cloudinary.com/dvs0cchst/video/upload/v1725036270/Emmy_slides_1_ekfp6n.mp4"
+            />
+          </q-carousel-slide>
+        </q-carousel>
+        <div class="row q-mt-lg justify-center">
+          <q-btn-toggle
+            glossy
+            v-model="videoSlide"
+            :options="[
+              { label: 'Know more', value: 1 },
+              { label: 'Explore new features', value: 2 },
+            ]"
+          />
+        </div>
       </q-card>
     </q-dialog>
   </q-page>
@@ -205,10 +227,81 @@ import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useMyAuthStore } from "src/stores/auth";
 import { Loading, QSpinnerRings } from "quasar";
+import { useMeta } from "quasar";
+
+const metaData = {
+  // sets document title
+  title: "Africa Medical Marketplace",
+  // optional; sets final title as "Index Page - My Website", useful for multiple level meta
+  titleTemplate: (title) => `${title} - Home`,
+
+  // meta tags
+  meta: {
+    description: {
+      name: "description",
+      content:
+        "At Africa Medical Marketplace, we are dedicated to facilitating access to quality and affordable healthcare solutions across Africa’s diverse communities. Our platform serves as a bridge, connecting global manufacturers, distributors, and suppliers with healthcare professionals and institutions across all 54 countries of Africa. We are committed to democratizing healthcare access, ensuring that even those at the grassroots level can access essential medical supplies and services. Through our user-friendly platform and dedication to social responsibility, we strive to make a positive impact on healthcare delivery and improve the lives of individuals across the continent",
+    },
+    keywords: {
+      name: "keywords",
+      content:
+        "Africa Medical Marketplace, Medical Equipments, X-ray Machine, Africa products",
+    },
+    equiv: {
+      "http-equiv": "Content-Type",
+      content: "text/html; charset=UTF-8",
+    },
+    // note: for Open Graph type metadata you will need to use SSR, to ensure page is rendered by the server
+    ogTitle: {
+      property: "og:title",
+      // optional; similar to titleTemplate, but allows templating with other meta properties
+      template(ogTitle) {
+        return `${ogTitle} - Africa Medical Marketplace`;
+      },
+    },
+  },
+
+  // CSS tags
+  link: {
+    material: {
+      rel: "stylesheet",
+      href: "https://fonts.googleapis.com/icon?family=Material+Icons",
+    },
+  },
+
+  // JS tags
+  script: {
+    ldJson: {
+      type: "application/ld+json",
+      innerHTML: `{ "@context": "http://schema.org" }`,
+    },
+  },
+
+  // <html> attributes
+  htmlAttr: {
+    "xmlns:cc": "http://creativecommons.org/ns#", // generates <html xmlns:cc="http://creativecommons.org/ns#">,
+    empty: undefined, // generates <html empty>
+  },
+
+  // <body> attributes
+  bodyAttr: {
+    "action-scope": "xyz", // generates <body action-scope="xyz">
+    empty: undefined, // generates <body empty>
+  },
+
+  // <noscript> tags
+  noscript: {
+    default: "This is content for browsers with no JS (or disabled JS)",
+  },
+};
+
+useMeta(metaData);
 useI18n();
+
 let productStore = useProductStore();
 let store = useMyAuthStore();
 let watchAStoreModal = ref(false);
+let videoSlide = ref(1);
 const productsArr = ref([]);
 const searchTerm = ref("");
 let disableInfiniteScroll = ref(false);

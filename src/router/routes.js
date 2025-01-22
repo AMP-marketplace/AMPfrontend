@@ -9,6 +9,16 @@ const routes = [
         name: "home",
       },
       {
+        path: "/about",
+        component: () => import("pages/AboutPage.vue"),
+        name: "about.us",
+      },
+      {
+        path: "/contact-us",
+        component: () => import("pages/ContactPage.vue"),
+        name: "contact.us",
+      },
+      {
         path: "/donate",
         component: () => import("pages/Donate/DonatePage.vue"),
         name: "donate",

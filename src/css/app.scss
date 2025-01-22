@@ -333,6 +333,29 @@ header {
 .sort_area .q-btn {
   text-transform: capitalize;
 }
+.about {
+  .hero {
+    background: url("/images/donatebg.jpg");
+  }
+}
+.about_us {
+  max-width: 1000px;
+  margin: 0 auto;
+  h4 {
+    font-weight: 700;
+  }
+  .card {
+    background: #b7a3c8;
+    padding: 1rem;
+    img {
+      max-width: 100px;
+      object-fit: contain;
+    }
+    ul li {
+      list-style: disc;
+    }
+  }
+}
 
 @media (min-width: 1100px) {
   .stores_wrap {

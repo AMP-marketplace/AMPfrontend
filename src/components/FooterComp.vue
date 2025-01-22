@@ -83,9 +83,9 @@
               </router-link>
             </p>
 
-            <p class="text-white q-my-md">
+            <!-- <p class="text-white q-my-md">
               <router-link to="">Blog </router-link>
-            </p>
+            </p> -->
           </div>
           <div>
             <h4 class="text-h6 text-white text-weight-bold">
@@ -96,12 +96,9 @@
               <router-link :to="{ name: 'faq' }"> FAQ </router-link>
             </p>
             <p class="text-white q-my-md">
-              <a
-                href="mailto:hello@africamedicalmarketplace.com"
-                target="_blank"
-              >
+              <router-link :to="{ name: 'contact.us' }">
                 Contact us
-              </a>
+              </router-link>
             </p>
             <p class="text-white q-my-md">
               <a

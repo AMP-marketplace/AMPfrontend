@@ -59,7 +59,75 @@ import FooterCompVue from "src/components/FooterComp.vue";
 import PlanCardVue from "src/components/PlanCardtest.vue";
 // import PlanCardVue from "src/components/PlanCard.vue";
 import { onMounted, ref } from "vue";
+import { useMeta } from "quasar";
 
+const metaData = {
+  // sets document title
+  title: "Africa Medical Marketplace",
+  // optional; sets final title as "Index Page - My Website", useful for multiple level meta
+  titleTemplate: (title) => `${title} - Explore Plans`,
+
+  // meta tags
+  meta: {
+    description: {
+      name: "description",
+      content:
+        "At Africa Medical Marketplace, we are dedicated to facilitating access to quality and affordable healthcare solutions across Africa’s diverse communities. Our platform serves as a bridge, connecting global manufacturers, distributors, and suppliers with healthcare professionals and institutions across all 54 countries of Africa. We are committed to democratizing healthcare access, ensuring that even those at the grassroots level can access essential medical supplies and services. Through our user-friendly platform and dedication to social responsibility, we strive to make a positive impact on healthcare delivery and improve the lives of individuals across the continent",
+    },
+    keywords: {
+      name: "keywords",
+      content:
+        "Africa Medical Marketplace, Medical Equipments, X-ray Machine, Africa products",
+    },
+    equiv: {
+      "http-equiv": "Content-Type",
+      content: "text/html; charset=UTF-8",
+    },
+    // note: for Open Graph type metadata you will need to use SSR, to ensure page is rendered by the server
+    ogTitle: {
+      property: "og:title",
+      // optional; similar to titleTemplate, but allows templating with other meta properties
+      template(ogTitle) {
+        return `${ogTitle} - Africa Medical Marketplace`;
+      },
+    },
+  },
+
+  // CSS tags
+  link: {
+    material: {
+      rel: "stylesheet",
+      href: "https://fonts.googleapis.com/icon?family=Material+Icons",
+    },
+  },
+
+  // JS tags
+  script: {
+    ldJson: {
+      type: "application/ld+json",
+      innerHTML: `{ "@context": "http://schema.org" }`,
+    },
+  },
+
+  // <html> attributes
+  htmlAttr: {
+    "xmlns:cc": "http://creativecommons.org/ns#", // generates <html xmlns:cc="http://creativecommons.org/ns#">,
+    empty: undefined, // generates <html empty>
+  },
+
+  // <body> attributes
+  bodyAttr: {
+    "action-scope": "xyz", // generates <body action-scope="xyz">
+    empty: undefined, // generates <body empty>
+  },
+
+  // <noscript> tags
+  noscript: {
+    default: "This is content for browsers with no JS (or disabled JS)",
+  },
+};
+
+useMeta(metaData);
 let businessPlans = ref([]);
 let loading = ref(true);
 let planView = ref("month");
@@ -92,18 +160,7 @@ let setView = (view) => {
       errors.value = response.errors || {};
     });
 };
-// let cancelProcess = () => {
-//   if ($router.currentRoute.value.query.getplan === "yes") {
-//     $router.replace({
-//       name: "business.dashboard",
-//       query: { videotour: "yes" },
-//     });
-//   } else {
-//     $router.replace({
-//       name: "business.dashboard",
-//     });
-//   }
-// };
+
 let getPlans = () => {
   authAxios
     .get("subscription/plans?duration=month")
