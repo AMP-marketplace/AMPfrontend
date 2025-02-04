@@ -94,15 +94,33 @@
             <q-td :props="props">
               <div style="gap: 1rem" class="row no-wrap items-center">
                 <div>
-                  <img
+                  <!-- <q-carousel
+                    animated
+                    style="height: 100px; width: 100px"
+                    v-model="slide"
+                    arrows
+                    navigation
+                    infinite
+                  >
+                    <q-carousel-slide
+                      v-for="(productImg, index) in product?.product?.media"
+                      :key="index"
+                      :name="index + 1"
+                      :img-src="productImg.url"
+                    />
+                  </q-carousel> -->
+                  <!-- <img
                     style="width: 80.957px; height: 107px; object-fit: contain"
-                    :src="props.row.product.images[0].url"
+                    :src="props.row.product.media[0].url"
                     alt=""
-                  />
-                </div>
-                <div>
+                  /> -->
                   <p class="smallerText q-mt-md">
-                    {{ props.row.product.description }}
+                    {{
+                      props.row.products.map((product) =>
+                        product?.product?.name?.toString()
+                      )[0]
+                    }}
+                    <!-- {{ product?.name }} -->
                   </p>
                 </div>
               </div>
@@ -131,6 +149,17 @@
             <q-td :props="props">
               <div class="table_btn row items-center no-wrap">
                 <q-btn
+                  @click="chatSeller(props.row)"
+                  flat
+                  no-wrap
+                  no-caps
+                  text-color="blue-7"
+                  size="md"
+                  :loading="loaders.save[props]"
+                >
+                  Chat Customer
+                </q-btn>
+                <!-- <q-btn
                   @click="acceptOrder(props.row)"
                   flat
                   no-wrap
@@ -147,7 +176,7 @@
                   :loading="loaders.save[props]"
                 >
                   {{ props.row.status === "accepted" ? "Accepted" : "Accept" }}
-                </q-btn>
+                </q-btn> -->
                 <q-btn
                   flat
                   no-wrap
@@ -206,7 +235,7 @@
                   "
                   >|</span
                 >
-                <q-btn
+                <!-- <q-btn
                   @click="declineOrder(props.row)"
                   flat
                   :disable="props.row.status === 'declined'"
@@ -224,7 +253,7 @@
                   :loading="loaders.save[props]"
                 >
                   {{ props.row.status === "declined" ? "Declined" : "Decline" }}
-                </q-btn>
+                </q-btn> -->
                 <q-btn-dropdown
                   no-caps
                   flat
@@ -311,16 +340,36 @@
       </div>
     </q-card>
   </q-dialog>
+
+  <q-dialog v-model="chatModal" persistent class="chatDialog">
+    <div>
+      <ChatPage
+        :product="product"
+        :conversationMessages="conversationMessages"
+        :conversationDetails="conversationDetails"
+        @closeModal="closeModalToggle"
+      />
+    </div>
+  </q-dialog>
 </template>
 
 <script setup>
 import { Dialog, Loading, Notify, QSpinnerRings } from "quasar";
 import { authAxios } from "src/boot/axios";
+import { useMyAuthStore } from "src/stores/auth";
 import { computed, onMounted, ref } from "vue";
-
+import { useRoute, useRouter } from "vue-router";
+import ChatPage from "src/components/ChatPage.vue";
+let authStore = useMyAuthStore();
 let loading = ref(false);
+let signleRouteData = useRoute();
+let router = useRouter();
 let dispatchRiderModal = ref(false);
+let loadingChatBtn = ref(false);
 let ridersGroupChoice = ref("op1");
+let slide = ref(1);
+let chatModal = ref(false);
+let conversationDetails = ref({});
 
 let ridersOptions = [
   {
@@ -353,23 +402,64 @@ const columns = [
     required: true,
     label: "Amount",
     align: "left",
-    field: (row) => `$ ${row.amount}`,
+    field: (row) => `$${row.amount}`,
+    sortable: true,
+  },
+  // {
+  //   name: "unit",
+  //   required: true,
+  //   label: "Quantity",
+  //   align: "left",
+  //   field: "unit",
+  //   sortable: true,
+  // },
+  {
+    name: "shipping_information",
+    required: true,
+    label: "Address",
+    align: "left",
+    field: (row) => row?.shipping_information?.address?.address_line_1,
     sortable: true,
   },
   {
-    name: "quantity",
+    name: "shipping_information",
     required: true,
-    label: "Quantity",
+    label: "City",
     align: "left",
-    field: "quantity",
+    field: (row) => row?.shipping_information?.address?.city,
     sortable: true,
   },
   {
-    name: "tracking_number",
+    name: "shipping_information",
     required: true,
-    label: "Tracking number",
+    label: "Country",
     align: "left",
-    field: "tracking_number",
+    field: (row) => row?.shipping_information?.address?.country,
+    sortable: true,
+  },
+  {
+    name: "shipping_information",
+    required: true,
+    label: "Customer Name",
+    align: "left",
+    field: (row) =>
+      `${row?.shipping_information?.address?.first_name} ${row?.shipping_information?.address?.last_name}`,
+    sortable: true,
+  },
+  {
+    name: "shipping_information",
+    required: true,
+    label: "State",
+    align: "left",
+    field: (row) => `${row?.shipping_information?.address?.state} `,
+    sortable: true,
+  },
+  {
+    name: "shipping_information",
+    required: true,
+    label: "Postal Code",
+    align: "left",
+    field: (row) => `${row?.shipping_information?.address?.postal_code} `,
     sortable: true,
   },
 
@@ -418,7 +508,22 @@ let rows = ref([]);
 // Current sort option
 const currentSortOption = ref("ascending");
 
-// Method to sort orders based on the selected option
+// Method to sort orders based on the selected// Reactive object to track the active slide for each product
+const slideTracker = ref({});
+
+// Function to initialize slideTracker safely
+const initializeSlideTracker = (row) => {
+  console.log(row);
+  if (!row || !row.products) return;
+
+  row.products.forEach((_, index) => {
+    const key = `${row.id}-${index}`;
+    if (!(key in slideTracker.value)) {
+      slideTracker.value[key] = 1; // Start at slide 1
+    }
+  });
+};
+
 const sortOrders = (option) => {
   currentSortOption.value = option;
 };
@@ -445,6 +550,67 @@ const sortedOrders = computed(() => {
   return sorted;
 });
 
+const closeModalToggle = () => {
+  chatModal.value = false;
+};
+
+let chatSeller = (order) => {
+  loadingChatBtn.value = true;
+  authAxios
+    .post(`chat/create-or-get`, {
+      participant_one_id:
+        authStore.userdetails.roles[0].name === "merchant"
+          ? authStore.storedetails.id
+          : authStore.userdetails.id,
+      participant_one_type:
+        authStore.userdetails.roles[0].name === "shopper" ? "user" : "merchant",
+      participant_two_id: order.user.id,
+      participant_two_type: order.user.roles[0].name,
+    })
+    .then((response) => {
+      loadingChatBtn.value = false;
+      console.log(response);
+      conversationDetails.value = response.data.data;
+      chatModal.value = true;
+      // getConversations(response.data.conversation.id);
+    })
+    .catch(({ response }) => {
+      // console.log(response);
+      if (response.data.message === "The user id field is required.") {
+        Notify.create({
+          message: "You need to be logged in to start a conversation",
+          position: "top",
+          color: "red",
+        });
+
+        Dialog.create({
+          title: "Authenticate",
+          message: `Please login to start conversation with vendor`,
+          cancel: true,
+          persistent: true,
+        })
+          .onOk(() => {
+            router.replace({
+              name: "customer.login",
+              query: {
+                redirect: signleRouteData.name,
+              },
+            });
+          })
+          .onCancel(() => {
+            // console.log('>>>> Cancel')
+          })
+          .onDismiss(() => {
+            // console.log('I am triggered on both OK and Cancel')
+          });
+      }
+
+      loadingChatBtn.value = false;
+      errors = response.data.errors || {};
+    });
+  // chat = true;
+};
+
 const onRequest = (props) => {
   loading.value = true;
 
@@ -452,6 +618,7 @@ const onRequest = (props) => {
     .get(`order/index`)
     .then(({ data }) => {
       console.log(data);
+
       rows.value = data.data;
       loading.value = false;
     })

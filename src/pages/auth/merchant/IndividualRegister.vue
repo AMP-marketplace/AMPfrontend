@@ -333,6 +333,7 @@ const verifyEmailModal = ref(false);
 const resending = ref(false);
 
 let store = useMyAuthStore();
+
 const formatPhoneNumber = (phone) => {
   if (phone.startsWith("0")) {
     return phone.slice(1);
@@ -415,6 +416,7 @@ const submitForm = () => {
       });
   }
 };
+
 const handleOnComplete = (value) => {
   console.log("OTP completed: ", value);
   code.value = value;

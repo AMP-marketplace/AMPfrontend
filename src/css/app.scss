@@ -91,6 +91,13 @@ p {
   }
 }
 
+.VIpgJd-ZVi9od-l4eHX-hSRGPd {
+  img {
+    max-width: 100px;
+    object-fit: contain;
+  }
+}
+
 .q-badge {
   &.new {
     background: rgba(40, 167, 69, 0.2);
@@ -416,6 +423,20 @@ header {
 }
 
 @media (max-width: 600px) {
+  .q-bottom-sheet--grid .q-icon,
+  .q-bottom-sheet--grid img,
+  .q-bottom-sheet--grid .q-bottom-sheet__empty-icon {
+    font-size: 28px;
+    width: 38px;
+    height: 38px;
+    margin-bottom: 8px;
+  }
+  .q-bottom-sheet__item {
+    div {
+      font-size: 14px;
+      line-height: 1.3;
+    }
+  }
   header a {
     font-size: 10px;
   }

@@ -345,42 +345,34 @@ const deleteReview = (review) => {
 };
 
 const uploadReview = () => {
-  if (!data.value.media) {
-    Notify.create({
-      message: "Please upload a review file",
-      position: "top",
-      color: "red",
-    });
-  } else {
-    const formData = new FormData();
-    formData.append("remark", data.value.remark);
-    formData.append("media[]", data.value.media);
-    loadingReview.value = true;
-    authAxios
-      .post(`merchant/${route.query.slug}/review/create`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      })
-      .then((response) => {
-        Notify.create({
-          message: "Review successfully added",
-          position: "top",
-          color: "green",
-        });
-        data.value = { media: null };
-        getStore();
-        loadingReview.value = false;
-      })
-      .catch(({ response }) => {
-        loadingReview.value = false;
-        Notify.create({
-          message: "An error occurred",
-          position: "top",
-          color: "red",
-        });
+  const formData = new FormData();
+  formData.append("remark", data.value.remark);
+  formData.append("media[]", data.value.media);
+  loadingReview.value = true;
+  authAxios
+    .post(`merchant/${route.query.slug}/review/create`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    })
+    .then((response) => {
+      Notify.create({
+        message: "Review successfully added",
+        position: "top",
+        color: "green",
       });
-  }
+      data.value = { media: null };
+      getStore();
+      loadingReview.value = false;
+    })
+    .catch(({ response }) => {
+      loadingReview.value = false;
+      Notify.create({
+        message: "An error occurred",
+        position: "top",
+        color: "red",
+      });
+    });
 };
 const getProducts = async () => {
   try {

@@ -237,7 +237,7 @@ Pusher.logToConsole = true;
 // Access the globally available Pusher instance
 const pusher = new Pusher("f71ee69f460a2ede9930", {
   cluster: "eu",
-  authEndpoint: "https://agora.lyt24tech.com/api/v1/broadcasting/auth",
+  authEndpoint: "https://ampagora.com/api/v1/broadcasting/auth",
   auth: {
     headers: {
       Authorization: `Bearer ${store.token}`, // Replace with your auth token
@@ -356,7 +356,7 @@ onMounted(() => {
   Pusher.logToConsole = true;
   const pusher = new Pusher("f71ee69f460a2ede9930", {
     cluster: "eu",
-    authEndpoint: "https://agora.lyt24tech.com/api/v1/broadcasting/auth", // Adjust the endpoint as needed
+    authEndpoint: "https://ampagora.com/api/v1/broadcasting/auth", // Adjust the endpoint as needed
     auth: {
       headers: {
         Authorization: `Bearer ${store.token}`, // Replace with your auth token

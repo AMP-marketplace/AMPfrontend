@@ -93,7 +93,7 @@
         :to="{
           name: 'product.detail',
           query: {
-            id: product?.id,
+            // id: product?.id,
             slug: product?.slug,
           },
         }"
@@ -113,7 +113,7 @@
           query: {
             name: product?.name,
             slug: product?.slug,
-            id: product?.id,
+            // id: product?.id,
           },
         }"
       >
@@ -160,13 +160,17 @@
       >
         {{ getCountryCurrencySymbol(product?.country) }}
         {{
-          product?.price?.minimum_price?.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+          product?.price?.minimum_price
+            ?.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+            .replace(/[^\d.]/g, "")
         }}
         <span v-if="product?.price?.maximum_price !== '1'"> -</span>
         <span v-if="product?.price?.maximum_price !== '1'">
           {{ getCountryCurrencySymbol(product?.country)
           }}{{
-            product?.price?.maximum_price?.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+            product?.price?.maximum_price
+              ?.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+              .replace(/[^\d.]/g, "")
           }}</span
         >
       </p>
@@ -245,19 +249,17 @@
                   >
                     {{ getCountryCurrencySymbol(product?.country) }}
                     {{
-                      product?.price?.minimum_price?.replace(
-                        /\B(?=(\d{3})+(?!\d))/g,
-                        ","
-                      )
+                      product?.price?.minimum_price
+                        ?.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                        .replace(/[^\d.]/g, "")
                     }}
                     <span v-if="product?.price?.maximum_price !== '1'"> -</span>
                     <span v-if="product?.price?.maximum_price !== '1'">
                       {{ getCountryCurrencySymbol(product?.country)
                       }}{{
-                        product?.price?.maximum_price?.replace(
-                          /\B(?=(\d{3})+(?!\d))/g,
-                          ","
-                        )
+                        product?.price?.maximum_price
+                          ?.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                          .replace(/[^\d.]/g, "")
                       }}</span
                     >
                   </span>

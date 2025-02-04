@@ -73,19 +73,17 @@
               <span class="price" data-total-price
                 >{{ getCountryCurrencySymbol(product?.country) }}
                 {{
-                  product?.price?.minimum_price?.replace(
-                    /\B(?=(\d{3})+(?!\d))/g,
-                    ","
-                  )
+                  product?.price?.minimum_price
+                    ?.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                    .replace(/[^\d.]/g, "")
                 }}
                 <span v-if="product?.price?.maximum_price !== '1'"> - </span>
                 <span v-if="product?.price?.maximum_price !== '1'"
                   >{{ getCountryCurrencySymbol(product?.country)
                   }}{{
-                    product?.price?.maximum_price?.replace(
-                      /\B(?=(\d{3})+(?!\d))/g,
-                      ","
-                    )
+                    product?.price?.maximum_price
+                      ?.replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+                      .replace(/[^\d.]/g, "")
                   }}</span
                 ></span
               >
@@ -256,6 +254,30 @@
                   assurance
                 </strong>
               </p>
+
+              <div style="gap: 1rem" class="share_btn row items-center nowrap">
+                <q-btn
+                  @click="showShareSheet"
+                  flat
+                  no-wrap
+                  no-caps
+                  class="review_big text-center"
+                >
+                  <i class="fa-solid q-mr-sm fa-share-nodes"></i> Share link
+                </q-btn>
+
+                <q-btn
+                  @click="copyTo"
+                  flat
+                  text-color="white"
+                  class="bg-primary"
+                  no-caps
+                  no-wrap
+                  rounded
+                >
+                  Copy Link
+                </q-btn>
+              </div>
             </div>
           </div>
         </div>
@@ -472,7 +494,14 @@
 </template>
 
 <script setup>
-import { Dialog, Loading, Notify, QSpinnerOval } from "quasar";
+import {
+  Dialog,
+  Loading,
+  Notify,
+  QSpinnerOval,
+  BottomSheet,
+  copyToClipboard,
+} from "quasar";
 import { authAxios } from "src/boot/axios";
 import { onMounted, ref, watch } from "vue";
 import FooterComp from "src/components/FooterComp.vue";
@@ -623,44 +652,43 @@ const rateProduct = () => {
     });
 };
 const uploadReview = () => {
-  if (!data.value.media) {
-    Notify.create({
-      message: "Please upload a review file",
-      position: "top",
-      color: "red",
-    });
+  // if (!data.value.media) {
+  //   Notify.create({
+  //     message: "Please upload a review file",
+  //     position: "top",
+  //     color: "red",
+  //   });
 
-    return;
-  } else {
-    const formData = new FormData();
-    formData.append("remark", data.value.remark);
-    formData.append("media[]", data.value.media);
-    loadingReview.value = true;
-    authAxios
-      .post(`product/${signleRouteData.query.slug}/review/create`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      })
-      .then((response) => {
-        Notify.create({
-          message: "Review successfully added",
-          position: "top",
-          color: "green",
-        });
-        loadingReview.value = false;
-        data.value = { media: null };
-        getDetail();
-      })
-      .catch(({ response }) => {
-        loadingReview.value = false;
-        Notify.create({
-          message: "An error occurred",
-          position: "top",
-          color: "red",
-        });
+  //   return;
+  // } else {
+  const formData = new FormData();
+  formData.append("remark", data.value.remark);
+  formData.append("media[]", data.value.media);
+  loadingReview.value = true;
+  authAxios
+    .post(`product/${signleRouteData.query.slug}/review/create`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    })
+    .then((response) => {
+      Notify.create({
+        message: "Review successfully added",
+        position: "top",
+        color: "green",
       });
-  }
+      loadingReview.value = false;
+      data.value = { media: null };
+      getDetail();
+    })
+    .catch(({ response }) => {
+      loadingReview.value = false;
+      Notify.create({
+        message: "An error occurred",
+        position: "top",
+        color: "red",
+      });
+    });
 };
 const getDetail = async () => {
   try {
@@ -812,6 +840,136 @@ const removeFromWishlist = () => {
       authStore.getWish();
     })
     .catch(({ response }) => {});
+};
+
+let copyTo = () => {
+  copyToClipboard(
+    `https://www.africamedicalmarketplace.com/user/product-detail?name=${product.value.name}&id=${product.value.id}&slug=${product.value.slug}`
+  ).then(() => {
+    Notify.create({
+      message: "Link copied successfully",
+      position: "top",
+      color: "green-7",
+    });
+  });
+};
+
+const showShareSheet = () => {
+  BottomSheet.create({
+    title: `Share ${product.value.name}`,
+    grid: true,
+    actions: [
+      {
+        label: "Copy Link",
+        icon: "content_copy",
+        id: "copyLink",
+      },
+      {
+        label: "Share via WhatsApp",
+        icon: "fa-brands fa-whatsapp",
+        id: "whatsapp",
+      },
+      {
+        label: "Share via X (formerly Twitter)",
+        icon: "fa-brands fa-x-twitter",
+        id: "twitter",
+      },
+      {
+        label: "Share via Facebook",
+        icon: "facebook",
+        id: "facebook",
+      },
+      {
+        label: "Share via Instagram",
+        icon: "fa-brands fa-instagram",
+        id: "instagram",
+      },
+      {
+        label: "Share via TikTok",
+        icon: "tiktok",
+        id: "tiktok",
+      },
+      {
+        label: "Share via Email",
+        icon: "email",
+        id: "email",
+      },
+    ],
+  })
+    .onOk((action) => {
+      if (action.id === "copyLink") {
+        copyTo();
+      } else if (action.id === "whatsapp") {
+        shareViaWhatsApp();
+      } else if (action.id === "twitter") {
+        shareViaX();
+      } else if (action.id === "facebook") {
+        shareViaFacebook();
+      } else if (action.id === "instagram") {
+        shareViaInstagram();
+      } else if (action.id === "tiktok") {
+        shareViaTikTok();
+      } else {
+        shareViaEmail();
+      }
+    })
+    .onCancel(() => {
+      // console.log('Dismissed')
+    })
+    .onDismiss(() => {
+      // console.log('I am triggered on both OK and Cancel')
+    });
+};
+
+const shareViaWhatsApp = () => {
+  const url = `https://wa.me/?text=${encodeURIComponent(
+    "Check out this amazing platform for your medical equipments needs across africa! " +
+      `https://www.africamedicalmarketplace.com/user/product-detail?name=${product.value.name}&id=${product.value.id}&slug=${product.value.slug}`
+  )}`;
+  window.open(url, "_blank");
+};
+
+const shareViaX = () => {
+  const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
+    "Check out this amazing platform for your medical equipments needs across africa! " +
+      `https://www.africamedicalmarketplace.com/user/product-detail?name=${product.value.name}&id=${product.value.id}&slug=${product.value.slug}`
+  )}`;
+  window.open(url, "_blank");
+};
+
+const shareViaFacebook = () => {
+  const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
+    `https://www.africamedicalmarketplace.com/user/product-detail?name=${product.value.name}&id=${product.value.id}&slug=${product.value.slug}`
+  )}`;
+  window.open(url, "_blank");
+};
+
+const shareViaInstagram = () => {
+  Notify.create({
+    color: "orange",
+    icon: "info",
+    position: "top",
+    progress: 100,
+    message: "Instagram sharing requires opening the app directly.",
+  });
+};
+
+const shareViaTikTok = () => {
+  Notify.create({
+    color: "purple",
+    icon: "info",
+    position: "top",
+    progress: 100,
+    message: "TikTok sharing requires opening the app directly.",
+  });
+};
+
+const shareViaEmail = () => {
+  const url = `mailto:?subject=Join me on this amazing app!&body=${encodeURIComponent(
+    "Check out this amazing platform for your medical equipments needs across africa" +
+      `https://www.africamedicalmarketplace.com/user/product-detail?name=${product.value.name}&id=${product.value.id}&slug=${product.value.slug}`
+  )}`;
+  window.open(url, "_blank");
 };
 onMounted(() => {
   getProductDetail();
@@ -1004,6 +1162,16 @@ section {
 
   .product-banner {
     max-height: unset;
+  }
+}
+
+.share_btn {
+  width: 100%;
+  margin-top: 1rem;
+  .q-btn {
+    padding: 12px 20px 12px 20px;
+    border-radius: 15px;
+    border: 2px solid #efefef;
   }
 }
 
