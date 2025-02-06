@@ -501,9 +501,10 @@ import {
   QSpinnerOval,
   BottomSheet,
   copyToClipboard,
+  useMeta,
 } from "quasar";
 import { authAxios } from "src/boot/axios";
-import { onMounted, ref, watch } from "vue";
+import { onMounted, ref, watch, computed } from "vue";
 import FooterComp from "src/components/FooterComp.vue";
 import ChatPage from "src/components/ChatPage.vue";
 import { useCartStore } from "src/stores/cart";
@@ -842,9 +843,35 @@ const removeFromWishlist = () => {
     .catch(({ response }) => {});
 };
 
+// const productDetail = computed(() => ({
+//   name: product.value?.name,
+//   slug: product.value?.slug,
+//   image: product.value?.media[0]?.url,
+//   description: product.value?.description,
+// }));
+
+useMeta({
+  title: product.value.name,
+  meta: [
+    { property: "og:title", content: product.value?.name },
+    { property: "og:description", content: product.value?.description },
+    {
+      property: "og:image",
+      content: product.value?.media
+        ? product.value?.media[0]?.url
+        : "/images/logo.svg",
+    },
+    {
+      property: "og:url",
+      content: `https://www.africamedicalmarketplace.com/user/product-detail?slug=${product.value?.slug}`,
+    },
+    { property: "og:type", content: "product" },
+  ],
+});
+
 let copyTo = () => {
   copyToClipboard(
-    `https://www.africamedicalmarketplace.com/user/product-detail?name=${product.value.name}&id=${product.value.id}&slug=${product.value.slug}`
+    `https://www.africamedicalmarketplace.com/user/product-detail?slug=${product.value.slug}`
   ).then(() => {
     Notify.create({
       message: "Link copied successfully",
@@ -924,7 +951,7 @@ const showShareSheet = () => {
 const shareViaWhatsApp = () => {
   const url = `https://wa.me/?text=${encodeURIComponent(
     "Check out this amazing platform for your medical equipments needs across africa! " +
-      `https://www.africamedicalmarketplace.com/user/product-detail?name=${product.value.name}&id=${product.value.id}&slug=${product.value.slug}`
+      `https://www.africamedicalmarketplace.com/user/product-detail?slug=${product.value.slug}`
   )}`;
   window.open(url, "_blank");
 };
@@ -932,14 +959,14 @@ const shareViaWhatsApp = () => {
 const shareViaX = () => {
   const url = `https://twitter.com/intent/tweet?text=${encodeURIComponent(
     "Check out this amazing platform for your medical equipments needs across africa! " +
-      `https://www.africamedicalmarketplace.com/user/product-detail?name=${product.value.name}&id=${product.value.id}&slug=${product.value.slug}`
+      `https://www.africamedicalmarketplace.com/user/product-detail?slug=${product.value.slug}`
   )}`;
   window.open(url, "_blank");
 };
 
 const shareViaFacebook = () => {
   const url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(
-    `https://www.africamedicalmarketplace.com/user/product-detail?name=${product.value.name}&id=${product.value.id}&slug=${product.value.slug}`
+    `https://www.africamedicalmarketplace.com/user/product-detail?slug=${product.value.slug}`
   )}`;
   window.open(url, "_blank");
 };
@@ -967,7 +994,7 @@ const shareViaTikTok = () => {
 const shareViaEmail = () => {
   const url = `mailto:?subject=Join me on this amazing app!&body=${encodeURIComponent(
     "Check out this amazing platform for your medical equipments needs across africa" +
-      `https://www.africamedicalmarketplace.com/user/product-detail?name=${product.value.name}&id=${product.value.id}&slug=${product.value.slug}`
+      `https://www.africamedicalmarketplace.com/user/product-detail?slug=${product.value.slug}`
   )}`;
   window.open(url, "_blank");
 };

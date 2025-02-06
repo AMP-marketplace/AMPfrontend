@@ -82,7 +82,8 @@
                 Biomedical near us
               </router-link>
             </p>
-            <div id="google_translate_element"></div>
+            <Translate />
+            <!-- <div id="google_translate_element"></div> -->
 
             <!-- <p class="text-white q-my-md">
               <router-link to="">Blog </router-link>
@@ -177,7 +178,9 @@
   </footer>
 </template>
 
-<script setup></script>
+<script setup>
+import Translate from "src/components/Translate.vue";
+</script>
 
 <style lang="scss" scoped>
 .fixed_mvr {
