@@ -2,10 +2,27 @@
   <router-view />
 </template>
 
-<script>
-import { defineComponent } from 'vue'
+<script setup>
+import { useRouter } from "vue-router";
+import { onMounted, watch } from "vue";
 
-export default defineComponent({
-  name: 'App'
-})
+const router = useRouter();
+
+onMounted(() => {
+  trackPageView(router.currentRoute.value.fullPath);
+});
+
+watch(
+  () => router.currentRoute.value.fullPath,
+  (newPath) => {
+    trackPageView(newPath);
+  }
+);
+
+function trackPageView(path) {
+  if (window.omnisend) {
+    console.log("Tracking page view:", path);
+    window.omnisend.push(["track", "$pageViewed"]);
+  }
+}
 </script>

@@ -4,37 +4,22 @@ import axios from "axios";
 
 // Function to validate price and ensure it's numeric
 function extractPrice(priceString) {
+  // Extract all numbers and decimals into an array
   const matches = priceString.match(/[0-9]+(?:\.[0-9]+)?/g);
+
+  // If no matches found, return 0
   if (!matches) return 0;
+
+  // Use only the first valid numeric part
   return parseFloat(matches[0]) || 0;
 }
 
 function validatePrice(priceString) {
+  // Extract and normalize the price
   const cleanedPrice = extractPrice(priceString);
-  return cleanedPrice > 0;
-}
 
-// Function to update Omnisend cart tracking
-function updateOmnisendCart(cart) {
-  if (window.omnisend) {
-    window.omnisend.push([
-      "cartUpdate",
-      {
-        cartID: `cart-${new Date().getTime()}`,
-        products: cart.map((item) => ({
-          productID: item.product.id,
-          title: item.product.name,
-          price: item.product.cleanedPrice,
-          quantity: item.quantity,
-          productURL: `https://yourwebsite.com/product/${item.product.id}`,
-          imageURL: item.product.image || "",
-        })),
-      },
-    ]);
-    console.log("Omnisend cart updated:", cart);
-  } else {
-    console.warn("Omnisend not available yet.");
-  }
+  // Ensure it's a valid number greater than 0
+  return cleanedPrice > 0;
 }
 
 export const useCartStore = defineStore("apmcart", {
@@ -44,8 +29,8 @@ export const useCartStore = defineStore("apmcart", {
     discounter: 0,
     deliveryLocationFee: 5000,
     orderDetail: [],
-    baseCurrency: "USD",
-    exchangeRates: {},
+    baseCurrency: "USD", // Default currency
+    exchangeRates: {}, // For storing exchange rates
   }),
   persist: {
     key: "apmcart",
@@ -63,9 +48,11 @@ export const useCartStore = defineStore("apmcart", {
     },
   },
   actions: {
-    // Add a product to the cart with Omnisend tracking
+    // Add a product to the cart with strict price validation
     addTocart(product_item) {
       const priceString = product_item.price.minimum_price;
+
+      // Extract and validate the price
       const cleanedPrice = extractPrice(priceString);
 
       if (cleanedPrice <= 0) {
@@ -78,6 +65,7 @@ export const useCartStore = defineStore("apmcart", {
         return;
       }
 
+      // Prevent mixing currencies in the cart
       if (
         this.cart.length > 0 &&
         product_item.currency !== this.cart[0].product.currency
@@ -102,7 +90,10 @@ export const useCartStore = defineStore("apmcart", {
 
       if (findproduct_item) {
         findproduct_item.quantity += item.quantity;
-        Notify.create({ message: "Item already added", position: "top" });
+        Notify.create({
+          message: "Item already added",
+          position: "top",
+        });
       } else {
         this.cart.push(item);
         Notify.create({
@@ -111,12 +102,8 @@ export const useCartStore = defineStore("apmcart", {
           position: "top",
         });
       }
-
-      // Update Omnisend cart tracking
-      updateOmnisendCart(this.cart);
     },
-
-    // Increase quantity and update Omnisend
+    // Other actions remain unchanged
     add(id) {
       const findproduct_item = this.cart.find(
         (product_item) => product_item.product.id === id
@@ -127,13 +114,9 @@ export const useCartStore = defineStore("apmcart", {
           findproduct_item.quantity === "" || 0
             ? 0 + 1
             : parseInt(findproduct_item.quantity) + 1;
-
-        // Update Omnisend
-        updateOmnisendCart(this.cart);
       }
     },
 
-    // Decrease quantity and update Omnisend
     remove(id) {
       const findproduct_item = this.cart.find(
         (product_item) => product_item.product.id === id
@@ -141,7 +124,6 @@ export const useCartStore = defineStore("apmcart", {
       if (!findproduct_item) {
         return;
       }
-
       findproduct_item.quantity = parseInt(findproduct_item.quantity) - 1;
 
       if (parseInt(findproduct_item.quantity) <= 0) {
@@ -149,12 +131,8 @@ export const useCartStore = defineStore("apmcart", {
         findproduct_item.quantity = 1;
         return;
       }
-
-      // Update Omnisend
-      updateOmnisendCart(this.cart);
     },
 
-    // Remove product from cart and update Omnisend
     removeFromCart(id) {
       this.cart = this.cart.filter((items) => items.product.id !== id);
       Notify.create({
@@ -162,12 +140,8 @@ export const useCartStore = defineStore("apmcart", {
         color: "red",
         position: "top",
       });
-
-      // Update Omnisend
-      updateOmnisendCart(this.cart);
     },
 
-    // Clear cart and update Omnisend
     clearCart() {
       this.cart = [];
       Notify.create({
@@ -175,14 +149,6 @@ export const useCartStore = defineStore("apmcart", {
         color: "green",
         position: "top",
       });
-
-      if (window.omnisend) {
-        window.omnisend.push([
-          "cartUpdate",
-          { cartID: `cart-${new Date().getTime()}`, products: [] },
-        ]);
-        // console.log("Omnisend cart cleared.");
-      }
     },
   },
 });
