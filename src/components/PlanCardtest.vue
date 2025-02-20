@@ -113,6 +113,67 @@
             <!-- ₦{{ plan.price.replace(/\B(?=(\d{3})+(?!\d))/g, ",") }} -->
           </div>
 
+          <div class="text-center q-mb-lg">
+            <!-- <div class="bigMediumText">Dear customer</div> -->
+
+            <p class="q-mt-sm text-center">
+              Dear exteemed customer please note that transactions are
+              <br />
+              currenctly in Dollars and Naira. <strong>NOTE:</strong> Using the
+              Dollar option will require you to enter a valid Card detail and it
+              will charge the dollar equivalent in your local currency.
+            </p>
+          </div>
+
+          <div class="column items-center justify-center">
+            <div class="q-gutter-sm">
+              <q-radio v-model="checkoutCurrency" val="dollar" label="Dollar" />
+              <q-radio
+                @update:model-value="getTotalInCurrencyNaira"
+                v-model="checkoutCurrency"
+                val="naira"
+                label="Naira"
+              />
+            </div>
+
+            <p v-if="currencyRatesData.rates" class="q-mt-xs">
+              Your order total in Naira is
+              <strong>
+                NGN
+                {{
+                  (
+                    plan.price * currencyRatesData?.rates["NGN"]
+                  ).toLocaleString()
+                }}</strong
+              >
+            </p>
+            <p
+              v-if="currencyRatesData.rates && showEquivInCurrency"
+              class="q-mt-xs"
+            >
+              {{ showEquivInCurrency }} to Dollar rate at this time is
+              <span class="text-green text-weight-bold">
+                {{ showEquivInCurrency }}
+                {{ currencyRatesData?.rates[showEquivInCurrency] }}
+              </span>
+            </p>
+
+            <p
+              v-if="currencyRatesData.rates && showEquivInCurrency"
+              class="q-mt-xs text-weight-bold"
+            >
+              Your subscription total in {{ showEquivInCurrency }} is
+              <strong>
+                {{ showEquivInCurrency }}
+                {{
+                  (
+                    plan.price * currencyRatesData?.rates[showEquivInCurrency]
+                  ).toLocaleString()
+                }}</strong
+              >
+            </p>
+          </div>
+
           <div v-if="errors.name" class="input-box active-grey">
             <label class="input-label">Business Name</label>
             <input
@@ -138,7 +199,16 @@
               :loading="loading"
               class="q-pa-sm"
               color="green-7"
+              v-if="checkoutCurrency === 'dollar'"
               @click="bringStripe"
+              >Proceed</q-btn
+            >
+            <q-btn
+              :loading="loading"
+              class="q-pa-sm"
+              color="green-7"
+              v-if="checkoutCurrency === 'naira'"
+              @click="initPayment"
               >Proceed</q-btn
             >
           </div>
@@ -154,8 +224,9 @@
         <div class="stripe-logo row justify-center">
           <img src="/images/stripe.png" alt="Stripe Logo" />
         </div>
+
         <div class="form-header">
-          <div>Enter valid card details to complete your payment</div>
+          <div>Enter continue to complete your payment</div>
         </div>
 
         <q-form @submit.prevent="handleSubmit" class="q-mt-md">
@@ -185,12 +256,14 @@
 </template>
 
 <script setup>
-import { Dialog, Loading, Notify, useQuasar } from "quasar";
+import { Dialog, Loading, Notify, QSpinnerRings, useQuasar } from "quasar";
 import { authAxios } from "src/boot/axios";
 import { useMyAuthStore } from "src/stores/auth";
 import { ref, watch } from "vue";
 import { loadStripe } from "@stripe/stripe-js";
 import { useRouter } from "vue-router";
+import axios from "axios";
+
 let store = useMyAuthStore();
 let props = defineProps(["plan", "loadingsign", "planDesc", "view"]);
 let router = useRouter();
@@ -209,6 +282,9 @@ let particularPlan = ref({});
 let refValue = ref("");
 let paymentRef = ref();
 const $q = useQuasar();
+let checkoutCurrency = ref("dollar");
+let currencyRatesData = ref({});
+let showEquivInCurrency = ref("");
 const appearance = {
   theme: "stripe",
 };
@@ -349,6 +425,41 @@ const handleSubmit = async () => {
     }
   }
 };
+
+const getTotalInCurrencyNaira = async () => {
+  // console.log("first");
+  Loading.show({
+    spinner: QSpinnerRings,
+    spinnerColor: "yellow",
+    spinnerSize: 140,
+    message: "Fetching, please wait...",
+    messageColor: "white",
+  });
+  let response = await axios.get(
+    "https://openexchangerates.org/api/latest.json?app_id=928ab800ac8d4100ae7d72be1fbf3ca0"
+  );
+  console.log(response);
+  currencyRatesData.value = response.data;
+  showEquivInCurrency.value = "NGN";
+  Loading.hide();
+};
+
+const getTotalInCurrency = async () => {
+  // console.log("first");
+  Loading.show({
+    spinner: QSpinnerRings,
+    spinnerColor: "yellow",
+    spinnerSize: 140,
+    message: "Fetching, please wait...",
+    messageColor: "white",
+  });
+  let response = await axios.get(
+    "https://openexchangerates.org/api/latest.json?app_id=928ab800ac8d4100ae7d72be1fbf3ca0"
+  );
+  console.log(response);
+  currencyRatesData.value = response.data;
+  Loading.hide();
+};
 let purchasePlan = () => {
   loading.value = true;
   authAxios
@@ -368,6 +479,40 @@ let purchasePlan = () => {
       // console.log(response);
       loading.value = false;
       errors.value = response.data.errors || {};
+    });
+};
+
+const initPayment = () => {
+  Loading.show();
+  // console.log(currencyRatesData?.rates);
+  authAxios
+    .post(`payment/charge?type=paystack&reference=${refValue.value}`, {
+      amount: (
+        parseInt(props.plan.price) *
+        currencyRatesData.value?.rates[showEquivInCurrency.value]
+      ).toString(),
+      currency: showEquivInCurrency.value,
+    })
+    .then(({ data }) => {
+      console.log(data);
+      Loading.hide();
+      Notify.create({
+        message: data.message,
+        color: "green",
+        position: "top",
+        actions: [{ icon: "close", color: "white" }],
+      });
+      window.location.href = data.data;
+      // cartStore.cart = [];
+    })
+    .catch(({ response }) => {
+      Loading.hide();
+      Notify.create({
+        message: response.data.message,
+        color: "red",
+        position: "top",
+        actions: [{ icon: "close", color: "white" }],
+      });
     });
 };
 </script>

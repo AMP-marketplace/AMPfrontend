@@ -1,22 +1,8 @@
 <template>
-  <q-layout class="side_" view="hHh lpR fFf">
+  <q-layout>
     <q-header class="header bg-white">
       <div class="">
         <div class="top_nav">
-          <div
-            style="justify-content: flex-start"
-            class="text-left container q-mb-md text-weight-bold"
-          >
-            Disclaimer: Africa Medical Marketplace (AMP) is not responsible for
-            any payment made directly to the Vendors. We protect the Vendors and
-            our esteemed customers.
-            <router-link
-              style="text-decoration: underline"
-              :to="{ name: 'disclaimer' }"
-            >
-              Click To Learn More
-            </router-link>
-          </div>
           <div class="container">
             <!-- <div class="left">Mon-Sat : <span>9:00am - 5:00pm</span></div> -->
             <div style="gap: 0.5rem" class="middle row items-center no-wrap">
@@ -32,8 +18,7 @@
             </div>
             <div class="right">
               <!-- <p>
-                <span
-                  >Call Us:
+                <span>
                   <a
                     href="mailto:hello@africamedicalmarketplace.com"
                     target="_blank"
@@ -68,8 +53,8 @@
           <div class="container">
             <div class="logo">
               <router-link :to="{ name: 'home' }">
-                <img src="/images/logo.svg" alt=""
-              /></router-link>
+                <img src="/images/logo.svg" alt="" />
+              </router-link>
             </div>
             <nav class="nav_items_">
               <ul>
@@ -84,18 +69,7 @@
                 </li> -->
                 <li class="navLinks">
                   <router-link :to="{ name: 'explore' }"
-                    >Explore Products</router-link
-                  >
-                </li>
-                <!-- <li class="navLinks">
-                  <router-link :to="{ name: 'plans.page' }"
-                    >Subscription Plans</router-link
-                  >
-                </li> -->
-
-                <li class="navLinks">
-                  <router-link :to="{ name: 'biomedical.near.us' }"
-                    >Biomedical Engineers</router-link
+                    >All Products</router-link
                   >
                 </li>
                 <li class="navLinks">
@@ -103,62 +77,19 @@
                     >Donate Medical Equipments</router-link
                   >
                 </li>
-                <li class="navLinks">
-                  <router-link :to="{ name: 'plans.page' }"
-                    >Pricing</router-link
-                  >
-                </li>
+                <!-- <li class="navLinks">
+                  <router-link to="">Services</router-link>
+                </li> -->
               </ul>
             </nav>
-            <div style="gap: 1rem" class="row items-center no-wrap">
+
+            <div style="gap: 0.5rem" class="row items-center no-wrap">
               <q-btn :to="{ name: 'cart' }" flat>
                 <i class="fa-solid text-black fa-cart-shopping"></i>
                 <q-badge color="red" floating>{{
                   cartStore.cart.length
                 }}</q-badge>
               </q-btn>
-
-              <q-btn
-                v-if="!store.token && route.name === 'login'"
-                :to="{
-                  name: 'merchant.register',
-                }"
-                color="primary"
-                no-caps
-                no-wrap
-                rounded
-                label="Signup"
-              />
-              <q-btn-dropdown
-                v-if="!store.token"
-                no-caps
-                no-wrap
-                rounded
-                color="green-7"
-                label="Login"
-              >
-                <q-list>
-                  <q-item
-                    clickable
-                    v-close-popup
-                    :to="{ name: 'customer.login' }"
-                  >
-                    <q-item-section>
-                      <q-item-label>Login as a customer</q-item-label>
-                    </q-item-section>
-                  </q-item>
-
-                  <q-item
-                    clickable
-                    v-close-popup
-                    :to="{ name: 'merchant.login' }"
-                  >
-                    <q-item-section>
-                      <q-item-label>Login as a merchant</q-item-label>
-                    </q-item-section>
-                  </q-item>
-                </q-list>
-              </q-btn-dropdown>
 
               <q-btn v-if="store.token" flat>
                 <img
@@ -174,10 +105,16 @@
                       />
                     </q-avatar>
 
-                    <div class="text-subtitle1 q-mt-md q-mb-xs">
-                      {{ store.userdetails.name }}
+                    <div
+                      style="white-space: nowrap"
+                      class="text-subtitle1 name_text q-mt-md q-mb-xs"
+                    >
+                      {{
+                        store.storedetails.business_name
+                          ? store.storedetails.business_name
+                          : store.userdetails.name
+                      }}
                     </div>
-
                     <q-btn
                       color="green-7"
                       label="View Dashboard"
@@ -193,27 +130,37 @@
                       size="sm"
                       v-close-popup
                     />
-                    <!-- v-if="store.userdetails.status !== 'pending'" -->
-                    <!-- {{ route.name }} -->
                     <q-btn
                       color="primary"
                       label="Logout"
-                      no-caps
+                      class="q-mt-sm"
                       no-wrap
+                      no-caps
+                      push
                       :to="{
                         name: 'logout',
                         query: {
                           redirect: route.name,
                         },
                       }"
-                      push
                       size="sm"
-                      class="q-mt-sm"
                       v-close-popup
                     />
                   </div>
                 </q-menu>
               </q-btn>
+
+              <q-btn
+                v-if="!store.token"
+                :to="{
+                  name: 'merchant.register',
+                }"
+                color="primary"
+                no-caps
+                no-wrap
+                rounded
+                label="Login"
+              />
               <q-btn @click="drawer = !drawer" class="expand_cats" flat>
                 <i class="fa-solid text-black fa-bars"></i>
               </q-btn>
@@ -238,26 +185,20 @@
           <q-list>
             <q-item :to="{ name: 'stores' }" clickable> All Stores </q-item>
             <q-item :to="{ name: 'explore' }" clickable> All Products </q-item>
-            <q-item :to="{ name: 'biomedical.near.us' }" clickable
-              >Biomedical Near Us</q-item
+            <q-item :to="{ name: 'donate' }" clickable
+              >Donate Medical Equipments</q-item
             >
-            <q-item :to="{ name: 'donate' }">Donate Medical Equipments</q-item>
-
-            <q-item :to="{ name: 'plans.page' }">Pricing</q-item>
-            <q-item :to="{ name: 'faq' }">FAQs</q-item>
             <q-item
               v-if="!store.token"
               :to="{ name: 'merchant.register' }"
               clickable
-              class="bg-green-7 text-white"
             >
               Register
             </q-item>
             <q-item
               v-if="!store.token"
-              :to="{ name: 'merchant.register' }"
+              :to="{ name: 'merchant.login' }"
               clickable
-              class="bg-green-7 text-white"
             >
               Login
             </q-item>
@@ -266,18 +207,90 @@
       </q-scroll-area>
     </q-drawer>
 
-    <q-page-container>
-      <router-view />
-    </q-page-container>
+    <div class="text-left container py-20 flex flex-center">
+      <div>
+        <!-- <div class="row justify-center items-center">
+          <img class="not_found" src="/images/404.jpg" alt="" />
+        </div> -->
+        <div class="text-black q-mt-xl text-weight-bold text-h4 pt-10">
+          Disclaimers: Africa Medical Marketplace (AMP)
+        </div>
+
+        <div
+          class="text-body1 text-black q-mt-md"
+          style="opacity: 0.8; max-width: 800px"
+        >
+          <p class="text-body1">
+            Please note the following while engaging with the Africa Medical
+            Marketplace (AMP) platform:
+          </p>
+
+          <ul class="q-mt-md">
+            <li class="text-weight-medium">
+              <span class="text-weight-bold">1.</span> AMP is not responsible
+              for any payment made directly to Vendors for goods or services
+              purchased.
+            </li>
+            <li class="q-mt-sm text-weight-medium">
+              <span class="text-weight-bold">2.</span> Buyers are advised to
+              confirm the current prices of products with Vendors before making
+              a purchase.
+            </li>
+            <li class="q-mt-sm text-weight-medium">
+              <span class="text-weight-bold">3.</span> AMP is committed to
+              protecting both Vendors and our esteemed customers.
+            </li>
+          </ul>
+        </div>
+
+        <div class="q-gutter-sm q-mt-xl row justify-center">
+          <q-btn
+            color="primary"
+            text-color="white"
+            unelevated
+            :to="{ name: 'home' }"
+            label="Go Home"
+            no-caps
+          />
+          <q-btn
+            color="primary"
+            text-color="white"
+            unelevated
+            :to="{ name: 'explore' }"
+            label="Shop products"
+            no-caps
+          />
+          <q-btn
+            color="primary"
+            text-color="white"
+            unelevated
+            :to="{ name: 'stores' }"
+            label="Visit stores"
+            no-caps
+          />
+          <q-btn
+            color="green-7"
+            text-color="white"
+            unelevated
+            :to="{ name: 'donate' }"
+            label="Donations"
+            no-caps
+          />
+        </div>
+      </div>
+    </div>
+
+    <FooterCompVue />
   </q-layout>
 </template>
 
 <script setup>
-import { useMyAuthStore } from "src/stores/auth";
+import FooterCompVue from "src/components/FooterComp.vue";
 import { ref } from "vue";
+import { useMyAuthStore } from "src/stores/auth";
 import { useRoute } from "vue-router";
-let store = useMyAuthStore();
 import { useCartStore } from "src/stores/cart";
+let store = useMyAuthStore();
 let route = useRoute();
 let cartStore = useCartStore();
 let leftDrawerOpen = ref(true);

@@ -3,6 +3,20 @@
     <q-header class="header bg-white">
       <div class="">
         <div class="top_nav">
+          <div
+            style="justify-content: flex-start"
+            class="text-left container q-mb-md text-weight-bold"
+          >
+            Disclaimer: Africa Medical Marketplace (AMP) is not responsible for
+            any payment made directly to the Vendors. We protect the Vendors and
+            our esteemed customers.
+            <router-link
+              style="text-decoration: underline"
+              :to="{ name: 'disclaimer' }"
+            >
+              Click To Learn More
+            </router-link>
+          </div>
           <div class="container">
             <!-- <div class="left">Mon-Sat : <span>9:00am - 5:00pm</span></div> -->
             <div style="gap: 0.5rem" class="middle row items-center no-wrap">

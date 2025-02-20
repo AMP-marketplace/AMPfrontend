@@ -148,7 +148,7 @@
           <template v-slot:body-cell-actions="props">
             <q-td :props="props">
               <div class="table_btn row items-center no-wrap">
-                <q-btn
+                <!-- <q-btn
                   @click="chatSeller(props.row)"
                   flat
                   no-wrap
@@ -158,8 +158,8 @@
                   :loading="loaders.save[props]"
                 >
                   Chat Customer
-                </q-btn>
-                <!-- <q-btn
+                </q-btn> -->
+                <q-btn
                   @click="acceptOrder(props.row)"
                   flat
                   no-wrap
@@ -176,7 +176,7 @@
                   :loading="loaders.save[props]"
                 >
                   {{ props.row.status === "accepted" ? "Accepted" : "Accept" }}
-                </q-btn> -->
+                </q-btn>
                 <q-btn
                   flat
                   no-wrap
@@ -235,8 +235,8 @@
                   "
                   >|</span
                 >
-                <!-- <q-btn
-                  @click="declineOrder(props.row)"
+                <q-btn
+                  @click="rejectOrder(props.row)"
                   flat
                   :disable="props.row.status === 'declined'"
                   no-wrap
@@ -253,8 +253,8 @@
                   :loading="loaders.save[props]"
                 >
                   {{ props.row.status === "declined" ? "Declined" : "Decline" }}
-                </q-btn> -->
-                <q-btn-dropdown
+                </q-btn>
+                <!-- <q-btn-dropdown
                   no-caps
                   flat
                   v-if="
@@ -295,7 +295,7 @@
                       </q-item-section>
                     </q-item>
                   </q-list>
-                </q-btn-dropdown>
+                </q-btn-dropdown> -->
               </div>
             </q-td>
           </template>
@@ -639,35 +639,95 @@ const getOrders = () => {
     });
 };
 const acceptOrder = (order) => {
-  Loading.show({
-    spinner: QSpinnerRings,
-    spinnerColor: "yellow",
-    spinnerSize: 140,
-    message: "Hold on... approving order",
-    messageColor: "white",
-  });
+  Dialog.create({
+    title: "Accept order",
+    message: `Are you sure you want to accept this order?`,
+    cancel: true,
+    persistent: true,
+  })
+    .onOk(() => {
+      Loading.show({
+        spinner: QSpinnerRings,
+        spinnerColor: "yellow",
+        spinnerSize: 140,
+        message: "Hold on... approving order",
+        messageColor: "white",
+      });
 
-  authAxios
-    .post(`merchant/order/${order.id}/action`, {
-      status: "accepted",
+      authAxios
+        .post(`merchant/order/${order.slug}/accept`, {
+          status: "accepted",
+        })
+        .then(({ data }) => {
+          console.log(data);
+          Notify.create({
+            message: data.message,
+            color: "green",
+            position: "top",
+          });
+          Loading.hide();
+          onRequest();
+        })
+        .catch(({ response }) => {
+          Loading.hide();
+          Notify.create({
+            message: "Error approving order",
+            color: "red",
+            position: "top",
+          });
+        });
     })
-    .then(({ data }) => {
-      console.log(data);
-      Notify.create({
-        message: data.message,
-        color: "green",
-        position: "top",
-      });
-      Loading.hide();
-      onRequest();
+    .onCancel(() => {
+      // console.log('>>>> Cancel')
     })
-    .catch(({ response }) => {
-      Loading.hide();
-      Notify.create({
-        message: "Error approving order",
-        color: "red",
-        position: "top",
+    .onDismiss(() => {
+      // console.log('I am triggered on both OK and Cancel')
+    });
+};
+const rejectOrder = (order) => {
+  Dialog.create({
+    title: "Reject order",
+    message: `Are you sure you want to reject this order?`,
+    cancel: true,
+    persistent: true,
+  })
+    .onOk(() => {
+      Loading.show({
+        spinner: QSpinnerRings,
+        spinnerColor: "yellow",
+        spinnerSize: 140,
+        message: "Hold on... rejecting order",
+        messageColor: "white",
       });
+
+      authAxios
+        .post(`merchant/order/${order.slug}/reject`, {
+          status: "accepted",
+        })
+        .then(({ data }) => {
+          console.log(data);
+          Notify.create({
+            message: data.message,
+            color: "green",
+            position: "top",
+          });
+          Loading.hide();
+          onRequest();
+        })
+        .catch(({ response }) => {
+          Loading.hide();
+          Notify.create({
+            message: "Error approving order",
+            color: "red",
+            position: "top",
+          });
+        });
+    })
+    .onCancel(() => {
+      // console.log('>>>> Cancel')
+    })
+    .onDismiss(() => {
+      // console.log('I am triggered on both OK and Cancel')
     });
 };
 const setTrackingStatus = (order) => {
