@@ -181,6 +181,10 @@
       </div>
     </section>
 
+    <section>
+      <Testimonails />
+    </section>
+
     <SponsorsCompVue />
     <FooterCompVue />
 
@@ -221,6 +225,7 @@
 import { authAxios } from "src/boot/axios";
 import { useProductStore } from "src/stores/productStore";
 import FooterCompVue from "src/components/FooterComp.vue";
+import Testimonails from "src/components/Testi.vue";
 import SponsorsCompVue from "src/components/SponsorsComp.vue";
 import ProductCompVue from "src/components/ProductComp.vue";
 import { computed, onMounted, ref } from "vue";

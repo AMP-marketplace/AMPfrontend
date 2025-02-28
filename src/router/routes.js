@@ -58,6 +58,26 @@ const routes = [
         component: () => import("pages/FaqPage.vue"),
         name: "faq",
       },
+      {
+        path: "/privacy-policy",
+        component: () => import("pages/PrivacyPolicy.vue"),
+        name: "privacy.policy",
+      },
+      {
+        path: "/prohibited-items",
+        component: () => import("pages/ProhibitedPage.vue"),
+        name: "prohibited.items",
+      },
+      {
+        path: "/terms-and-conditions",
+        component: () => import("pages/TermsAndConditions.vue"),
+        name: "terms.conditions",
+      },
+      {
+        path: "/vendor-buyer-guide",
+        component: () => import("pages/WebsiteDocsPage.vue"),
+        name: "vendor.buyer",
+      },
 
       {
         path: "/explore",

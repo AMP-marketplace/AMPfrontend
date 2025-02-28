@@ -61,6 +61,18 @@
                 >Explore subscription plans
               </router-link>
             </p>
+
+            <p class="text-white q-my-md">
+              <router-link :to="{ name: 'privacy.policy' }">
+                Privacy policy
+              </router-link>
+            </p>
+
+            <p class="text-white q-my-md">
+              <router-link :to="{ name: 'prohibited.items' }">
+                Prohibited Items
+              </router-link>
+            </p>
             <!-- <p class="text-white q-my-md">
               <router-link to=""> Banner Advertising </router-link>
             </p>
@@ -95,7 +107,18 @@
             </h4>
             <q-separator class="bg-white" />
             <p class="text-white q-my-md">
-              <router-link :to="{ name: 'faq' }"> FAQ </router-link>
+              <router-link :to="{ name: 'faq' }">
+                FAQ(Vendor Buyer Support Guide)
+              </router-link>
+            </p>
+
+            <!-- <p class="text-white q-my-md">
+              <router-link :to="{ name: 'vendor.buyer' }">
+                Vendor Buyer Support Guide
+              </router-link>
+            </p> -->
+            <p class="text-white q-my-md">
+              <router-link :to="{ name: 'about.us' }"> About us </router-link>
             </p>
             <p class="text-white q-my-md">
               <router-link :to="{ name: 'contact.us' }">
@@ -136,7 +159,7 @@
           rights reserved.
         </p>
         <p class="text-white text_underline text-weight-medium">
-          <router-link to="" class="text_underline"
+          <router-link :to="{ name: 'terms.conditions' }" class="text_underline"
             >Terms & Conditions</router-link
           >
         </p>

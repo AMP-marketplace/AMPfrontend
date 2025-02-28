@@ -254,7 +254,7 @@
                 >
                   {{ props.row.status === "declined" ? "Declined" : "Decline" }}
                 </q-btn>
-                <!-- <q-btn-dropdown
+                <q-btn-dropdown
                   no-caps
                   flat
                   v-if="
@@ -295,7 +295,7 @@
                       </q-item-section>
                     </q-item>
                   </q-list>
-                </q-btn-dropdown> -->
+                </q-btn-dropdown>
               </div>
             </q-td>
           </template>
@@ -746,7 +746,9 @@ const setTrackingStatus = (order) => {
         messageColor: "white",
       });
       authAxios
-        .post(`merchant/order/track?tracking_number=${order.tracking_number}`)
+        .post(`merchant/tracking/${order.tracking_number}/${order.slug}`, {
+          status: "shipped",
+        })
         .then(({ data }) => {
           console.log(data);
           Notify.create({

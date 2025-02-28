@@ -266,7 +266,7 @@ onMounted(() => {
   border-radius: 14px;
   min-width: 100%;
   // min-width: 300px;
-  min-height: 321px;
+  min-height: 691px;
   // min-height: 351px;
   padding: 1rem;
 }

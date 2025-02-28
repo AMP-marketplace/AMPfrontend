@@ -4,7 +4,16 @@
       <img src="/images/plancircle.png" alt="" />
       <img :src="`/images/sellerplan.png`" alt="" />
     </div>
-    <div class="title">{{ plan.name }}</div>
+    <div v-if="plan.name === 'free'" class="title">{{ "Free Plan" }}</div>
+    <div v-else-if="plan.name === 'standard'" class="title">
+      {{ "Lite Plan ($7/month or $70/year – Save 17%)" }}
+    </div>
+    <div v-else-if="plan.name === 'basic'" class="title">
+      {{ "Pro Plan ($15/month or $150/year – Save 17%)" }}
+    </div>
+    <div v-else class="title">
+      {{ "Elite Plan ($30/month or $300/year – Save 17%)" }}
+    </div>
     <div class="amount">
       ${{
         planDesc !== "yearly"
@@ -19,77 +28,185 @@
     </div>
     <!-- {{  }} -->
     <div class="options">
-      <ul v-if="plan.name === 'free'">
-        <li>
-          <i class="fa-solid q-mr-sm text-green fa-check"></i>
-          Verified Badge
-        </li>
-        <li>
-          <i class="fa-solid q-mr-sm text-green fa-check"></i>
-          Users Chat
-        </li>
-        <li>
-          <i class="fa-solid q-mr-sm text-green fa-check"></i> 50 Products
-          uploads
-        </li>
-      </ul>
-      <ul v-else-if="plan.name === 'standard'">
-        <li>
-          <i class="fa-solid q-mr-sm text-green fa-check"></i>
-          Verified Badge
-        </li>
-        <li>
-          <i class="fa-solid q-mr-sm text-green fa-check"></i>
-          Users Chat
-        </li>
-        <li>
-          <i class="fa-solid q-mr-sm text-green fa-check"></i> Analytics
-          Dashboard
-        </li>
-        <li>
-          <i class="fa-solid q-mr-sm text-green fa-check"></i> Unlimited
-          Products uploads
-        </li>
-      </ul>
-      <ul v-else-if="plan.name === 'basic'">
-        <li>
-          <i class="fa-solid q-mr-sm text-green fa-check"></i>
-          Verified Badge
-        </li>
-        <li>
-          <i class="fa-solid q-mr-sm text-green fa-check"></i>
-          Users Chat
-        </li>
-        <li>
-          <i class="fa-solid q-mr-sm text-green fa-check"></i> Unlimited
-          Products uploads
-        </li>
-      </ul>
-      <ul v-else>
-        <li>
-          <i class="fa-solid q-mr-sm text-green fa-check"></i>
-          Verified Badge
-        </li>
-        <li>
-          <i class="fa-solid q-mr-sm text-green fa-check"></i>
-          Users Chat
-        </li>
-        <li>
-          <i class="fa-solid q-mr-sm text-green fa-check"></i>
-          Unlimited Products uploads
-        </li>
-        <li>
-          <i class="fa-solid q-mr-sm text-green fa-check"></i> Analytics
-          Dashboard
-        </li>
-        <li>
-          <i class="fa-solid q-mr-sm text-green fa-check"></i> Dedicated page
-        </li>
-        <!-- <li v-for="(option, index) in plan.description" :key="index">
+      <div v-if="plan.name === 'free'">
+        <div class="q-my-md">
+          <p><strong>Perfect for:</strong> New vendors testing the platform.</p>
+          <h6 class="text-weight-bold">Features:</h6>
+        </div>
+        <ul>
+          <li>
+            <i class="fa-solid q-mr-sm text-green fa-check"></i>
+            Access to RFQs after 48 hours of posting
+          </li>
+          <li>
+            <i class="fa-solid q-mr-sm text-green fa-check"></i>
+            Upload up to 5 products
+          </li>
+          <li>
+            <i class="fa-solid q-mr-sm text-green fa-check"></i> Send 10 buyer
+            messages per month
+          </li>
+          <li>
+            <i class="fa-solid q-mr-sm text-green fa-check"></i> Basic
+            storefront
+          </li>
+          <li>❌ No analytics</li>
+          <li>❌ No search priority</li>
+          <li>
+            <i class="fa-solid q-mr-sm text-green fa-check"></i> Local pricing
+            display available
+          </li>
+        </ul>
+        <p class="q-mt-md">
+          <strong
+            >Start for free and upgrade to get first dibs on high-value
+            RFQs!</strong
+          >
+        </p>
+      </div>
+
+      <div v-else-if="plan.name === 'standard'">
+        <div class="q-my-md">
+          <p><strong>Perfect for:</strong>Small businesses ready to grow.</p>
+          <h6 class="text-weight-bold">Features:</h6>
+        </div>
+        <ul>
+          <li>
+            <i class="fa-solid q-mr-sm text-green fa-check"></i>
+            Access to RFQs after 36 hours of posting
+          </li>
+          <li>
+            <i class="fa-solid q-mr-sm text-green fa-check"></i>
+            Upload up to 20 products
+          </li>
+          <li>
+            <i class="fa-solid q-mr-sm text-green fa-check"></i> Send 30 buyer
+            messages per month
+          </li>
+          <li>
+            <i class="fa-solid q-mr-sm text-green fa-check"></i> Basic analytics
+            (traffic and product views)
+          </li>
+          <li>
+            <i class="fa-solid q-mr-sm text-green fa-check"></i> Category
+            listing priority (Page 2 for niche searches)
+          </li>
+          <li>
+            <i class="fa-solid q-mr-sm text-green fa-check"></i> Email support
+            (72-hour response time)
+          </li>
+          <li>
+            <i class="fa-solid q-mr-sm text-green fa-check"></i> Local pricing
+            display available
+          </li>
+        </ul>
+
+        <p class="q-mt-md">
+          <strong
+            >Just $5.83/month if paid yearly – get faster RFQ access and grow
+            your business!</strong
+          >
+        </p>
+      </div>
+
+      <div v-else-if="plan.name === 'basic'">
+        <div class="q-my-md">
+          <p>
+            <strong>Perfect for:</strong>Growing businesses with steady demand.
+          </p>
+          <h6 class="text-weight-bold">Features:</h6>
+        </div>
+        <ul>
+          <li>
+            <i class="fa-solid q-mr-sm text-green fa-check"></i>
+            Access to RFQs after 24 hours of posting
+          </li>
+          <li>
+            <i class="fa-solid q-mr-sm text-green fa-check"></i>
+            Upload up to 50 products
+          </li>
+          <li>
+            <i class="fa-solid q-mr-sm text-green fa-check"></i> Unlimited buyer
+            messages
+          </li>
+          <li>
+            <i class="fa-solid q-mr-sm text-green fa-check"></i> Advanced
+            analytics (customer demographics, search trends)
+          </li>
+          <li>
+            <i class="fa-solid q-mr-sm text-green fa-check"></i> Search result
+            boost (Page 1 for niche keywords)
+          </li>
+          <li>
+            <i class="fa-solid q-mr-sm text-green fa-check"></i> Live chat
+            support
+          </li>
+          <li>
+            <i class="fa-solid q-mr-sm text-green fa-check"></i> Local pricing
+            display available
+          </li>
+        </ul>
+
+        <p class="q-mt-md">
+          <strong
+            >Join 50+ businesses scaling with Pro Plan insights and faster RFQ
+            access!</strong
+          >
+        </p>
+      </div>
+
+      <div v-else>
+        <div class="q-my-md">
+          <p>
+            <strong>Perfect for:</strong>Established businesses looking to
+            dominate.
+          </p>
+          <h6 class="text-weight-bold">Features:</h6>
+        </div>
+        <ul>
+          <li>
+            <i class="fa-solid q-mr-sm text-green fa-check"></i>
+            Immediate access to RFQs after screening
+          </li>
+          <li>
+            <i class="fa-solid q-mr-sm text-green fa-check"></i>
+            Upload up to 100 products
+          </li>
+          <li>
+            <i class="fa-solid q-mr-sm text-green fa-check"></i>
+            Priority RFQ access (Guaranteed 20 high-value RFQs per month)
+          </li>
+          <li>
+            <i class="fa-solid q-mr-sm text-green fa-check"></i> Full analytics
+            suite (sales forecasting, competitor insights)
+          </li>
+          <li>
+            <i class="fa-solid q-mr-sm text-green fa-check"></i> Homepage
+            feature (rotating banner, 1 week per month)
+          </li>
+          <li>
+            <i class="fa-solid q-mr-sm text-green fa-check"></i> 24/7 priority
+            support + dedicated account manager
+          </li>
+          <li>
+            <i class="fa-solid q-mr-sm text-green fa-check"></i> “Top Seller”
+            badge for credibility
+          </li>
+          <li>
+            <i class="fa-solid q-mr-sm text-green fa-check"></i> Local pricing
+            display available
+          </li>
+          <!-- <li v-for="(option, index) in plan.description" :key="index">
           <i class="fa-solid q-mr-sm text-green fa-check"></i>
           {{ option }}
         </li> -->
-      </ul>
+        </ul>
+        <p class="q-mt-md">
+          <strong
+            >Elite users see 2x more RFQs and 40% faster sales cycles!</strong
+          >
+        </p>
+      </div>
     </div>
 
     <div class="btn">
@@ -609,7 +726,7 @@ const initPayment = () => {
   box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.15);
   border-radius: 14px;
   min-width: 230px;
-  min-height: 351px;
+  min-height: 1051px;
   padding: 2rem;
   max-width: 400px;
   margin: 0 auto;
