@@ -1,6 +1,9 @@
 <template>
   <div class="wrapperr container">
-    <div class="other_cards">
+    <div class="text-center">
+      <h4 class="text-h3 text-weight-bold">Testimonials</h4>
+    </div>
+    <div style="margin: 0 auto" class="other_cards row justify-center">
       <Splide
         :options="{
           rewind: true,
@@ -11,32 +14,35 @@
           },
           breakpoints: {
             640: {
-              perPage: 2,
+              perPage: 1,
             },
             767: {
-              perPage: 2,
+              perPage: 1,
             },
             1024: {
-              perPage: 3,
+              perPage: 1,
             },
             2000: {
-              perPage: 3,
+              perPage: 1,
             },
           },
         }"
-        :extensions="extensions"
         aria-label="My Favorite Images"
       >
         <SplideSlide v-for="(card, index) in cards" :key="index">
-          <div class="card">
+          <div class="card bg-primary text-white">
             <div class="q-my-sm">
-              {{ card.main }}
+              <h3 class="text-h4 text-center text-weight-bold">
+                {{ card.main }}
+              </h3>
             </div>
 
-            <p>{{ card.amt }}</p>
+            <p class="text-center">{{ card.amt }}</p>
 
             <div class="row justify-end">
-              {{ card.person }}
+              <h3 class="text-weight-bold">
+                {{ card.person }}
+              </h3>
             </div>
           </div>
         </SplideSlide>
@@ -71,9 +77,9 @@ export default {
           speed: 0.5,
         },
       },
-      extensions: {
-        AutoScroll,
-      },
+      // extensions: {
+      //   AutoScroll,
+      // },
       cards: [
         {
           main: "Mentor",
@@ -101,7 +107,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .wrapperr {
   padding: 5rem 0;
 }
@@ -128,6 +134,8 @@ export default {
 .card {
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
   padding: 0.5rem;
+  max-width: 300px;
+  margin: 0 auto;
 }
 .Oprice {
   font-weight: 700;
@@ -144,6 +152,13 @@ export default {
   text-align: center;
   color: #ffffff;
   padding: 2rem 3rem;
+}
+
+.other_cards {
+  max-width: 600px;
+  .card {
+    max-width: 100%;
+  }
 }
 
 .price {
@@ -230,8 +245,8 @@ h2.head {
   border-radius: 6.40068px;
   position: relative;
   padding-top: 3rem;
-  min-height: 350px;
-  height: 350px;
+  min-height: 270px;
+  height: 420px;
   width: 100%;
   display: flex;
   justify-content: center;
@@ -258,6 +273,15 @@ h2.head {
   background: linear-gradient(180deg, #150f70 0%, #463cdf 100%);
 }
 
+@media (min-width: 900px) {
+  .other_cards {
+    max-width: 600px;
+    .card {
+      max-width: 100%;
+      height: 350px;
+    }
+  }
+}
 @media (max-width: 800px) {
   h2.head {
     font-size: 50px;

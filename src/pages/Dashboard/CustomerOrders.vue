@@ -655,9 +655,7 @@ const acceptOrder = (order) => {
       });
 
       authAxios
-        .post(`merchant/order/${order.slug}/accept`, {
-          status: "accepted",
-        })
+        .post(`merchant/order/${order.id}/accept`)
         .then(({ data }) => {
           console.log(data);
           Notify.create({
@@ -731,6 +729,7 @@ const rejectOrder = (order) => {
     });
 };
 const setTrackingStatus = (order) => {
+  // console.log(order.shipping_information.tracking_number);
   Dialog.create({
     title: "Set Order Status",
     message: `Are you sure you want to change the status of this order?`,
@@ -746,9 +745,12 @@ const setTrackingStatus = (order) => {
         messageColor: "white",
       });
       authAxios
-        .post(`merchant/tracking/${order.tracking_number}/${order.slug}`, {
-          status: "shipped",
-        })
+        .post(
+          `merchant/tracking/${order.shipping_information.tracking_number}/${order.slug}`,
+          {
+            status: "shipped",
+          }
+        )
         .then(({ data }) => {
           console.log(data);
           Notify.create({

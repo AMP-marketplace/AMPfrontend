@@ -102,6 +102,42 @@ p {
   padding: 3rem 0;
 }
 
+.splide {
+  overflow: hidden;
+
+  .splide__arrow {
+    bottom: 0;
+    background: #28a745;
+    color: white;
+  }
+  .splide__arrow--next {
+    right: -0%;
+    bottom: 0;
+  }
+  .splide__arrow svg {
+    fill: #fff;
+    height: 1.2em;
+    width: 1.2em;
+  }
+  .splide__arrow--prev {
+    left: unset;
+    right: 9%;
+    bottom: 0;
+  }
+  .splide__arrow {
+    top: 90%;
+  }
+
+  .splide__pagination__page {
+    width: 40px;
+    border-radius: 1rem;
+
+    &.is-active {
+      background: #28a745;
+    }
+  }
+}
+
 .q-badge {
   &.new {
     background: rgba(40, 167, 69, 0.2);

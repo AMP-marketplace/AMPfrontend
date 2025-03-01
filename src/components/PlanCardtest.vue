@@ -5,14 +5,18 @@
       <img :src="`/images/sellerplan.png`" alt="" />
     </div>
     <div v-if="plan.name === 'free'" class="title">{{ "Free Plan" }}</div>
-    <div v-else-if="plan.name === 'standard'" class="title">
-      {{ "Lite Plan ($7/month or $70/year – Save 17%)" }}
-    </div>
     <div v-else-if="plan.name === 'basic'" class="title">
-      {{ "Pro Plan ($15/month or $150/year – Save 17%)" }}
+      {{ "Lite Plan" }}
+      <!-- {{ "Lite Plan ($7/month or $70/year – Save 17%)" }} -->
     </div>
+    <div v-else-if="plan.name === 'standard'" class="title">
+      {{ "Pro Plan" }}
+      <!-- {{ "Pro Plan ($15/month or $150/year – Save 17%)" }} -->
+    </div>
+
     <div v-else class="title">
-      {{ "Elite Plan ($30/month or $300/year – Save 17%)" }}
+      {{ "Elite Plan" }}
+      <!-- {{ "Elite Plan ($30/month or $300/year – Save 17%)" }} -->
     </div>
     <div class="amount">
       ${{
@@ -22,8 +26,9 @@
       }}
       <!-- ₦{{ plan.price.replace(/\B(?=(\d{3})+(?!\d))/g, ",") }} -->
       <br />
+      <!-- {{ planDesc }} -->
       <div class="small">
-        {{ planDesc === "monthly" ? "Per month" : "Per year" }}
+        {{ planDesc === "month" ? "Per month" : "Per year" }}
       </div>
     </div>
     <!-- {{  }} -->
@@ -50,8 +55,8 @@
             <i class="fa-solid q-mr-sm text-green fa-check"></i> Basic
             storefront
           </li>
-          <li>❌ No analytics</li>
-          <li>❌ No search priority</li>
+          <li>❌ <span class="ml-sm">No analytics</span></li>
+          <li>❌ <span class="ml-sm">No search priority</span></li>
           <li>
             <i class="fa-solid q-mr-sm text-green fa-check"></i> Local pricing
             display available
@@ -65,7 +70,7 @@
         </p>
       </div>
 
-      <div v-else-if="plan.name === 'standard'">
+      <div v-else-if="plan.name === 'basic'">
         <div class="q-my-md">
           <p><strong>Perfect for:</strong>Small businesses ready to grow.</p>
           <h6 class="text-weight-bold">Features:</h6>
@@ -102,14 +107,11 @@
         </ul>
 
         <p class="q-mt-md">
-          <strong
-            >Just $5.83/month if paid yearly – get faster RFQ access and grow
-            your business!</strong
-          >
+          <strong>Get faster RFQ access and grow your business!</strong>
         </p>
       </div>
 
-      <div v-else-if="plan.name === 'basic'">
+      <div v-else-if="plan.name === 'standard'">
         <div class="q-my-md">
           <p>
             <strong>Perfect for:</strong>Growing businesses with steady demand.
@@ -210,7 +212,12 @@
     </div>
 
     <div class="btn">
-      <q-btn @click="purchasePlan" :loading="loading" color="primary">
+      <q-btn
+        v-if="plan.name !== 'free'"
+        @click="purchasePlan"
+        :loading="loading"
+        color="primary"
+      >
         Start Plan
       </q-btn>
     </div>
