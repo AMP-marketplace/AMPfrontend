@@ -84,6 +84,19 @@
               <q-item-label>All Payments</q-item-label>
             </q-item-section>
           </q-item>
+          <q-item
+            :to="{ name: 'admin.list.rfq' }"
+            class="links"
+            v-ripple
+            clickable
+          >
+            <q-item-section class="avater_side" avatar>
+              <q-icon size="18px" name="inventory" />
+            </q-item-section>
+            <q-item-section>
+              <q-item-label>All Rfqs</q-item-label>
+            </q-item-section>
+          </q-item>
           <!-- <q-item
             :to="{ name: 'admin.list.kyc' }"
             class="links"

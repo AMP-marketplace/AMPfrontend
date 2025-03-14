@@ -115,12 +115,12 @@
                     alt=""
                   /> -->
                   <p class="smallerText q-mt-md">
-                    {{
-                      props.row.products.map((product) =>
+                    <!-- {{
+                      props?.row?.products?.map((product) =>
                         product?.product?.name?.toString()
                       )[0]
-                    }}
-                    <!-- {{ product?.name }} -->
+                    }} -->
+                    {{ props?.row?.product?.name }}
                   </p>
                 </div>
               </div>
@@ -254,7 +254,7 @@
                 >
                   {{ props.row.status === "declined" ? "Declined" : "Decline" }}
                 </q-btn>
-                <q-btn-dropdown
+                <!-- <q-btn-dropdown
                   no-caps
                   flat
                   v-if="
@@ -295,7 +295,7 @@
                       </q-item-section>
                     </q-item>
                   </q-list>
-                </q-btn-dropdown>
+                </q-btn-dropdown> -->
               </div>
             </q-td>
           </template>
@@ -402,7 +402,7 @@ const columns = [
     required: true,
     label: "Amount",
     align: "left",
-    field: (row) => `$${row.amount}`,
+    field: (row) => `$${row.price}`,
     sortable: true,
   },
   // {
@@ -413,55 +413,55 @@ const columns = [
   //   field: "unit",
   //   sortable: true,
   // },
-  {
-    name: "shipping_information",
-    required: true,
-    label: "Address",
-    align: "left",
-    field: (row) => row?.shipping_information?.address?.address_line_1,
-    sortable: true,
-  },
-  {
-    name: "shipping_information",
-    required: true,
-    label: "City",
-    align: "left",
-    field: (row) => row?.shipping_information?.address?.city,
-    sortable: true,
-  },
-  {
-    name: "shipping_information",
-    required: true,
-    label: "Country",
-    align: "left",
-    field: (row) => row?.shipping_information?.address?.country,
-    sortable: true,
-  },
-  {
-    name: "shipping_information",
-    required: true,
-    label: "Customer Name",
-    align: "left",
-    field: (row) =>
-      `${row?.shipping_information?.address?.first_name} ${row?.shipping_information?.address?.last_name}`,
-    sortable: true,
-  },
-  {
-    name: "shipping_information",
-    required: true,
-    label: "State",
-    align: "left",
-    field: (row) => `${row?.shipping_information?.address?.state} `,
-    sortable: true,
-  },
-  {
-    name: "shipping_information",
-    required: true,
-    label: "Postal Code",
-    align: "left",
-    field: (row) => `${row?.shipping_information?.address?.postal_code} `,
-    sortable: true,
-  },
+  // {
+  //   name: "shipping_information",
+  //   required: true,
+  //   label: "Address",
+  //   align: "left",
+  //   field: (row) => row?.shipping_information?.address?.address_line_1,
+  //   sortable: true,
+  // },
+  // {
+  //   name: "shipping_information",
+  //   required: true,
+  //   label: "City",
+  //   align: "left",
+  //   field: (row) => row?.shipping_information?.address?.city,
+  //   sortable: true,
+  // },
+  // {
+  //   name: "shipping_information",
+  //   required: true,
+  //   label: "Country",
+  //   align: "left",
+  //   field: (row) => row?.shipping_information?.address?.country,
+  //   sortable: true,
+  // },
+  // {
+  //   name: "shipping_information",
+  //   required: true,
+  //   label: "Customer Name",
+  //   align: "left",
+  //   field: (row) =>
+  //     `${row?.shipping_information?.address?.first_name} ${row?.shipping_information?.address?.last_name}`,
+  //   sortable: true,
+  // },
+  // {
+  //   name: "shipping_information",
+  //   required: true,
+  //   label: "State",
+  //   align: "left",
+  //   field: (row) => `${row?.shipping_information?.address?.state} `,
+  //   sortable: true,
+  // },
+  // {
+  //   name: "shipping_information",
+  //   required: true,
+  //   label: "Postal Code",
+  //   align: "left",
+  //   field: (row) => `${row?.shipping_information?.address?.postal_code} `,
+  //   sortable: true,
+  // },
 
   {
     name: "created_at",
@@ -615,11 +615,11 @@ const onRequest = (props) => {
   loading.value = true;
 
   authAxios
-    .get(`order/index`)
+    .get(`merchant/order/index`)
     .then(({ data }) => {
       console.log(data);
 
-      rows.value = data.data;
+      rows.value = data.orders;
       loading.value = false;
     })
     .catch(({ response }) => {
@@ -629,7 +629,7 @@ const onRequest = (props) => {
 const getOrders = () => {
   loading.value = true;
   authAxios
-    .get(`order/index`)
+    .get(`merchant/order/index`)
     .then(({ data }) => {
       console.log(data);
       loading.value = false;

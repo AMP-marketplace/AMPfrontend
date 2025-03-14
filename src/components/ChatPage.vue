@@ -72,9 +72,12 @@
                 v-for="(chat, index) in conversationDetails?.messages"
                 :key="index"
               >
+                <!-- {{ chat.sender.roles ? chat.sender.roles[0] : "" }} -->
+                <!-- {{ chat.sender }} -->
                 <div
                   :class="
-                    chat?.sender?.roles[0].name === 'shopper'
+                    chat.sender.roles &&
+                    chat?.sender?.roles[0]?.name === 'shopper'
                       ? 'user chat'
                       : 'vendor chat'
                   "
@@ -247,11 +250,11 @@ const pusher = new Pusher("f71ee69f460a2ede9930", {
 channel = pusher.subscribe(`private-${props.conversationDetails.slug}`);
 channel.bind("pusher:subscription_succeeded", () => {
   errorConnectingToChatServer.value = true;
-  console.log("Successfully subscribed to the channel");
+  // console.log("Successfully subscribed to the channel");
 });
 channel.bind("pusher:subscription_error", (status) => {
   errorConnectingToChatServer.value = false;
-  console.error("Subscription error:", status);
+  // console.error("Subscription error:", status);
 });
 // // Listen for incoming messages
 // channel.bind("message.delivered", (data) => {
@@ -274,7 +277,7 @@ let scrollToBottom = () => {
   });
 };
 function hideDropdown() {
-  console.log("close dropdown");
+  // console.log("close dropdown");
   toggleEmojiPicker.value = !toggleEmojiPicker;
 }
 
@@ -288,12 +291,12 @@ let closeModal = () => {
 };
 
 let onSelectEmoji = (emoji) => {
-  console.log(emoji);
+  // console.log(emoji);
   newMessage.value += emoji.i + " ";
 };
 
 let sendMessage = () => {
-  console.log(props.conversationDetails);
+  // console.log(props.conversationDetails);
   if (newMessage.value === "") {
     Notify.create({
       message: "Type in a message",
@@ -324,12 +327,12 @@ let sendMessage = () => {
     })
     .then((response) => {
       sendingMessageLoading.value = false;
-      console.log(response);
+      // console.log(response);
 
       scrollToBottom();
     })
     .catch(({ response }) => {
-      console.log(response);
+      // console.log(response);
       if (props.conversationDetails.messages.length > 1) {
         props.conversationDetails.messages.pop();
       }
@@ -350,7 +353,7 @@ onMounted(() => {
     const scrollDiv = document.getElementById("myDiv");
     scrollDiv.scrollTop = scrollDiv.scrollHeight;
     let lastChildDiv = scrollDiv.lastElementChild;
-    console.log(lastChildDiv);
+    // console.log(lastChildDiv);
     lastChildDiv.scrollIntoView({ behavior: "smooth", block: "end" });
   }
   Pusher.logToConsole = true;
@@ -367,11 +370,11 @@ onMounted(() => {
   channel = pusher.subscribe(`private-${props.conversationDetails.slug}`);
   channel.bind("pusher:subscription_succeeded", () => {
     errorConnectingToChatServer.value = true;
-    console.log("Successfully subscribed to the channel");
+    // console.log("Successfully subscribed to the channel");
   });
   channel.bind("pusher:subscription_error", (status) => {
     errorConnectingToChatServer.value = false;
-    console.error("Subscription error:", status);
+    // console.error("Subscription error:", status);
   });
   channel.bind("client-typing", (data) => {
     if (store.userdetails.id === data.sender_id) {
@@ -388,7 +391,7 @@ onMounted(() => {
     }
   });
   channel.bind("message.delivered", (data) => {
-    console.log("Message received:", data);
+    // console.log("Message received:", data);
     sendingMessageLoading.value = false;
     newMessage.value = "";
     Notify.create({
@@ -397,7 +400,7 @@ onMounted(() => {
       position: "top",
     });
     if (store.userdetails.id === data.sender_id) {
-      console.log(store.userdetails.id === data.sender_id);
+      // console.log(store.userdetails.id === data.sender_id);
       let newData = {
         ...data,
         // is_authenticated_user_author: true,
@@ -415,8 +418,8 @@ onMounted(() => {
       props.conversationDetails.messages.push(newData);
       scrollToBottom();
     }
-    console.log(data);
-    console.log(props.conversationDetails.messages);
+    // console.log(data);
+    // console.log(props.conversationDetails.messages);
   });
 
   // Pusher.logToConsole = true;

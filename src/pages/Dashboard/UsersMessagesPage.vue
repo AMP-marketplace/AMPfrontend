@@ -50,10 +50,15 @@
               <div class="name">
                 <div class="name_top">
                   {{
+                    props?.row?.participants[1].data.business_name
+                      ? props?.row?.participants[1].data.business_name
+                      : ""
+                  }}
+                  <!-- {{
                     props?.row?.participants[0].data.business_name
                       ? props?.row?.participants[0].data.business_name
                       : props?.row?.participants[0].data.name
-                  }}
+                  }} -->
                 </div>
                 <div class="name_down">
                   {{ props?.row?.messages.length }} Messages

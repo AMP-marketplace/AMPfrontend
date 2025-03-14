@@ -108,6 +108,10 @@
                     >Pricing</router-link
                   >
                 </li>
+
+                <li class="navLinks">
+                  <router-link :to="{ name: 'rfq' }">RFQ</router-link>
+                </li>
               </ul>
             </nav>
             <div style="gap: 1rem" class="row items-center no-wrap">
@@ -244,6 +248,7 @@
             <q-item :to="{ name: 'donate' }">Donate Medical Equipments</q-item>
 
             <q-item :to="{ name: 'plans.page' }">Pricing</q-item>
+            <q-item :to="{ name: 'rfq' }">RFQ</q-item>
             <q-item :to="{ name: 'faq' }">FAQs</q-item>
             <q-item
               v-if="!store.token"

@@ -102,9 +102,9 @@
                     >Pricing</router-link
                   >
                 </li>
-                <!-- <li class="navLinks">
-                  <router-link :to="{ name: 'faq' }">FAQs</router-link>
-                </li> -->
+                <li class="navLinks">
+                  <router-link :to="{ name: 'rfq' }">RFQ</router-link>
+                </li>
               </ul>
             </nav>
 
@@ -218,6 +218,7 @@
             >
 
             <q-item :to="{ name: 'plans.page' }">Pricing</q-item>
+            <q-item :to="{ name: 'rfq' }">RFQ</q-item>
             <!-- <q-item :to="{ name: 'faq' }" clickable>FAQs</q-item> -->
             <q-item
               v-if="!store.token"

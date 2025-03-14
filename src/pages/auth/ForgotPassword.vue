@@ -48,6 +48,7 @@
           <p v-if="!store.token" class="text-h6 text-center q-mt-lg">
             Remember your password?
             <router-link
+              style="text-decoration: underline"
               :to="{
                 name: 'merchant.login',
               }"
@@ -56,6 +57,7 @@
             </router-link>
             <span class="q-mx-md"> Or </span>
             <router-link
+              style="text-decoration: underline"
               :to="{
                 name: 'customer.login',
               }"

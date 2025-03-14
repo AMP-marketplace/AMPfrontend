@@ -59,6 +59,11 @@ const routes = [
         name: "faq",
       },
       {
+        path: "/rfq",
+        component: () => import("pages/RfqPage.vue"),
+        name: "rfq",
+      },
+      {
         path: "/privacy-policy",
         component: () => import("pages/PrivacyPolicy.vue"),
         name: "privacy.policy",
@@ -199,6 +204,11 @@ const routes = [
         path: "/admin/payments",
         component: () => import("pages/admin/ListPayments.vue"),
         name: "admin.list.payments",
+      },
+      {
+        path: "/admin/rfq",
+        component: () => import("pages/admin/ListRfq.vue"),
+        name: "admin.list.rfq",
       },
       // {
       //   path: "/admin/merchants",

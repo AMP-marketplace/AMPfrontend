@@ -100,6 +100,9 @@
                     >Pricing</router-link
                   >
                 </li>
+                <li class="navLinks">
+                  <router-link :to="{ name: 'rfq' }">RFQ</router-link>
+                </li>
               </ul>
             </nav>
             <div class="row items-center no-wrap">

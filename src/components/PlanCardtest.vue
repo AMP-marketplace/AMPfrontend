@@ -213,11 +213,13 @@
 
     <div class="btn">
       <q-btn
-        v-if="plan.name !== 'free'"
-        @click="purchasePlan"
-        :loading="loading"
+        v-if="plan.name === 'free'"
+        :to="{ name: 'account.dashboard' }"
         color="primary"
       >
+        Proceed to dashboard
+      </q-btn>
+      <q-btn v-else @click="purchasePlan" :loading="loading" color="primary">
         Start Plan
       </q-btn>
     </div>
