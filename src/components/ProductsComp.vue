@@ -7,11 +7,10 @@
             store.userdetails.type === 'business'
               ? 'product.detail'
               : 'user.product.detail',
-          // query: {
-          //   id: product.id,
-          // },
+          params: {
+            slug: product.slug,
+          },
           query: {
-            name: product.name,
             id: product.id,
           },
         }"
@@ -43,6 +42,9 @@
           "
           :to="{
             name: 'product.detail',
+            params: {
+              slug: product.slug,
+            },
             query: {
               id: product.id,
             },
@@ -58,9 +60,9 @@
               store.userdetails.type === 'business'
                 ? 'product.detail'
                 : 'user.product.detail',
-            // query: {
-            //   id: product.id,
-            // },
+            params: {
+              slug: product.slug,
+            },
             query: {
               name: product.name,
               id: product.id,

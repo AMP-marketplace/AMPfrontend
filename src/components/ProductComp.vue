@@ -57,11 +57,11 @@
             store.role === 'merchant' && route.name === 'account.dashboard'
               ? 'product.detail'
               : 'user.product.detail',
-
+          params: {
+            slug: product.slug,
+          },
           query: {
-            name: product?.name,
             slug: product?.slug,
-            id: product?.id,
           },
         }"
       >
@@ -92,6 +92,9 @@
         "
         :to="{
           name: 'product.detail',
+          params: {
+            slug: product.slug,
+          },
           query: {
             // id: product?.id,
             slug: product?.slug,
@@ -109,11 +112,11 @@
             store.role === 'merchant' && route.name === 'account.dashboard'
               ? 'product.detail'
               : 'user.product.detail',
-
+          params: {
+            slug: product.slug,
+          },
           query: {
-            name: product?.name,
             slug: product?.slug,
-            // id: product?.id,
           },
         }"
       >
@@ -197,11 +200,11 @@
               store.role === 'merchant' && route.name === 'account.dashboard'
                 ? 'product.detail'
                 : 'user.product.detail',
-
+            params: {
+              slug: product.slug,
+            },
             query: {
-              name: product?.name,
               slug: product?.slug,
-              id: product?.id,
             },
           }"
         >

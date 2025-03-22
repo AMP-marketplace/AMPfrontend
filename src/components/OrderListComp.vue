@@ -15,6 +15,9 @@
           "
           :to="{
             name: 'product.detail',
+            params: {
+              slug: product.slug,
+            },
             query: {
               id: product.id,
             },

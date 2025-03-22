@@ -131,12 +131,12 @@ const routes = [
         name: "order.tracking.new",
       },
       {
-        path: "/product-detail",
+        path: "/product-detail/:slug",
         component: () => import("pages/Dashboard/ProductDetail.vue"),
         name: "product.detail",
       },
       {
-        path: "/user/product-detail",
+        path: "/user/product-detail/:slug",
         component: () => import("pages/Dashboard/UserProductDetail.vue"),
         name: "user.product.detail",
       },

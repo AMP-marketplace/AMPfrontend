@@ -60,11 +60,11 @@
                 rounded
                 :to="{
                   name: 'user.product.detail',
-
+                  params: {
+                    slug: product.slug,
+                  },
                   query: {
-                    name: prod?.name,
                     slug: prod?.slug,
-                    id: prod?.id,
                   },
                 }"
               >
@@ -230,7 +230,7 @@ import SponsorsCompVue from "src/components/SponsorsComp.vue";
 import ProductCompVue from "src/components/ProductComp.vue";
 import { computed, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
-import { useMyAuthStore } from "src/stores/auth";
+// import { useMyAuthStore } from "src/stores/auth";
 import { Loading, QSpinnerRings } from "quasar";
 import { useMeta } from "quasar";
 

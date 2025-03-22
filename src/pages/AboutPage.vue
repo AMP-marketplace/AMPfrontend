@@ -52,7 +52,7 @@
                   affordably.
                 </li>
                 <li>
-                  🔧 Biomedical Engineers expand their impact through meaningful
+                  Biomedical Engineers expand their impact through meaningful
                   partnerships.
                 </li>
                 <li>
@@ -116,24 +116,24 @@
               <div style="gap: 1rem" class="q-mt-lg row items-center no-wrap">
                 <ul>
                   <li>
-                    ✅ Empathy – We design solutions rooted in Africa’s unique
+                    Empathy – We design solutions rooted in Africa’s unique
                     healthcare challenges.
                   </li>
                   <li>
-                    ✅ Innovation – Harnessing cutting-edge technology to
-                    redefine medical procurement.
+                    Innovation – Harnessing cutting-edge technology to redefine
+                    medical procurement.
                   </li>
                   <li>
-                    ✅ Collaboration – Partnering with global and local
+                    Collaboration – Partnering with global and local
                     stakeholders to amplify impact.
                   </li>
                   <li>
-                    ✅ Integrity – Prioritizing transparency and ethical
-                    practices in every transaction.
+                    Integrity – Prioritizing transparency and ethical practices
+                    in every transaction.
                   </li>
                   <li>
-                    ✅ Sustainability – Championing circular healthcare
-                    economies to reduce waste.
+                    Sustainability – Championing circular healthcare economies
+                    to reduce waste.
                   </li>
                 </ul>
                 <!-- <ul>
@@ -164,15 +164,15 @@
 
                 <ul>
                   <li>
-                    🛒 Trusted Medical Marketplace – Source verified equipment
-                    from global suppliers, tailored to Africa’s needs.
+                    Trusted Medical Marketplace – Source verified equipment from
+                    global suppliers, tailored to Africa’s needs.
                   </li>
                   <li>
-                    🔧 Biomedical Support Network – Connect with certified
+                    Biomedical Support Network – Connect with certified
                     professionals for maintenance, repairs, and training.
                   </li>
                   <li>
-                    🔧 Biomedical Support Network – Connect with certified
+                    Biomedical Support Network – Connect with certified
                     professionals for maintenance, repairs, and training.
                   </li>
                 </ul>
@@ -182,12 +182,12 @@
 
                 <ul>
                   <li>
-                    🌱 Growth Opportunities – Reach new markets through Africa’s
+                    Growth Opportunities – Reach new markets through Africa’s
                     largest healthcare procurement network.
                   </li>
                   <li>
-                    🌐 Logistics Excellence – Leverage optimized delivery
-                    networks to ensure timely, cost-effective fulfillment.
+                    Logistics Excellence – Leverage optimized delivery networks
+                    to ensure timely, cost-effective fulfillment.
                   </li>
                 </ul>
               </div>
@@ -207,15 +207,15 @@
               <h4 class="text-h3 q-mb-md text-weight-bold">Why Trust AMP?</h4>
               <ul>
                 <li>
-                  ✔ Verified Quality: Suppliers undergo a rigorous multi-tier
+                  Verified Quality: Suppliers undergo a rigorous multi-tier
                   verification process.
                 </li>
                 <li>
-                  ✔ Regulatory Alignment: Compliance with international
-                  standards and local regulations.
+                  Regulatory Alignment: Compliance with international standards
+                  and local regulations.
                 </li>
                 <li>
-                  ✔ Community Impact: Every transaction supports our mission to
+                  Community Impact: Every transaction supports our mission to
                   reduce healthcare inequality.
                 </li>
               </ul>
@@ -226,10 +226,10 @@
                 We collaborate with forward-thinking organizations, including:
               </p>
               <ul>
-                <li>✔ Global health innovators</li>
-                <li>✔ Government agencies</li>
-                <li>✔ Leading NGOs</li>
-                <li>✔ Technology pioneers</li>
+                <li>Global health innovators</li>
+                <li>Government agencies</li>
+                <li>Leading NGOs</li>
+                <li>Technology pioneers</li>
               </ul>
 
               <div>
@@ -243,8 +243,7 @@
                 <p>
                   <strong> Healthcare Providers:</strong>
                   <router-link :to="{ name: 'explore' }">
-                    [Browse Equipment](https://www.africamedicalmarketplace.com
-                    )
+                    https://www.africamedicalmarketplace.com
                   </router-link>
                 </p>
                 <p class="q-mt-sm">
@@ -253,8 +252,7 @@
                     style="text-decoration: underline"
                     href="donate.africamedicalmarketplace.com"
                     target="_blank"
-                    >[Join Our
-                    Network](https://www.donate.africamedicalmarketplace.com)</a
+                    >https://www.donate.africamedicalmarketplace.com</a
                   >
                 </p>
                 <p class="q-mt-sm">
@@ -263,8 +261,7 @@
                     style="text-decoration: underline"
                     href="biomedical.africamedicalmarketplace.com"
                     target="_blank"
-                    >[Join Our
-                    Network](https://www.biomedical.africamedicalmarketplace.com)</a
+                    >https://www.biomedical.africamedicalmarketplace.com</a
                   >
                 </p>
               </div>

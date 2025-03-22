@@ -49,7 +49,7 @@ export const useCartStore = defineStore("apmcart", {
   }),
   persist: {
     key: "apmcart",
-    storage: localStorage,
+    storage: process.client ? localStorage : "",
   },
   getters: {
     totalPrice: (state) => {

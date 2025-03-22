@@ -504,13 +504,13 @@ import {
   useMeta,
 } from "quasar";
 import { authAxios } from "src/boot/axios";
-import { onMounted, ref, watch, computed } from "vue";
+import { onMounted, ref, watch, computed, watchEffect } from "vue";
 import FooterComp from "src/components/FooterComp.vue";
 import ChatPage from "src/components/ChatPage.vue";
 import { useCartStore } from "src/stores/cart";
 import { useRoute, useRouter } from "vue-router";
 import { useMyAuthStore } from "src/stores/auth";
-
+import he from "he";
 import countries from "app/countries";
 import currencies from "app/currencies";
 const route = useRouter();
@@ -843,38 +843,87 @@ const removeFromWishlist = () => {
     .catch(({ response }) => {});
 };
 
-// const productDetail = computed(() => ({
-//   name: product.value?.name,
-//   slug: product.value?.slug,
-//   image: product.value?.media[0]?.url,
-//   description: product.value?.description,
-// }));
+watchEffect(() => {
+  const cleanedDescription = cleanDescription(
+    product.value?.description || "Check out this amazing product!"
+  );
 
-useMeta({
-  title: product.value.name,
-  meta: [
-    { property: "og:title", content: product.value?.name },
-    { property: "og:description", content: product.value?.description },
-    {
-      property: "og:image",
-      content: product.value?.media
-        ? product.value?.media[0]?.url
-        : "/images/logo.svg",
-    },
-    {
-      property: "og:url",
-      content: `https://www.africamedicalmarketplace.com/user/product-detail?slug=${product.value?.slug}`,
-    },
-    { property: "og:type", content: "product" },
-  ],
+  console.log(product.value?.media);
+
+  useMeta({
+    title: product.value?.name || "Product Details",
+    meta: [
+      {
+        property: "og:title",
+        content: product.value?.name || "Product Details",
+      },
+      { property: "og:description", content: cleanedDescription },
+      {
+        property: "og:image",
+        content: product.value?.media
+          ? product.value?.media[0]?.url // Ensure this is the full Cloudinary URL
+          : "https://www.africamedicalmarketplace.com/images/logo.svg",
+      },
+      {
+        property: "og:url",
+        content: `https://www.africamedicalmarketplace.com/user/product-detail?slug=${product.value?.slug}`,
+      },
+      { property: "og:type", content: "product" },
+
+      // Twitter Card Meta Tags
+      { name: "twitter:card", content: "summary_large_image" }, // Use "summary" for small images
+      {
+        name: "twitter:title",
+        content: product.value?.name || "Product Details",
+      },
+      { name: "twitter:description", content: cleanedDescription },
+      {
+        name: "twitter:image",
+        content: product.value?.media
+          ? product.value?.media[0]?.url // Ensure this is the full Cloudinary URL
+          : "https://www.africamedicalmarketplace.com/images/logo.svg",
+      },
+      {
+        name: "twitter:url",
+        content: `https://www.africamedicalmarketplace.com/user/product-detail?slug=${product.value?.slug}`,
+      },
+    ],
+  });
 });
 
+// let copyTo = () => {
+//   copyToClipboard(
+//     `https://www.africamedicalmarketplace.com/user/product-detail?slug=${product.value.slug}`
+//   ).then(() => {
+//     Notify.create({
+//       message: "Link copied successfully",
+//       position: "top",
+//       color: "green-7",
+//     });
+//   });
+// };
+
+// Utility function to strip HTML tags
+function stripHtmlTags(html) {
+  return html.replace(/<[^>]*>?/gm, "");
+}
+
+// Utility function to clean description
+function cleanDescription(description) {
+  const stripped = stripHtmlTags(description); // Remove HTML tags
+  return he.decode(stripped); // Decode HTML entities
+}
+
+// Copy link and description to clipboard
 let copyTo = () => {
-  copyToClipboard(
-    `https://www.africamedicalmarketplace.com/user/product-detail?slug=${product.value.slug}`
-  ).then(() => {
+  const cleanedDescription = cleanDescription(
+    product.value?.description || "Check out this amazing product!"
+  );
+  const textToCopy = `Check out this product: ${product.value.name}\n\n${cleanedDescription}\n\nhttps://www.africamedicalmarketplace.com/user/product-detail?slug=${product.value.slug}`;
+
+  copyToClipboard(textToCopy).then(() => {
     Notify.create({
-      message: "Link copied successfully",
+      message: "Link and description copied successfully",
       position: "top",
       color: "green-7",
     });
@@ -948,10 +997,20 @@ const showShareSheet = () => {
     });
 };
 
+// const shareViaWhatsApp = () => {
+//   const url = `https://wa.me/?text=${encodeURIComponent(
+//     "Check out this amazing platform for your medical equipments needs across africa! " +
+//       `https://www.africamedicalmarketplace.com/user/product-detail?slug=${product.value.slug}`
+//   )}`;
+//   window.open(url, "_blank");
+// };
+// Example sharing function
 const shareViaWhatsApp = () => {
+  const cleanedDescription = cleanDescription(
+    product.value?.description || "Check out this amazing product!"
+  );
   const url = `https://wa.me/?text=${encodeURIComponent(
-    "Check out this amazing platform for your medical equipments needs across africa! " +
-      `https://www.africamedicalmarketplace.com/user/product-detail?slug=${product.value.slug}`
+    `Check out this product: ${product.value.name}\n\n${cleanedDescription}\n\nhttps://www.africamedicalmarketplace.com/user/product-detail?slug=${product.value.slug}`
   )}`;
   window.open(url, "_blank");
 };

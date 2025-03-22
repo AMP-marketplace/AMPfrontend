@@ -63,7 +63,7 @@
             <div class="q-mt-md">
               <div class="grid items-center">
                 <div class="phone">
-                  <label for="">Phone Number<span>*</span></label>
+                  <label for="">Phone Number</label>
                   <div class="phone_wrap">
                     <div class="country_select">
                       <div class="input_wrap">
@@ -85,7 +85,6 @@
                         <input
                           v-model="data.phone"
                           placeholder="Enter phone number"
-                          required
                           type="text"
                         />
                       </div>
@@ -115,12 +114,11 @@
             <div class="q-mt-md">
               <div class="grid">
                 <div class="input_wrap">
-                  <label for="">Website <span>*</span></label>
+                  <label for="">Website</label>
                   <div class="input">
                     <input
                       v-model="data.website"
                       placeholder="Enter website"
-                      required
                       type="text"
                     />
                   </div>
@@ -169,7 +167,7 @@
                 {{ errors.project_details[0] }}
               </small>
             </div>
-            <div class="input_wrap">
+            <!-- <div class="input_wrap">
               <label for="">Project Description <span>*</span></label>
 
               <div class="input">
@@ -186,7 +184,7 @@
               >
                 {{ errors.project_description[0] }}
               </small>
-            </div>
+            </div> -->
             <div class="input_wrap">
               <label for="">Specification<span>*</span></label>
 
@@ -208,14 +206,22 @@
             <div class="input_wrap">
               <label for="">Delivery Location<span>*</span></label>
 
-              <div class="input">
+              <MapPicker @locationSelected="handleLocationSelection" />
+
+              <!-- <div class="input">
                 <textarea
                   v-model="data.delivery_location"
                   cols="30"
                   placeholder="Enter location"
                   rows="5"
                 ></textarea>
-              </div>
+              </div> -->
+              <p class="q-my-sm">
+                <small class="text-red text-weight-bold">
+                  Please make sure to click confirm location after selecting
+                  location
+                </small>
+              </p>
               <small
                 v-if="errors.delivery_location"
                 class="text-red text-weight-bold"
@@ -223,7 +229,7 @@
                 {{ errors.delivery_location[0] }}
               </small>
             </div>
-            <div class="input_wrap">
+            <!-- <div class="input_wrap">
               <label for="">Product Requirements<span>*</span></label>
 
               <div class="input">
@@ -240,7 +246,7 @@
               >
                 {{ errors.product_requirements[0] }}
               </small>
-            </div>
+            </div> -->
             <div class="q-mt-md">
               <div class="grid">
                 <div class="input_wrap">
@@ -285,15 +291,16 @@
             <div class="q-mt-md">
               <div class="grid">
                 <div class="input_wrap">
-                  <label for="">Delivery Method<span>*</span></label>
+                  <label for="">Delivery Method<small></small></label>
 
                   <div class="input">
-                    <select required v-model="data.delivery_method">
+                    <select v-model="data.delivery_method">
                       <option value="Air">Air</option>
                       <option value="Water">Water</option>
                       <option value="Land">Land</option>
                     </select>
                   </div>
+                  <small> (can be agreed upon during conversation) </small>
                   <small
                     v-if="errors.delivery_method"
                     class="text-red text-weight-bold"
@@ -363,7 +370,31 @@
               </div>
             </div>
 
-            <div class="input_wrap">
+            <div class="q-mt-md">
+              <q-file
+                @update:model-value="setRfqFiles"
+                accept=".jpg,.png,.jpeg,.pdf,.docx"
+                outlined
+                use-chips
+                label="Add Attachment"
+                multiple
+                v-model="rfqDocuments"
+              >
+                <template v-slot:prepend>
+                  <q-icon name="attach_file" />
+                </template>
+              </q-file>
+            </div>
+
+            <div class="q-mt-md">
+              <q-checkbox
+                v-model="data.attachments_and_acknowledgement"
+                color="secondary"
+                label="I agree that the information uploaded above are accurate"
+              />
+            </div>
+
+            <!-- <div class="input_wrap">
               <label for=""
                 >Attachments and Acknowledgement<span>*</span></label
               >
@@ -381,7 +412,7 @@
               >
                 {{ errors.attachments_and_acknowledgement[0] }}
               </small>
-            </div>
+            </div> -->
             <div class="row justify-center q-mt-md">
               <q-btn
                 :loading="loading"
@@ -444,8 +475,13 @@ import { Dialog, Loading, Notify, QSpinnerOval, useMeta } from "quasar";
 import { ref } from "vue";
 import { authAxios } from "src/boot/axios";
 import countries from "app/countries";
+import MapPicker from "src/components/MapPicker.vue";
 
-let data = ref({});
+let data = ref({
+  attachments_and_acknowledgement: false,
+  product_requirements: "-",
+  project_description: "-",
+});
 let rfqData = ref({});
 let errors = ref({});
 let loading = ref(false);
@@ -463,24 +499,21 @@ const formatPhoneNumber = (phone) => {
   }
 };
 
-const setRfqFiles = (props) => {
-  const files = Array.isArray(props) ? props : [props]; // Ensure we handle multiple files
+const selectedLocation = ref({});
+
+function handleLocationSelection(location) {
+  selectedLocation.value = location;
+  console.log(selectedLocation.value);
+}
+
+const uploadDocuments = () => {
+  // const files = Array.isArray(rfqDocuments) ? rfqDocuments : [rfqDocuments];
+
   const formData = new FormData();
-  const imagePreviews = [];
 
-  files.forEach((file) => {
+  rfqDocuments.value.forEach((file) => {
     formData.append("documents[]", file);
-
-    // Generate image previews
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      imagePreviews.push(e.target.result);
-      uploadPreviews.value = [...imagePreviews]; // Update previews
-    };
-    reader.readAsDataURL(file);
   });
-
-  rfqDocuments.value = files; // Store the selected files
 
   Loading.show({
     spinner: QSpinnerOval,
@@ -540,43 +573,63 @@ const setRfqFiles = (props) => {
     });
 };
 
-const submitForm = () => {
-  let newData = {
-    ...data.value,
-  };
-  console.log(newData);
+const setRfqFiles = (props) => {
+  const files = Array.isArray(props) ? props : [props]; // Ensure we handle multiple files
+  rfqDocuments.value = files; // Store the selected files
+};
 
-  loading.value = true;
-  authAxios
-    .post("rfq", {
-      ...newData,
-      phone: country_code.value + formatPhoneNumber(data.value.phone),
-    })
-    .then((response) => {
-      console.log(response);
-      Notify.create({
-        message: response.data.message,
-        color: "green",
-        position: "top",
-      });
-      data.value = {};
-      loading.value = false;
-      rfqData.value = response.data.rfq;
-      AttachModal.value = true;
-    })
-    .catch(({ response }) => {
-      console.log(response);
-      loading.value = false;
-      errors.value = response.data.errors || {};
-      Notify.create({
-        message: response.data.message
-          ? response.data.message
-          : Object.values(response.data.errors) + ",",
-        color: "red",
-        position: "top",
-        actions: [{ icon: "close", color: "white" }],
-      });
+const submitForm = () => {
+  if (data.value.attachments_and_acknowledgement === false) {
+    Notify.create({
+      message: "You must agree to the terms and conditions",
+      color: "red",
+      position: "top",
     });
+    return;
+  } else {
+    let newData = {
+      ...data.value,
+      delivery_location: selectedLocation.value.address,
+      attachments_and_acknowledgement: data.value
+        .attachments_and_acknowledgement
+        ? "True"
+        : "False",
+    };
+    console.log(newData);
+
+    loading.value = true;
+    authAxios
+      .post("rfq", {
+        ...newData,
+        phone: country_code.value + formatPhoneNumber(data.value.phone),
+      })
+      .then((response) => {
+        console.log(response);
+        Notify.create({
+          message: response.data.message,
+          color: "green",
+          position: "top",
+        });
+        data.value = {};
+        loading.value = false;
+        rfqData.value = response.data.rfq;
+        // AttachModal.value = true;
+        uploadDocuments();
+      })
+      .catch(({ response }) => {
+        console.log(response);
+        loading.value = false;
+        errors.value = response.data.errors || {};
+        Notify.create({
+          message: response.data.message
+            ? response.data.message
+            : Object.values(response.data.errors) + ",",
+          color: "red",
+          position: "top",
+          actions: [{ icon: "close", color: "white" }],
+        });
+      });
+  }
 };
 
 const metaData = {
