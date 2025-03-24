@@ -148,7 +148,7 @@
           <template v-slot:body-cell-actions="props">
             <q-td :props="props">
               <div class="table_btn row items-center no-wrap">
-                <!-- <q-btn
+                <q-btn
                   @click="chatSeller(props.row)"
                   flat
                   no-wrap
@@ -158,8 +158,27 @@
                   :loading="loaders.save[props]"
                 >
                   Chat Customer
-                </q-btn> -->
+                </q-btn>
                 <q-btn
+                  @click="acceptOrder(props.row)"
+                  flat
+                  no-wrap
+                  v-if="
+                    props.row.merchant_response !== 'declined' &&
+                    props.row.merchant_response !== 'accepted'
+                  "
+                  no-caps
+                  text-color="blue-7"
+                  size="md"
+                  :loading="loaders.save[props]"
+                >
+                  {{
+                    props.row.merchant_response === "accepted"
+                      ? "Accepted"
+                      : "Accept"
+                  }}
+                </q-btn>
+                <!-- <q-btn
                   @click="acceptOrder(props.row)"
                   flat
                   no-wrap
@@ -175,21 +194,21 @@
                   size="md"
                   :loading="loaders.save[props]"
                 >
-                  {{ props.row.status === "accepted" ? "Accepted" : "Accept" }}
-                </q-btn>
+                  {{ props.row.merchant_response === "accepted" ? "Accepted" : "Accept" }}
+                </q-btn> -->
                 <q-btn
                   flat
                   no-wrap
                   no-caps
                   disable
                   text-color="blue-7"
-                  v-if="props.row.status === 'accepted'"
+                  v-if="props.row.merchant_response === 'accepted'"
                   size="md"
                   :loading="loaders.save[props]"
                 >
                   Accepted
                 </q-btn>
-                <q-btn
+                <!-- <q-btn
                   flat
                   no-wrap
                   no-caps
@@ -200,8 +219,8 @@
                   :loading="loaders.save[props]"
                 >
                   Proccessed
-                </q-btn>
-                <q-btn
+                </q-btn> -->
+                <!-- <q-btn
                   flat
                   no-wrap
                   no-caps
@@ -212,8 +231,8 @@
                   :loading="loaders.save[props]"
                 >
                   Dispatched
-                </q-btn>
-                <q-btn
+                </q-btn> -->
+                <!-- <q-btn
                   flat
                   no-wrap
                   no-caps
@@ -224,18 +243,36 @@
                   :loading="loaders.save[props]"
                 >
                   Delivered
-                </q-btn>
+                </q-btn> -->
 
                 <span
                   v-if="
-                    props.row.status !== 'accepted' &&
-                    props.row.status !== 'declined' &&
-                    props.row.status !== 'dispatched' &&
-                    props.row.status !== 'delivered'
+                    props.row.merchant_response !== 'accepted' &&
+                    props.row.merchant_response !== 'declined'
                   "
                   >|</span
                 >
                 <q-btn
+                  @click="rejectOrder(props.row)"
+                  flat
+                  :disable="props.row.merchant_response === 'declined'"
+                  no-wrap
+                  v-if="
+                    props.row.merchant_response !== 'declined' &&
+                    props.row.merchant_response !== 'accepted'
+                  "
+                  no-caps
+                  text-color="red-7"
+                  size="md"
+                  :loading="loaders.save[props]"
+                >
+                  {{
+                    props.row.merchant_response === "declined"
+                      ? "Declined"
+                      : "Decline"
+                  }}
+                </q-btn>
+                <!-- <q-btn
                   @click="rejectOrder(props.row)"
                   flat
                   :disable="props.row.status === 'declined'"
@@ -253,13 +290,13 @@
                   :loading="loaders.save[props]"
                 >
                   {{ props.row.status === "declined" ? "Declined" : "Decline" }}
-                </q-btn>
-                <!-- <q-btn-dropdown
+                </q-btn> -->
+                <q-btn-dropdown
                   no-caps
                   flat
                   v-if="
-                    props.row.status !== 'declined' &&
-                    props.row.status !== 'delivered'
+                    props?.row?.merchant_response !== 'declined' ||
+                    props?.row?.shipping_status !== 'delivered'
                   "
                   no-wrap
                   label="Track order"
@@ -272,11 +309,11 @@
                       @click="setTrackingStatus(props.row)"
                     >
                       <q-item-section>
-                        <q-item-label>Order Proccessed</q-item-label>
+                        <q-item-label>Order Shipped</q-item-label>
                       </q-item-section>
                     </q-item>
 
-                    <q-item
+                    <!-- <q-item
                       clickable
                       v-close-popup
                       @click="setTrackingStatus(props.row)"
@@ -293,9 +330,9 @@
                       <q-item-section>
                         <q-item-label>Order Delivered</q-item-label>
                       </q-item-section>
-                    </q-item>
+                    </q-item> -->
                   </q-list>
-                </q-btn-dropdown> -->
+                </q-btn-dropdown>
               </div>
             </q-td>
           </template>
@@ -405,22 +442,30 @@ const columns = [
     field: (row) => `$${row.price}`,
     sortable: true,
   },
-  // {
-  //   name: "unit",
-  //   required: true,
-  //   label: "Quantity",
-  //   align: "left",
-  //   field: "unit",
-  //   sortable: true,
-  // },
-  // {
-  //   name: "shipping_information",
-  //   required: true,
-  //   label: "Address",
-  //   align: "left",
-  //   field: (row) => row?.shipping_information?.address?.address_line_1,
-  //   sortable: true,
-  // },
+  {
+    name: "unit",
+    required: true,
+    label: "Quantity",
+    align: "left",
+    field: "unit",
+    sortable: true,
+  },
+  {
+    name: "customer",
+    required: true,
+    label: "Customer name",
+    align: "left",
+    field: (row) => row?.customer?.name,
+    sortable: true,
+  },
+  {
+    name: "customer",
+    required: true,
+    label: "Customer email",
+    align: "left",
+    field: (row) => row?.customer?.email,
+    sortable: true,
+  },
   // {
   //   name: "shipping_information",
   //   required: true,
@@ -564,8 +609,8 @@ let chatSeller = (order) => {
           : authStore.userdetails.id,
       participant_one_type:
         authStore.userdetails.roles[0].name === "shopper" ? "user" : "merchant",
-      participant_two_id: order.user.id,
-      participant_two_type: order.user.roles[0].name,
+      participant_two_id: order.customer.id,
+      participant_two_type: "shopper",
     })
     .then((response) => {
       loadingChatBtn.value = false;
@@ -746,7 +791,7 @@ const setTrackingStatus = (order) => {
       });
       authAxios
         .post(
-          `merchant/tracking/${order.shipping_information.tracking_number}/${order.slug}`,
+          `merchant/tracking/${order?.shipping_information?.tracking_number}/${order.slug}`,
           {
             status: "shipped",
           }

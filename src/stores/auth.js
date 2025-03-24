@@ -13,7 +13,7 @@ export const useMyAuthStore = defineStore("ampauth", {
   }),
   persist: {
     key: "ampauth",
-    storage: process.client ? localStorage : "",
+    storage: localStorage,
   },
   getters: {
     registrationForm: (state) => state.userdetails,

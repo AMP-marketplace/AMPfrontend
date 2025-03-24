@@ -138,7 +138,7 @@
             >
               <small>
                 We could not connect you to our chat server at this time, please
-                wait...</small
+                wait or refresh your page...</small
               >
             </p>
             <div class="inp_wra">

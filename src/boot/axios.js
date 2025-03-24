@@ -154,7 +154,7 @@ export default boot(({ app, store, router }) => {
   });
 
   router.beforeEach((to, from, next) => {
-    if (process.client && store.state.value.ampauth.token) {
+    if (store.state.value.ampauth.token) {
       authAxios.defaults.headers.common[
         "Authorization"
       ] = `Bearer ${store.state.value.ampauth.token}`;

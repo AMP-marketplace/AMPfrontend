@@ -843,52 +843,53 @@ const removeFromWishlist = () => {
     .catch(({ response }) => {});
 };
 
-watchEffect(() => {
-  const cleanedDescription = cleanDescription(
-    product.value?.description || "Check out this amazing product!"
-  );
+const cleanedDescription = product.value?.description
+  ? cleanDescription(
+      truncatedDescription(product.value?.description) ||
+        "Check out this amazing product!"
+    )
+  : "";
 
-  console.log(product.value?.media);
+console.log(product.value?.media);
 
-  useMeta({
-    title: product.value?.name || "Product Details",
-    meta: [
-      {
-        property: "og:title",
-        content: product.value?.name || "Product Details",
-      },
-      { property: "og:description", content: cleanedDescription },
-      {
-        property: "og:image",
-        content: product.value?.media
-          ? product.value?.media[0]?.url // Ensure this is the full Cloudinary URL
-          : "https://www.africamedicalmarketplace.com/images/logo.svg",
-      },
-      {
-        property: "og:url",
-        content: `https://www.africamedicalmarketplace.com/user/product-detail?slug=${product.value?.slug}`,
-      },
-      { property: "og:type", content: "product" },
+useMeta({
+  title: product.value?.name || "Product Details",
+  meta: [
+    {
+      property: "og:title",
+      content: product.value?.name || "Product Details",
+    },
+    { property: "og:description", content: cleanedDescription },
+    {
+      property: "og:image",
+      content: product.value?.media
+        ? product.value?.media[0]?.url // Ensure this is the full Cloudinary URL
+        : "https://www.africamedicalmarketplace.com/images/logo.svg",
+    },
+    {
+      property: "og:url",
+      content: `https://www.africamedicalmarketplace.com/user/product-detail?slug=${product.value?.slug}`,
+    },
+    { property: "og:type", content: "product" },
 
-      // Twitter Card Meta Tags
-      { name: "twitter:card", content: "summary_large_image" }, // Use "summary" for small images
-      {
-        name: "twitter:title",
-        content: product.value?.name || "Product Details",
-      },
-      { name: "twitter:description", content: cleanedDescription },
-      {
-        name: "twitter:image",
-        content: product.value?.media
-          ? product.value?.media[0]?.url // Ensure this is the full Cloudinary URL
-          : "https://www.africamedicalmarketplace.com/images/logo.svg",
-      },
-      {
-        name: "twitter:url",
-        content: `https://www.africamedicalmarketplace.com/user/product-detail?slug=${product.value?.slug}`,
-      },
-    ],
-  });
+    // Twitter Card Meta Tags
+    { name: "twitter:card", content: "summary_large_image" }, // Use "summary" for small images
+    {
+      name: "twitter:title",
+      content: product.value?.name || "Product Details",
+    },
+    { name: "twitter:description", content: cleanedDescription },
+    {
+      name: "twitter:image",
+      content: product.value?.media
+        ? product.value?.media[0]?.url // Ensure this is the full Cloudinary URL
+        : "https://www.africamedicalmarketplace.com/images/logo.svg",
+    },
+    {
+      name: "twitter:url",
+      content: `https://www.africamedicalmarketplace.com/user/product-detail?slug=${product.value?.slug}`,
+    },
+  ],
 });
 
 // let copyTo = () => {
@@ -917,7 +918,8 @@ function cleanDescription(description) {
 // Copy link and description to clipboard
 let copyTo = () => {
   const cleanedDescription = cleanDescription(
-    product.value?.description || "Check out this amazing product!"
+    truncatedDescription(product.value?.description) ||
+      "Check out this amazing product!"
   );
   const textToCopy = `Check out this product: ${product.value.name}\n\n${cleanedDescription}\n\nhttps://www.africamedicalmarketplace.com/user/product-detail?slug=${product.value.slug}`;
 
@@ -928,6 +930,13 @@ let copyTo = () => {
       color: "green-7",
     });
   });
+};
+
+let truncatedDescription = (description) => {
+  return (
+    description.split(" ").slice(0, 20).join(" ") +
+    (description.split(" ").length > 20 ? "..." : "")
+  );
 };
 
 const showShareSheet = () => {
@@ -1007,7 +1016,8 @@ const showShareSheet = () => {
 // Example sharing function
 const shareViaWhatsApp = () => {
   const cleanedDescription = cleanDescription(
-    product.value?.description || "Check out this amazing product!"
+    truncatedDescription(product.value?.description) ||
+      "Check out this amazing product!"
   );
   const url = `https://wa.me/?text=${encodeURIComponent(
     `Check out this product: ${product.value.name}\n\n${cleanedDescription}\n\nhttps://www.africamedicalmarketplace.com/user/product-detail?slug=${product.value.slug}`

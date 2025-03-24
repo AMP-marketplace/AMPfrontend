@@ -204,7 +204,10 @@
               </small>
             </div>
             <div class="input_wrap">
-              <label for="">Delivery Location<span>*</span></label>
+              <label for=""
+                >Delivery Location( Please make sure to click confirm location
+                after selecting location)<span>*</span></label
+              >
 
               <MapPicker @locationSelected="handleLocationSelection" />
 
@@ -614,7 +617,31 @@ const submitForm = () => {
         loading.value = false;
         rfqData.value = response.data.rfq;
         // AttachModal.value = true;
-        uploadDocuments();
+        if (rfqDocuments.value) {
+          uploadDocuments();
+        } else {
+          Dialog.create({
+            title: `Your RFQ request was successful`,
+            message: `We have received your RFQ request and we are looking through and proccessing it. We will get back to you very shortly.`,
+            ok: {
+              push: true,
+              label: "Okay",
+              color: "green",
+            },
+            cancel: {
+              push: true,
+              color: "grey",
+            },
+            persistent: true,
+          })
+            .onOk(() => {})
+            .onCancel(() => {
+              // console.log('>>>> Cancel')
+            })
+            .onDismiss(() => {
+              // console.log('I am triggered on both OK and Cancel')
+            });
+        }
       })
       .catch(({ response }) => {
         console.log(response);

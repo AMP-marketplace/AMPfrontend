@@ -28,7 +28,7 @@ export const useProductStore = defineStore("productStore", {
   }),
   persist: {
     key: "productStore",
-    storage: process.client ? localStorage : "",
+    storage: localStorage,
   },
   getters: {
     filteredProducts: (state) => {
